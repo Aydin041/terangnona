@@ -20,12 +20,14 @@ class AuthController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:peserta,email',
+            'kontak' => 'required|string|max:20',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $peserta = Peserta::create([
             'nama' => $validated['nama'],
             'email' => $validated['email'],
+            'kontak' => $validated['kontak'],
             'password_hash' => Hash::make($validated['password']),
         ]);
 

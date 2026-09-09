@@ -11,6 +11,7 @@ class Peserta extends Authenticatable
     protected $fillable = [
         'nama',
         'email',
+        'kontak',
         'password_hash',
     ];
 

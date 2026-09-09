@@ -13,6 +13,7 @@ class Dokumen extends Model
     protected $fillable = [
         'pengajuan_id',
         'jenis_dokumen',
+        'nama_asli',
         'file_path',
         'uploaded_at',
     ];

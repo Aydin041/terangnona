@@ -25,7 +25,11 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
         Route::post('/pengajuan/step1', [PengajuanController::class, 'step1Store'])->name('pengajuan.step1.submit');
         Route::get('/pengajuan/step2/{id}', [PengajuanController::class, 'step2Form'])->name('pengajuan.step2');
         Route::post('/pengajuan/step2/{id}', [PengajuanController::class, 'step2Store'])->name('pengajuan.step2.submit');
-        });
+        Route::get('/pengajuan/step3/{id}', [PengajuanController::class, 'step3Form'])->name('pengajuan.step3');
+        Route::post('/pengajuan/step3/{id}', [PengajuanController::class, 'step3Store'])->name('pengajuan.step3.submit');
+        Route::get('/pengajuan/step4/{id}', [PengajuanController::class, 'step4Form'])->name('pengajuan.step4');
+        Route::post('/pengajuan/step4/{id}', [PengajuanController::class, 'step4Store'])->name('pengajuan.step4.submit');
+    });
 });
 
 // Panitia

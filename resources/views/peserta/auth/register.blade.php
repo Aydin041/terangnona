@@ -31,6 +31,11 @@
         </div>
 
         <div>
+            <label>Nomor Kontak/WA</label><br>
+            <input type="text" name="kontak" value="{{ old('kontak') }}" required>
+        </div>
+
+        <div>
             <label>Password (minimal 8 karakter)</label><br>
             <input type="password" name="password" required>
         </div>
