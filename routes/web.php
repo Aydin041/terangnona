@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Peserta\AuthController as PesertaAuthController;
+use App\Http\Controllers\Peserta\PengajuanController;
 use App\Http\Controllers\Panitia\AuthController as PanitiaAuthController;
 use App\Http\Controllers\Juri\AuthController as JuriAuthController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
@@ -19,10 +20,12 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
     Route::post('/logout', [PesertaAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:peserta')->group(function () {
-        Route::get('/dashboard', function () {
-            return 'Dashboard Peserta — halaman ini masih sementara.';
-        })->name('dashboard');
-    });
+        Route::get('/dashboard', [PengajuanController::class, 'dashboard'])->name('dashboard');
+        Route::get('/pengajuan/step1', [PengajuanController::class, 'step1Form'])->name('pengajuan.step1');
+        Route::post('/pengajuan/step1', [PengajuanController::class, 'step1Store'])->name('pengajuan.step1.submit');
+        Route::get('/pengajuan/step2/{id}', [PengajuanController::class, 'step2Form'])->name('pengajuan.step2');
+        Route::post('/pengajuan/step2/{id}', [PengajuanController::class, 'step2Store'])->name('pengajuan.step2.submit');
+        });
 });
 
 // Panitia
