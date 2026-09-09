@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Peserta;
 use App\Http\Controllers\Controller;
 use App\Models\Kategori;
 use App\Models\Pengajuan;
+use App\Models\RiwayatStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -183,5 +184,67 @@ class PengajuanController extends Controller
         }
 
         return redirect()->route('peserta.pengajuan.step5', $pengajuan->id);
+    }
+
+    private function daftarDokumenWajib($pengajuan)
+    {
+        $wajib = ['proposal', 'bukti_dukung', 'surat_identitas'];
+        $wajib[] = $pengajuan->bentuk_inovasi === 'eksisting' ? 'surat_implementasi' : 'surat_komitmen';
+        $wajib[] = 'video_link';
+        return $wajib;
+    }
+
+    public function step5Form($pengajuanId)
+    {
+        $peserta = Auth::guard('peserta')->user();
+        $pengajuan = Pengajuan::where('id', $pengajuanId)
+            ->where('peserta_id', $peserta->id)
+            ->firstOrFail();
+
+        $anggotaKelompok = $pengajuan->anggotaKelompok()->get();
+        $dokumenTersimpan = $pengajuan->dokumen()->get()->keyBy('jenis_dokumen');
+
+        $dokumenWajib = $this->daftarDokumenWajib($pengajuan);
+        $dokumenBelumLengkap = [];
+        foreach ($dokumenWajib as $jenis) {
+            if (!isset($dokumenTersimpan[$jenis])) {
+                $dokumenBelumLengkap[] = $jenis;
+            }
+        }
+
+        return view('peserta.pengajuan.step5', compact(
+            'pengajuan', 'anggotaKelompok', 'dokumenTersimpan', 'dokumenBelumLengkap'
+        ));
+    }
+
+    public function step5Store($pengajuanId)
+    {
+        $peserta = Auth::guard('peserta')->user();
+        $pengajuan = Pengajuan::where('id', $pengajuanId)
+            ->where('peserta_id', $peserta->id)
+            ->firstOrFail();
+
+        $dokumenTersimpan = $pengajuan->dokumen()->get()->keyBy('jenis_dokumen');
+        $dokumenWajib = $this->daftarDokumenWajib($pengajuan);
+
+        foreach ($dokumenWajib as $jenis) {
+            if (!isset($dokumenTersimpan[$jenis])) {
+                return back()->withErrors([
+                    'dokumen' => 'Masih ada dokumen wajib yang belum lengkap. Silakan lengkapi dulu di Langkah 4.',
+                ]);
+            }
+        }
+
+        $pengajuan->update(['status' => 'menunggu_pemeriksaan']);
+
+        RiwayatStatus::create([
+            'pengajuan_id' => $pengajuan->id,
+            'status' => 'menunggu_pemeriksaan',
+            'catatan_panitia' => null,
+            'panitia_id' => null,
+            'changed_at' => now(),
+        ]);
+
+        return redirect()->route('peserta.dashboard')->with('sukses', 'Pengajuan berhasil disubmit dan menunggu pemeriksaan Panitia.');
     }
 }

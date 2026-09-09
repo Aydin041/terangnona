@@ -29,6 +29,8 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
         Route::post('/pengajuan/step3/{id}', [PengajuanController::class, 'step3Store'])->name('pengajuan.step3.submit');
         Route::get('/pengajuan/step4/{id}', [PengajuanController::class, 'step4Form'])->name('pengajuan.step4');
         Route::post('/pengajuan/step4/{id}', [PengajuanController::class, 'step4Store'])->name('pengajuan.step4.submit');
+        Route::get('/pengajuan/step5/{id}', [PengajuanController::class, 'step5Form'])->name('pengajuan.step5');
+        Route::post('/pengajuan/step5/{id}', [PengajuanController::class, 'step5Store'])->name('pengajuan.step5.submit');
     });
 });
 
