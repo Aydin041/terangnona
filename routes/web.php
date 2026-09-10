@@ -6,6 +6,7 @@ use App\Http\Controllers\Peserta\PengajuanController as PesertaPengajuanControll
 use App\Http\Controllers\Panitia\AuthController as PanitiaAuthController;
 use App\Http\Controllers\Panitia\PengajuanController as PanitiaPengajuanController;
 use App\Http\Controllers\Juri\AuthController as JuriAuthController;
+use App\Http\Controllers\Juri\PenilaianController as JuriPenilaianController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
 Route::get('/', function () {
@@ -61,9 +62,11 @@ Route::prefix('juri')->name('juri.')->group(function () {
     Route::post('/logout', [JuriAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:juri')->group(function () {
-        Route::get('/dashboard', function () {
-            return 'Dashboard Juri — halaman ini masih sementara.';
-        })->name('dashboard');
+        Route::get('/dashboard', [JuriPenilaianController::class, 'index'])->name('dashboard');
+        Route::get('/penilaian', [JuriPenilaianController::class, 'index'])->name('penilaian.index');
+        Route::get('/penilaian/proposal/{id}', [JuriPenilaianController::class, 'proposalForm'])->name('penilaian.proposal');
+        Route::post('/penilaian/proposal/{id}/draft', [JuriPenilaianController::class, 'proposalDraft'])->name('penilaian.proposal.draft');
+        Route::post('/penilaian/proposal/{id}/submit', [JuriPenilaianController::class, 'proposalSubmit'])->name('penilaian.proposal.submit');
     });
 });
 
