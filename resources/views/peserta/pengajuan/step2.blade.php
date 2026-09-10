@@ -2,10 +2,10 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Pengajuan Baru - Langkah 2 - TERANG NONA</title>
+    <title>Pengajuan - Langkah 2 - TERANG NONA</title>
 </head>
 <body>
-    <h1>Pengajuan Baru — Langkah 2/5: Bentuk Inovasi</h1>
+    <h1>Pengajuan — Langkah 2/5: Bentuk Inovasi</h1>
     <p>{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</p>
 
     @if ($errors->any())
@@ -23,19 +23,22 @@
 
         <div>
             <label>
-                <input type="radio" name="bentuk_inovasi" value="eksisting" required>
+                <input type="radio" name="bentuk_inovasi" value="eksisting" required
+                    {{ old('bentuk_inovasi', $pengajuan->bentuk_inovasi) === 'eksisting' ? 'checked' : '' }}>
                 Inovasi Eksisting (sudah berjalan minimal 1 tahun)
             </label>
         </div>
         <div>
             <label>
-                <input type="radio" name="bentuk_inovasi" value="pengembangan" required>
+                <input type="radio" name="bentuk_inovasi" value="pengembangan" required
+                    {{ old('bentuk_inovasi', $pengajuan->bentuk_inovasi) === 'pengembangan' ? 'checked' : '' }}>
                 Pengembangan Inovasi
             </label>
         </div>
         <div>
             <label>
-                <input type="radio" name="bentuk_inovasi" value="rancangan" required>
+                <input type="radio" name="bentuk_inovasi" value="rancangan" required
+                    {{ old('bentuk_inovasi', $pengajuan->bentuk_inovasi) === 'rancangan' ? 'checked' : '' }}>
                 Rancangan Inovasi (baru)
             </label>
         </div>

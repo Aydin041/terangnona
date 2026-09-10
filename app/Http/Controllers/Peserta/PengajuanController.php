@@ -16,16 +16,39 @@ class PengajuanController extends Controller
         $peserta = Auth::guard('peserta')->user();
         $daftarPengajuan = Pengajuan::where('peserta_id', $peserta->id)->get();
 
-        return view('peserta.pengajuan.dashboard', compact('daftarPengajuan'));
+        $catatanPengembalian = [];
+        foreach ($daftarPengajuan as $item) {
+            if ($item->status === 'perlu_perbaikan') {
+                $riwayatTerakhir = RiwayatStatus::where('pengajuan_id', $item->id)
+                    ->where('status', 'perlu_perbaikan')
+                    ->orderBy('id', 'desc')
+                    ->first();
+
+                if ($riwayatTerakhir) {
+                    $catatanPengembalian[$item->id] = $riwayatTerakhir->catatan_panitia;
+                }
+            }
+        }
+
+        return view('peserta.pengajuan.dashboard', compact('daftarPengajuan', 'catatanPengembalian'));
     }
 
-    public function step1Form()
+    public function step1Form($pengajuanId = null)
     {
         $kategoriList = Kategori::all();
-        return view('peserta.pengajuan.step1', compact('kategoriList'));
+        $pengajuan = null;
+
+        if ($pengajuanId) {
+            $peserta = Auth::guard('peserta')->user();
+            $pengajuan = Pengajuan::where('id', $pengajuanId)
+                ->where('peserta_id', $peserta->id)
+                ->firstOrFail();
+        }
+
+        return view('peserta.pengajuan.step1', compact('kategoriList', 'pengajuan'));
     }
 
-    public function step1Store(Request $request)
+    public function step1Store(Request $request, $pengajuanId = null)
     {
         $validated = $request->validate([
             'nama_inovasi' => 'required|string|max:255',
@@ -36,16 +59,24 @@ class PengajuanController extends Controller
 
         $peserta = Auth::guard('peserta')->user();
 
-        $pengajuan = Pengajuan::create([
-            'peserta_id' => $peserta->id,
-            'kategori_id' => $validated['kategori_id'],
-            'nama_inovasi' => $validated['nama_inovasi'],
-            'akronim' => $validated['akronim'],
-            'tahun_implementasi' => $validated['tahun_implementasi'],
-            'bentuk_inovasi' => 'belum_dipilih',
-            'deskripsi' => '',
-            'status' => 'draft',
-        ]);
+        if ($pengajuanId) {
+            $pengajuan = Pengajuan::where('id', $pengajuanId)
+                ->where('peserta_id', $peserta->id)
+                ->firstOrFail();
+
+            $pengajuan->update($validated);
+        } else {
+            $pengajuan = Pengajuan::create([
+                'peserta_id' => $peserta->id,
+                'kategori_id' => $validated['kategori_id'],
+                'nama_inovasi' => $validated['nama_inovasi'],
+                'akronim' => $validated['akronim'],
+                'tahun_implementasi' => $validated['tahun_implementasi'],
+                'bentuk_inovasi' => 'belum_dipilih',
+                'deskripsi' => '',
+                'status' => 'draft',
+            ]);
+        }
 
         return redirect()->route('peserta.pengajuan.step2', $pengajuan->id);
     }

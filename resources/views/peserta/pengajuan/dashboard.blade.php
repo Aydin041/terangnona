@@ -12,6 +12,10 @@
         <button type="submit">Logout</button>
     </form>
 
+    @if (session('sukses'))
+        <p style="color: green;">{{ session('sukses') }}</p>
+    @endif
+
     <hr>
 
     @if ($daftarPengajuan->isEmpty())
@@ -22,7 +26,19 @@
                 <li>
                     <strong>{{ $item->nama_inovasi }} ({{ $item->akronim }})</strong><br>
                     Status: {{ $item->status }}
+
+                    @if ($item->status === 'perlu_perbaikan')
+                        <div style="background: #ffe0e0; padding: 8px; margin-top: 5px;">
+                            <strong>Alasan dari Panitia:</strong><br>
+                            {{ $catatanPengembalian[$item->id] ?? '(tidak ada catatan)' }}
+                            <br>
+                            <a href="{{ route('peserta.pengajuan.step1.edit', $item->id) }}">
+                                <button type="button">Perbaiki Pengajuan Ini</button>
+                            </a>
+                        </div>
+                    @endif
                 </li>
+                <hr>
             @endforeach
         </ul>
     @endif

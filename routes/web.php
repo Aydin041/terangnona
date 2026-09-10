@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Peserta\AuthController as PesertaAuthController;
-use App\Http\Controllers\Peserta\PengajuanController;
+use App\Http\Controllers\Peserta\PengajuanController as PesertaPengajuanController;
 use App\Http\Controllers\Panitia\AuthController as PanitiaAuthController;
+use App\Http\Controllers\Panitia\PengajuanController as PanitiaPengajuanController;
 use App\Http\Controllers\Juri\AuthController as JuriAuthController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 
@@ -20,17 +21,21 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
     Route::post('/logout', [PesertaAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:peserta')->group(function () {
-        Route::get('/dashboard', [PengajuanController::class, 'dashboard'])->name('dashboard');
-        Route::get('/pengajuan/step1', [PengajuanController::class, 'step1Form'])->name('pengajuan.step1');
-        Route::post('/pengajuan/step1', [PengajuanController::class, 'step1Store'])->name('pengajuan.step1.submit');
-        Route::get('/pengajuan/step2/{id}', [PengajuanController::class, 'step2Form'])->name('pengajuan.step2');
-        Route::post('/pengajuan/step2/{id}', [PengajuanController::class, 'step2Store'])->name('pengajuan.step2.submit');
-        Route::get('/pengajuan/step3/{id}', [PengajuanController::class, 'step3Form'])->name('pengajuan.step3');
-        Route::post('/pengajuan/step3/{id}', [PengajuanController::class, 'step3Store'])->name('pengajuan.step3.submit');
-        Route::get('/pengajuan/step4/{id}', [PengajuanController::class, 'step4Form'])->name('pengajuan.step4');
-        Route::post('/pengajuan/step4/{id}', [PengajuanController::class, 'step4Store'])->name('pengajuan.step4.submit');
-        Route::get('/pengajuan/step5/{id}', [PengajuanController::class, 'step5Form'])->name('pengajuan.step5');
-        Route::post('/pengajuan/step5/{id}', [PengajuanController::class, 'step5Store'])->name('pengajuan.step5.submit');
+        Route::get('/dashboard', [PesertaPengajuanController::class, 'dashboard'])->name('dashboard');
+
+        Route::get('/pengajuan/step1', [PesertaPengajuanController::class, 'step1Form'])->name('pengajuan.step1');
+        Route::post('/pengajuan/step1', [PesertaPengajuanController::class, 'step1Store'])->name('pengajuan.step1.submit');
+        Route::get('/pengajuan/step1/edit/{id}', [PesertaPengajuanController::class, 'step1Form'])->name('pengajuan.step1.edit');
+        Route::post('/pengajuan/step1/edit/{id}', [PesertaPengajuanController::class, 'step1Store'])->name('pengajuan.step1.update');
+
+        Route::get('/pengajuan/step2/{id}', [PesertaPengajuanController::class, 'step2Form'])->name('pengajuan.step2');
+        Route::post('/pengajuan/step2/{id}', [PesertaPengajuanController::class, 'step2Store'])->name('pengajuan.step2.submit');
+        Route::get('/pengajuan/step3/{id}', [PesertaPengajuanController::class, 'step3Form'])->name('pengajuan.step3');
+        Route::post('/pengajuan/step3/{id}', [PesertaPengajuanController::class, 'step3Store'])->name('pengajuan.step3.submit');
+        Route::get('/pengajuan/step4/{id}', [PesertaPengajuanController::class, 'step4Form'])->name('pengajuan.step4');
+        Route::post('/pengajuan/step4/{id}', [PesertaPengajuanController::class, 'step4Store'])->name('pengajuan.step4.submit');
+        Route::get('/pengajuan/step5/{id}', [PesertaPengajuanController::class, 'step5Form'])->name('pengajuan.step5');
+        Route::post('/pengajuan/step5/{id}', [PesertaPengajuanController::class, 'step5Store'])->name('pengajuan.step5.submit');
     });
 });
 
@@ -41,9 +46,11 @@ Route::prefix('panitia')->name('panitia.')->group(function () {
     Route::post('/logout', [PanitiaAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:panitia')->group(function () {
-        Route::get('/dashboard', function () {
-            return 'Dashboard Panitia — halaman ini masih sementara.';
-        })->name('dashboard');
+        Route::get('/dashboard', [PanitiaPengajuanController::class, 'index'])->name('dashboard');
+        Route::get('/pengajuan', [PanitiaPengajuanController::class, 'index'])->name('pengajuan.index');
+        Route::get('/pengajuan/{id}', [PanitiaPengajuanController::class, 'detail'])->name('pengajuan.detail');
+        Route::post('/pengajuan/{id}/setujui', [PanitiaPengajuanController::class, 'setujui'])->name('pengajuan.setujui');
+        Route::post('/pengajuan/{id}/kembalikan', [PanitiaPengajuanController::class, 'kembalikan'])->name('pengajuan.kembalikan');
     });
 });
 

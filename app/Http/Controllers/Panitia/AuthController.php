@@ -16,8 +16,8 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
 
         if (Auth::guard('panitia')->attempt($credentials)) {
@@ -35,7 +35,6 @@ class AuthController extends Controller
         Auth::guard('panitia')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
         return redirect()->route('panitia.login');
     }
 }

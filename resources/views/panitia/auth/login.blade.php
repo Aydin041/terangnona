@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Login Panitia - TERANG NONA</title>
+    <title>Login Panitia - TERANG NONA 2026</title>
 </head>
 <body>
     <h1>Login Panitia</h1>
 
     @if ($errors->any())
-        <div style="color: red;">
+        <div>
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -17,17 +16,29 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('panitia.login.submit') }}">
+    <form method="POST" action="{{ route('panitia.login.submit') }}" id="formLoginPanitia">
         @csrf
+
         <div>
-            <label>Email</label><br>
-            <input type="email" name="email" value="{{ old('email') }}" required>
+            <label for="email">Email:</label><br>
+            <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus>
         </div>
+
         <div>
-            <label>Password</label><br>
-            <input type="password" name="password" required>
+            <label for="password">Password:</label><br>
+            <input type="password" name="password" id="password" required>
         </div>
-        <button type="submit">Masuk</button>
+
+        <div>
+            <button type="submit" id="btnLoginPanitia">Login</button>
+        </div>
     </form>
+
+    <script>
+        document.getElementById('formLoginPanitia').addEventListener('submit', function () {
+            document.getElementById('btnLoginPanitia').disabled = true;
+            document.getElementById('btnLoginPanitia').innerText = 'Memproses...';
+        });
+    </script>
 </body>
 </html>
