@@ -5,6 +5,7 @@ use App\Http\Controllers\Peserta\AuthController as PesertaAuthController;
 use App\Http\Controllers\Peserta\PengajuanController as PesertaPengajuanController;
 use App\Http\Controllers\Panitia\AuthController as PanitiaAuthController;
 use App\Http\Controllers\Panitia\PengajuanController as PanitiaPengajuanController;
+use App\Http\Controllers\Panitia\RankingController as PanitiaRankingController;
 use App\Http\Controllers\Juri\AuthController as JuriAuthController;
 use App\Http\Controllers\Juri\PenilaianController as JuriPenilaianController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
@@ -52,6 +53,7 @@ Route::prefix('panitia')->name('panitia.')->group(function () {
         Route::get('/pengajuan/{id}', [PanitiaPengajuanController::class, 'detail'])->name('pengajuan.detail');
         Route::post('/pengajuan/{id}/setujui', [PanitiaPengajuanController::class, 'setujui'])->name('pengajuan.setujui');
         Route::post('/pengajuan/{id}/kembalikan', [PanitiaPengajuanController::class, 'kembalikan'])->name('pengajuan.kembalikan');
+        Route::get('/ranking', [PanitiaRankingController::class, 'index'])->name('ranking.index');
     });
 });
 
