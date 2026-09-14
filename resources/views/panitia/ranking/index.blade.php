@@ -8,17 +8,18 @@
     <h1>Ranking Peserta</h1>
     <p><a href="{{ route('panitia.pengajuan.index') }}">← Kembali ke Daftar Pengajuan</a></p>
 
-    <p><em>Catatan: nilai baru muncul di sini kalau minimal 2 dari 3 Juri sudah submit penilaian proposal untuk pengajuan tersebut. Pengajuan yang belum cukup dinilai tidak akan tampil.</em></p>
+    <h2>Tahap 1 — Ranking Proposal (5 Besar)</h2>
+    <p><em>Minimal 2 dari 3 Juri sudah submit penilaian proposal.</em></p>
 
-    <h2>Kelompok: Inovasi Eksisting</h2>
+    <h3>Kelompok: Inovasi Eksisting</h3>
     @if (empty($ranking['eksisting']))
-        <p>Belum ada nilai final untuk kelompok ini.</p>
+        <p>Belum ada nilai final.</p>
     @else
         <ol>
             @foreach ($ranking['eksisting'] as $item)
                 <li>
                     {{ $item['pengajuan']->nama_inovasi }} ({{ $item['pengajuan']->akronim }})
-                    — Nilai: {{ $item['nilai_proposal'] }}
+                    — Nilai Proposal: {{ $item['nilai_proposal'] }}
                     @if (in_array($item['pengajuan']->id, $idLolos5Besar))
                         <strong style="color: green;"> [LOLOS 5 BESAR]</strong>
                     @endif
@@ -27,17 +28,58 @@
         </ol>
     @endif
 
-    <h2>Kelompok: Pengembangan & Rancangan Inovasi</h2>
+    <h3>Kelompok: Pengembangan & Rancangan Inovasi</h3>
     @if (empty($ranking['pengembangan_rancangan']))
-        <p>Belum ada nilai final untuk kelompok ini.</p>
+        <p>Belum ada nilai final.</p>
     @else
         <ol>
             @foreach ($ranking['pengembangan_rancangan'] as $item)
                 <li>
                     {{ $item['pengajuan']->nama_inovasi }} ({{ $item['pengajuan']->akronim }})
-                    — Nilai: {{ $item['nilai_proposal'] }}
+                    — Nilai Proposal: {{ $item['nilai_proposal'] }}
                     @if (in_array($item['pengajuan']->id, $idLolos5Besar))
                         <strong style="color: green;"> [LOLOS 5 BESAR]</strong>
+                    @endif
+                </li>
+            @endforeach
+        </ol>
+    @endif
+
+    <hr>
+
+    <h2>Tahap 2 — Ranking Akhir (Proposal 75% + Presentasi 25%) — 3 Besar</h2>
+    <p><em>Minimal 2 dari 3 Juri sudah submit penilaian presentasi (untuk pengajuan yang lolos 5 besar).</em></p>
+
+    <h3>Kelompok: Inovasi Eksisting</h3>
+    @if (empty($rankingAkhir['eksisting']))
+        <p>Belum ada nilai akhir final.</p>
+    @else
+        <ol>
+            @foreach ($rankingAkhir['eksisting'] as $item)
+                <li>
+                    {{ $item['pengajuan']->nama_inovasi }} ({{ $item['pengajuan']->akronim }})
+                    — Proposal: {{ $item['nilai_proposal'] }} | Presentasi: {{ $item['nilai_presentasi'] }}
+                    | <strong>Nilai Akhir: {{ $item['nilai_akhir'] }}</strong>
+                    @if (in_array($item['pengajuan']->id, $id3Besar))
+                        <strong style="color: red;"> [JUARA]</strong>
+                    @endif
+                </li>
+            @endforeach
+        </ol>
+    @endif
+
+    <h3>Kelompok: Pengembangan & Rancangan Inovasi</h3>
+    @if (empty($rankingAkhir['pengembangan_rancangan']))
+        <p>Belum ada nilai akhir final.</p>
+    @else
+        <ol>
+            @foreach ($rankingAkhir['pengembangan_rancangan'] as $item)
+                <li>
+                    {{ $item['pengajuan']->nama_inovasi }} ({{ $item['pengajuan']->akronim }})
+                    — Proposal: {{ $item['nilai_proposal'] }} | Presentasi: {{ $item['nilai_presentasi'] }}
+                    | <strong>Nilai Akhir: {{ $item['nilai_akhir'] }}</strong>
+                    @if (in_array($item['pengajuan']->id, $id3Besar))
+                        <strong style="color: red;"> [JUARA]</strong>
                     @endif
                 </li>
             @endforeach

@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\KomponenPenilaian;
+use App\Models\NilaiAspekPresentasi;
 use App\Models\NilaiKomponenProposal;
 use App\Models\Pengajuan;
+use App\Models\SubmissionPresentasi;
 use App\Models\SubmissionProposal;
 
 class RankingService
@@ -25,7 +27,7 @@ class RankingService
             ->pluck('id');
 
         if ($submissionSubmitted->count() < self::MINIMAL_JURI_SUBMIT) {
-            return null; // belum cukup juri yang submit, nilai belum final
+            return null;
         }
 
         $komponenList = KomponenPenilaian::all()->filter(function ($komponen) use ($pengajuan) {
@@ -46,12 +48,48 @@ class RankingService
             $totalNilai += ($rataRata * $komponen->bobot / 100);
         }
 
-        // Eksisting otomatis dapat 100 utk komponen "Rencana Aksi/Pengembangan" (bobot 5%)
         if ($pengajuan->bentuk_inovasi === 'eksisting') {
-            $totalNilai += (100 * 5 / 100); // = 5
+            $totalNilai += (100 * 5 / 100);
         }
 
         return round($totalNilai, 2);
+    }
+
+    public function hitungNilaiPresentasi(Pengajuan $pengajuan): ?float
+    {
+        $submissionSubmitted = SubmissionPresentasi::where('pengajuan_id', $pengajuan->id)
+            ->where('status', 'submitted')
+            ->pluck('id');
+
+        if ($submissionSubmitted->count() < self::MINIMAL_JURI_SUBMIT) {
+            return null;
+        }
+
+        $aspekList = ['teknik_penyajian', 'substansi_materi', 'komitmen_pimpinan'];
+        $totalNilai = 0;
+
+        foreach ($aspekList as $aspek) {
+            $rataRata = NilaiAspekPresentasi::whereIn('submission_id', $submissionSubmitted)
+                ->where('aspek', $aspek)
+                ->avg('nilai');
+
+            $rataRata = $rataRata ?? 0;
+            $totalNilai += $rataRata;
+        }
+
+        return round($totalNilai / count($aspekList), 2);
+    }
+
+    public function hitungNilaiAkhir(Pengajuan $pengajuan): ?float
+    {
+        $nilaiProposal = $this->hitungNilaiProposal($pengajuan);
+        $nilaiPresentasi = $this->hitungNilaiPresentasi($pengajuan);
+
+        if ($nilaiProposal === null || $nilaiPresentasi === null) {
+            return null;
+        }
+
+        return round(($nilaiProposal * 0.75) + ($nilaiPresentasi * 0.25), 2);
     }
 
     public function rankingPerKelompok(): array
@@ -66,7 +104,7 @@ class RankingService
         foreach ($semuaPengajuan as $pengajuan) {
             $nilai = $this->hitungNilaiProposal($pengajuan);
             if ($nilai === null) {
-                continue; // skip yg belum cukup juri submit
+                continue;
             }
 
             $kelompok = $pengajuan->kelompok_penilaian;
@@ -99,5 +137,55 @@ class RankingService
         }
 
         return $lolos;
+    }
+
+    public function rankingAkhirPerKelompok(): array
+    {
+        $idLolos5Besar = $this->idPengajuanLolos5Besar();
+        $pengajuanLolos = Pengajuan::whereIn('id', $idLolos5Besar)->get();
+
+        $hasil = [
+            'eksisting' => [],
+            'pengembangan_rancangan' => [],
+        ];
+
+        foreach ($pengajuanLolos as $pengajuan) {
+            $nilaiAkhir = $this->hitungNilaiAkhir($pengajuan);
+            if ($nilaiAkhir === null) {
+                continue; // belum cukup juri nilai presentasinya
+            }
+
+            $kelompok = $pengajuan->kelompok_penilaian;
+            $hasil[$kelompok][] = [
+                'pengajuan' => $pengajuan,
+                'nilai_proposal' => $this->hitungNilaiProposal($pengajuan),
+                'nilai_presentasi' => $this->hitungNilaiPresentasi($pengajuan),
+                'nilai_akhir' => $nilaiAkhir,
+            ];
+        }
+
+        foreach ($hasil as $kelompok => $daftar) {
+            usort($daftar, function ($a, $b) {
+                return $b['nilai_akhir'] <=> $a['nilai_akhir'];
+            });
+            $hasil[$kelompok] = $daftar;
+        }
+
+        return $hasil;
+    }
+
+    public function idPengajuan3Besar(): array
+    {
+        $ranking = $this->rankingAkhirPerKelompok();
+        $juara = [];
+
+        foreach ($ranking as $kelompok => $daftar) {
+            $batas = min(3, count($daftar));
+            for ($i = 0; $i < $batas; $i++) {
+                $juara[] = $daftar[$i]['pengajuan']->id;
+            }
+        }
+
+        return $juara;
     }
 }
