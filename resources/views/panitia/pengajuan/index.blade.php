@@ -12,6 +12,8 @@
         <button type="submit">Logout</button>
     </form>
 
+    <p><a href="{{ route('panitia.ranking.index') }}">Lihat Ranking Peserta →</a></p>
+
     @if (session('sukses'))
         <p style="color: green;">{{ session('sukses') }}</p>
     @endif
