@@ -2,10 +2,10 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Penilaian Proposal - Juri - TERANG NONA</title>
+    <title>Penilaian - Juri - TERANG NONA</title>
 </head>
 <body>
-    <h1>Penilaian Proposal</h1>
+    <h1>Daftar Penilaian</h1>
 
     <form method="POST" action="{{ route('juri.logout') }}">
         @csrf
@@ -26,8 +26,14 @@
                 <li>
                     <strong>{{ $item->nama_inovasi }} ({{ $item->akronim }})</strong><br>
                     Kategori: {{ $item->kategori->nama }} | Bentuk: {{ $item->bentuk_inovasi }}<br>
-                    Status penilaian Anda: {{ $statusPenilaian[$item->id] }}<br>
+                    Status penilaian proposal Anda: {{ $statusPenilaian[$item->id] }}<br>
                     <a href="{{ route('juri.penilaian.proposal', $item->id) }}">Nilai Proposal</a>
+
+                    @if (in_array($item->id, $idLolos5Besar))
+                        | <a href="{{ route('juri.penilaian.presentasi', $item->id) }}">
+                            <strong style="color: green;">Nilai Presentasi (Lolos 5 Besar)</strong>
+                        </a>
+                    @endif
                 </li>
                 <hr>
             @endforeach

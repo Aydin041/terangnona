@@ -66,9 +66,14 @@ Route::prefix('juri')->name('juri.')->group(function () {
     Route::middleware('auth:juri')->group(function () {
         Route::get('/dashboard', [JuriPenilaianController::class, 'index'])->name('dashboard');
         Route::get('/penilaian', [JuriPenilaianController::class, 'index'])->name('penilaian.index');
+
         Route::get('/penilaian/proposal/{id}', [JuriPenilaianController::class, 'proposalForm'])->name('penilaian.proposal');
         Route::post('/penilaian/proposal/{id}/draft', [JuriPenilaianController::class, 'proposalDraft'])->name('penilaian.proposal.draft');
         Route::post('/penilaian/proposal/{id}/submit', [JuriPenilaianController::class, 'proposalSubmit'])->name('penilaian.proposal.submit');
+
+        Route::get('/penilaian/presentasi/{id}', [JuriPenilaianController::class, 'presentasiForm'])->name('penilaian.presentasi');
+        Route::post('/penilaian/presentasi/{id}/draft', [JuriPenilaianController::class, 'presentasiDraft'])->name('penilaian.presentasi.draft');
+        Route::post('/penilaian/presentasi/{id}/submit', [JuriPenilaianController::class, 'presentasiSubmit'])->name('penilaian.presentasi.submit');
     });
 });
 
