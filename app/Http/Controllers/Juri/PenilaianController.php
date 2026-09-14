@@ -78,8 +78,12 @@ class PenilaianController extends Controller
             ->get()
             ->keyBy('komponen_id');
 
+        $adaBarisTerbuka = $nilaiTersimpan->contains(function ($n) {
+            return !$n->terkunci;
+        });
+
         return view('juri.penilaian.proposal', compact(
-            'pengajuan', 'submission', 'komponenList', 'nilaiTersimpan'
+            'pengajuan', 'submission', 'komponenList', 'nilaiTersimpan', 'adaBarisTerbuka'
         ));
     }
 
@@ -160,6 +164,47 @@ class PenilaianController extends Controller
         return redirect()->route('juri.penilaian.index')->with('sukses', 'Penilaian proposal berhasil disubmit dan terkunci.');
     }
 
+    public function proposalPerbaikanSubmit(Request $request, $pengajuanId)
+    {
+        $juri = Auth::guard('juri')->user();
+        $pengajuan = Pengajuan::findOrFail($pengajuanId);
+
+        $submission = SubmissionProposal::where('pengajuan_id', $pengajuan->id)
+            ->where('juri_id', $juri->id)
+            ->firstOrFail();
+
+        $barisTerbuka = NilaiKomponenProposal::where('submission_id', $submission->id)
+            ->where('terkunci', false)
+            ->get();
+
+        if ($barisTerbuka->isEmpty()) {
+            return back()->withErrors(['umum' => 'Tidak ada komponen yang sedang dibuka untuk diperbaiki.']);
+        }
+
+        $nilaiInput = $request->input('nilai', []);
+        $komentarInput = $request->input('komentar', []);
+
+        foreach ($barisTerbuka as $baris) {
+            $nilai = $nilaiInput[$baris->komponen_id] ?? null;
+            if ($nilai === null || $nilai === '') {
+                return back()->withErrors(['umum' => 'Komponen yang sedang dibuka wajib diisi sebelum dikonfirmasi.']);
+            }
+            if ($nilai < 0 || $nilai > 100) {
+                return back()->withErrors(['umum' => 'Nilai harus antara 0-100.']);
+            }
+        }
+
+        foreach ($barisTerbuka as $baris) {
+            $baris->update([
+                'nilai' => $nilaiInput[$baris->komponen_id],
+                'komentar' => $komentarInput[$baris->komponen_id] ?? null,
+                'terkunci' => true,
+            ]);
+        }
+
+        return redirect()->route('juri.penilaian.index')->with('sukses', 'Perbaikan nilai berhasil dikonfirmasi dan terkunci kembali.');
+    }
+
     public function presentasiForm($pengajuanId)
     {
         $juri = Auth::guard('juri')->user();
@@ -188,10 +233,14 @@ class PenilaianController extends Controller
             ->get()
             ->keyBy('aspek');
 
+        $adaBarisTerbuka = $nilaiTersimpan->contains(function ($n) {
+            return !$n->terkunci;
+        });
+
         $aspekList = self::ASPEK_PRESENTASI;
 
         return view('juri.penilaian.presentasi', compact(
-            'pengajuan', 'submission', 'aspekList', 'nilaiTersimpan'
+            'pengajuan', 'submission', 'aspekList', 'nilaiTersimpan', 'adaBarisTerbuka'
         ));
     }
 
@@ -268,5 +317,46 @@ class PenilaianController extends Controller
         ]);
 
         return redirect()->route('juri.penilaian.index')->with('sukses', 'Penilaian presentasi berhasil disubmit dan terkunci.');
+    }
+
+    public function presentasiPerbaikanSubmit(Request $request, $pengajuanId)
+    {
+        $juri = Auth::guard('juri')->user();
+        $pengajuan = Pengajuan::findOrFail($pengajuanId);
+
+        $submission = SubmissionPresentasi::where('pengajuan_id', $pengajuan->id)
+            ->where('juri_id', $juri->id)
+            ->firstOrFail();
+
+        $barisTerbuka = NilaiAspekPresentasi::where('submission_id', $submission->id)
+            ->where('terkunci', false)
+            ->get();
+
+        if ($barisTerbuka->isEmpty()) {
+            return back()->withErrors(['umum' => 'Tidak ada aspek yang sedang dibuka untuk diperbaiki.']);
+        }
+
+        $nilaiInput = $request->input('nilai', []);
+        $catatanInput = $request->input('catatan', []);
+
+        foreach ($barisTerbuka as $baris) {
+            $nilai = $nilaiInput[$baris->aspek] ?? null;
+            if ($nilai === null || $nilai === '') {
+                return back()->withErrors(['umum' => 'Aspek yang sedang dibuka wajib diisi sebelum dikonfirmasi.']);
+            }
+            if ($nilai < 0 || $nilai > 100) {
+                return back()->withErrors(['umum' => 'Nilai harus antara 0-100.']);
+            }
+        }
+
+        foreach ($barisTerbuka as $baris) {
+            $baris->update([
+                'nilai' => $nilaiInput[$baris->aspek],
+                'catatan' => $catatanInput[$baris->aspek] ?? null,
+                'terkunci' => true,
+            ]);
+        }
+
+        return redirect()->route('juri.penilaian.index')->with('sukses', 'Perbaikan nilai berhasil dikonfirmasi dan terkunci kembali.');
     }
 }

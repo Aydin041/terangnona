@@ -8,7 +8,9 @@ use App\Http\Controllers\Panitia\PengajuanController as PanitiaPengajuanControll
 use App\Http\Controllers\Panitia\RankingController as PanitiaRankingController;
 use App\Http\Controllers\Juri\AuthController as JuriAuthController;
 use App\Http\Controllers\Juri\PenilaianController as JuriPenilaianController;
+use App\Http\Controllers\Juri\KoreksiController as JuriKoreksiController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\KoreksiController as AdminKoreksiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -74,6 +76,12 @@ Route::prefix('juri')->name('juri.')->group(function () {
         Route::get('/penilaian/presentasi/{id}', [JuriPenilaianController::class, 'presentasiForm'])->name('penilaian.presentasi');
         Route::post('/penilaian/presentasi/{id}/draft', [JuriPenilaianController::class, 'presentasiDraft'])->name('penilaian.presentasi.draft');
         Route::post('/penilaian/presentasi/{id}/submit', [JuriPenilaianController::class, 'presentasiSubmit'])->name('penilaian.presentasi.submit');
+
+        Route::get('/koreksi/proposal/{id}', [JuriKoreksiController::class, 'ajukanProposalForm'])->name('koreksi.proposal.form');
+        Route::post('/koreksi/proposal/{id}', [JuriKoreksiController::class, 'ajukanProposalSubmit'])->name('koreksi.proposal.submit');
+
+        Route::get('/koreksi/presentasi/{id}', [JuriKoreksiController::class, 'ajukanPresentasiForm'])->name('koreksi.presentasi.form');
+        Route::post('/koreksi/presentasi/{id}', [JuriKoreksiController::class, 'ajukanPresentasiSubmit'])->name('koreksi.presentasi.submit');
     });
 });
 
@@ -84,8 +92,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return 'Dashboard Admin — halaman ini masih sementara.';
-        })->name('dashboard');
+        Route::get('/dashboard', [AdminKoreksiController::class, 'index'])->name('dashboard');
+        Route::get('/koreksi', [AdminKoreksiController::class, 'index'])->name('koreksi.index');
+        Route::post('/koreksi/{id}/setujui', [AdminKoreksiController::class, 'setujui'])->name('koreksi.setujui');
+        Route::post('/koreksi/{id}/tolak', [AdminKoreksiController::class, 'tolak'])->name('koreksi.tolak');
     });
 });

@@ -25,7 +25,10 @@
     <p><strong>Status penilaian:</strong> {{ $submission->status }}</p>
 
     @if ($submission->status === 'submitted')
-        <p><em>Penilaian sudah disubmit dan terkunci. Kalau ada kesalahan, ajukan permintaan koreksi ke Admin.</em></p>
+        <p>
+            <em>Penilaian sudah disubmit dan terkunci.</em>
+            <a href="{{ route('juri.koreksi.proposal.form', $pengajuan->id) }}">Ajukan Koreksi Nilai</a>
+        </p>
     @endif
 
     <form method="POST">
@@ -39,12 +42,12 @@
                 <label>Nilai (0-100)</label><br>
                 <input type="number" name="nilai[{{ $komponen->id }}]" min="0" max="100"
                     value="{{ $nilaiRow->nilai ?? '' }}"
-                    {{ $submission->status === 'submitted' ? 'disabled' : '' }}>
+                    {{ ($nilaiRow && $nilaiRow->terkunci) ? 'disabled' : '' }}>
                 <br>
 
                 <label>Saran/Masukan/Catatan</label><br>
                 <textarea name="komentar[{{ $komponen->id }}]" rows="2" cols="50"
-                    {{ $submission->status === 'submitted' ? 'disabled' : '' }}>{{ $nilaiRow->komentar ?? '' }}</textarea>
+                    {{ ($nilaiRow && $nilaiRow->terkunci) ? 'disabled' : '' }}>{{ $nilaiRow->komentar ?? '' }}</textarea>
             </div>
         @endforeach
 
