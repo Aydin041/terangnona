@@ -11,6 +11,7 @@ use App\Http\Controllers\Juri\PenilaianController as JuriPenilaianController;
 use App\Http\Controllers\Juri\KoreksiController as JuriKoreksiController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\KoreksiController as AdminKoreksiController;
+use App\Http\Controllers\Admin\AkunController as AdminAkunController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -98,5 +99,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/koreksi', [AdminKoreksiController::class, 'index'])->name('koreksi.index');
         Route::post('/koreksi/{id}/setujui', [AdminKoreksiController::class, 'setujui'])->name('koreksi.setujui');
         Route::post('/koreksi/{id}/tolak', [AdminKoreksiController::class, 'tolak'])->name('koreksi.tolak');
+
+        Route::get('/akun/panitia', [AdminAkunController::class, 'panitiaIndex'])->name('akun.panitia.index');
+        Route::get('/akun/panitia/create', [AdminAkunController::class, 'panitiaCreateForm'])->name('akun.panitia.create');
+        Route::post('/akun/panitia', [AdminAkunController::class, 'panitiaStore'])->name('akun.panitia.store');
+        Route::post('/akun/panitia/{id}/reset', [AdminAkunController::class, 'panitiaReset'])->name('akun.panitia.reset');
+
+        Route::get('/akun/juri', [AdminAkunController::class, 'juriIndex'])->name('akun.juri.index');
+        Route::get('/akun/juri/create', [AdminAkunController::class, 'juriCreateForm'])->name('akun.juri.create');
+        Route::post('/akun/juri', [AdminAkunController::class, 'juriStore'])->name('akun.juri.store');
+        Route::post('/akun/juri/{id}/reset', [AdminAkunController::class, 'juriReset'])->name('akun.juri.reset');
     });
 });

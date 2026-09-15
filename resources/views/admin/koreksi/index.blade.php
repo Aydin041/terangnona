@@ -12,6 +12,11 @@
         <button type="submit">Logout</button>
     </form>
 
+    <p>
+        <a href="{{ route('admin.akun.panitia.index') }}">Kelola Akun Panitia</a> |
+        <a href="{{ route('admin.akun.juri.index') }}">Kelola Akun Juri</a>
+    </p>
+
     @if (session('sukses'))
         <p style="color: green;">{{ session('sukses') }}</p>
     @endif
