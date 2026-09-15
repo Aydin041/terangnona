@@ -26,11 +26,7 @@
             @foreach ($daftarJuri as $item)
                 <li>
                     <strong>{{ $item->nama }}</strong> — {{ $item->email }}
-                    <form method="POST" action="{{ route('admin.akun.juri.reset', $item->id) }}" style="display: inline;"
-                        onsubmit="return confirm('Reset password untuk {{ $item->nama }}?');">
-                        @csrf
-                        <button type="submit">Reset Password</button>
-                    </form>
+                    <a href="{{ route('admin.akun.juri.reset.form', $item->id) }}"><button type="button">Reset Password</button></a>
                 </li>
                 <hr>
             @endforeach

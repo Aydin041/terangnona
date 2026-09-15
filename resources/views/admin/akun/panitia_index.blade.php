@@ -26,11 +26,7 @@
             @foreach ($daftarPanitia as $item)
                 <li>
                     <strong>{{ $item->nama }}</strong> — {{ $item->email }}
-                    <form method="POST" action="{{ route('admin.akun.panitia.reset', $item->id) }}" style="display: inline;"
-                        onsubmit="return confirm('Reset password untuk {{ $item->nama }}?');">
-                        @csrf
-                        <button type="submit">Reset Password</button>
-                    </form>
+                    <a href="{{ route('admin.akun.panitia.reset.form', $item->id) }}"><button type="button">Reset Password</button></a>
                 </li>
                 <hr>
             @endforeach

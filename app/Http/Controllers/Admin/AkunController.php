@@ -27,9 +27,10 @@ class AkunController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:panitia,email',
+            'password' => 'nullable|string|min:6',
         ]);
 
-        $passwordAsli = Str::random(10);
+        $passwordAsli = !empty($validated['password']) ? $validated['password'] : Str::random(10);
 
         Panitia::create([
             'nama' => $validated['nama'],
@@ -42,10 +43,20 @@ class AkunController extends Controller
             ->with('sukses', "Akun Panitia berhasil dibuat. Email: {$validated['email']} | Password: {$passwordAsli} (catat sekarang, tidak akan ditampilkan lagi)");
     }
 
-    public function panitiaReset($id)
+    public function panitiaResetForm($id)
     {
         $panitia = Panitia::findOrFail($id);
-        $passwordBaru = Str::random(10);
+        return view('admin.akun.panitia_reset', compact('panitia'));
+    }
+
+    public function panitiaReset(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $panitia = Panitia::findOrFail($id);
+        $passwordBaru = !empty($validated['password']) ? $validated['password'] : Str::random(10);
 
         $panitia->update([
             'password_hash' => Hash::make($passwordBaru),
@@ -72,9 +83,10 @@ class AkunController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:juri,email',
+            'password' => 'nullable|string|min:6',
         ]);
 
-        $passwordAsli = Str::random(10);
+        $passwordAsli = !empty($validated['password']) ? $validated['password'] : Str::random(10);
 
         Juri::create([
             'nama' => $validated['nama'],
@@ -87,10 +99,20 @@ class AkunController extends Controller
             ->with('sukses', "Akun Juri berhasil dibuat. Email: {$validated['email']} | Password: {$passwordAsli} (catat sekarang, tidak akan ditampilkan lagi)");
     }
 
-    public function juriReset($id)
+    public function juriResetForm($id)
     {
         $juri = Juri::findOrFail($id);
-        $passwordBaru = Str::random(10);
+        return view('admin.akun.juri_reset', compact('juri'));
+    }
+
+    public function juriReset(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $juri = Juri::findOrFail($id);
+        $passwordBaru = !empty($validated['password']) ? $validated['password'] : Str::random(10);
 
         $juri->update([
             'password_hash' => Hash::make($passwordBaru),

@@ -103,11 +103,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/akun/panitia', [AdminAkunController::class, 'panitiaIndex'])->name('akun.panitia.index');
         Route::get('/akun/panitia/create', [AdminAkunController::class, 'panitiaCreateForm'])->name('akun.panitia.create');
         Route::post('/akun/panitia', [AdminAkunController::class, 'panitiaStore'])->name('akun.panitia.store');
+        Route::get('/akun/panitia/{id}/reset', [AdminAkunController::class, 'panitiaResetForm'])->name('akun.panitia.reset.form');
         Route::post('/akun/panitia/{id}/reset', [AdminAkunController::class, 'panitiaReset'])->name('akun.panitia.reset');
 
         Route::get('/akun/juri', [AdminAkunController::class, 'juriIndex'])->name('akun.juri.index');
         Route::get('/akun/juri/create', [AdminAkunController::class, 'juriCreateForm'])->name('akun.juri.create');
         Route::post('/akun/juri', [AdminAkunController::class, 'juriStore'])->name('akun.juri.store');
+        Route::get('/akun/juri/{id}/reset', [AdminAkunController::class, 'juriResetForm'])->name('akun.juri.reset.form');
         Route::post('/akun/juri/{id}/reset', [AdminAkunController::class, 'juriReset'])->name('akun.juri.reset');
     });
 });

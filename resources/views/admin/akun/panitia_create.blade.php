@@ -29,7 +29,9 @@
         <input type="email" name="email" value="{{ old('email') }}" required>
         <br><br>
 
-        <p><em>Password akan digenerate otomatis dan ditampilkan sekali setelah akun dibuat.</em></p>
+        <label>Password (opsional — kosongkan untuk digenerate otomatis)</label><br>
+        <input type="text" name="password" value="{{ old('password') }}" minlength="6">
+        <br><br>
 
         <button type="submit">Buat Akun</button>
     </form>

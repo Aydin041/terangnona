@@ -5,6 +5,8 @@
     <title>Nilai Proposal - Juri - TERANG NONA</title>
 </head>
 <body>
+    <p style="background: #eee; padding: 8px;">Login sebagai Juri: <strong>{{ $juri->nama }}</strong> ({{ $juri->email }})</p>
+
     <h1>Nilai Proposal — {{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</h1>
     <p><a href="{{ route('juri.penilaian.index') }}">← Kembali ke daftar</a></p>
 
@@ -21,6 +23,27 @@
     @if (session('sukses'))
         <p style="color: green;">{{ session('sukses') }}</p>
     @endif
+
+    <h3>Dokumen Pengajuan</h3>
+    @if ($dokumenPengajuan->isEmpty())
+        <p style="color: red;">Belum ada dokumen yang diupload peserta.</p>
+    @else
+        <ul>
+            @foreach ($dokumenPengajuan as $dok)
+                <li>
+                    <strong>{{ $dok->jenis_dokumen }}:</strong>
+                    @if ($dok->jenis_dokumen === 'video_link')
+                        <a href="{{ $dok->file_path }}" target="_blank">{{ $dok->file_path }}</a>
+                    @else
+                        {{ $dok->nama_asli }}
+                        <a href="{{ asset('storage/' . $dok->file_path) }}" target="_blank">Lihat/Download</a>
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+    @endif
+
+    <hr>
 
     <p><strong>Status penilaian:</strong> {{ $submission->status }}</p>
 

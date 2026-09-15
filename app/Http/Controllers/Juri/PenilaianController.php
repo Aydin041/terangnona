@@ -82,8 +82,10 @@ class PenilaianController extends Controller
             return !$n->terkunci;
         });
 
+        $dokumenPengajuan = $pengajuan->dokumen()->get();
+
         return view('juri.penilaian.proposal', compact(
-            'pengajuan', 'submission', 'komponenList', 'nilaiTersimpan', 'adaBarisTerbuka'
+            'pengajuan', 'submission', 'komponenList', 'nilaiTersimpan', 'adaBarisTerbuka', 'dokumenPengajuan', 'juri'
         ));
     }
 
@@ -112,6 +114,8 @@ class PenilaianController extends Controller
                     'komentar' => $komentarInput[$komponenId] ?? null,
                 ]);
         }
+
+        $submission->update(['status' => 'draft']);
 
         return back()->with('sukses', 'Draft berhasil disimpan.');
     }
@@ -240,7 +244,7 @@ class PenilaianController extends Controller
         $aspekList = self::ASPEK_PRESENTASI;
 
         return view('juri.penilaian.presentasi', compact(
-            'pengajuan', 'submission', 'aspekList', 'nilaiTersimpan', 'adaBarisTerbuka'
+            'pengajuan', 'submission', 'aspekList', 'nilaiTersimpan', 'adaBarisTerbuka', 'juri'
         ));
     }
 
@@ -269,6 +273,8 @@ class PenilaianController extends Controller
                     'catatan' => $catatanInput[$aspek] ?? null,
                 ]);
         }
+
+        $submission->update(['status' => 'draft']);
 
         return back()->with('sukses', 'Draft berhasil disimpan.');
     }
