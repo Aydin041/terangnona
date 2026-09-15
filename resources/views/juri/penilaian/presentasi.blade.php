@@ -24,11 +24,17 @@
 
     <p><strong>Status penilaian:</strong> {{ $submission->status }}</p>
 
-    @if ($submission->status === 'submitted')
+    @if ($submission->status === 'submitted' && !$adaBarisTerbuka)
         <p>
             <em>Penilaian sudah disubmit dan terkunci.</em>
             <a href="{{ route('juri.koreksi.presentasi.form', $pengajuan->id) }}">Ajukan Koreksi Nilai</a>
         </p>
+    @endif
+
+    @if ($submission->status === 'submitted' && $adaBarisTerbuka)
+        <div style="background: #fff3cd; padding: 10px; margin-bottom: 10px;">
+            <strong>⚠ Ada aspek yang sedang dibuka untuk diperbaiki (disetujui Admin).</strong> Isi ulang aspek yang kosong di bawah, lalu klik "Konfirmasi Perbaikan".
+        </div>
     @endif
 
     <form method="POST">
@@ -55,6 +61,9 @@
             <br>
             <button type="submit" formaction="{{ route('juri.penilaian.presentasi.draft', $pengajuan->id) }}">Simpan Draft</button>
             <button type="submit" formaction="{{ route('juri.penilaian.presentasi.submit', $pengajuan->id) }}">Submit Penilaian</button>
+        @elseif ($adaBarisTerbuka)
+            <br>
+            <button type="submit" formaction="{{ route('juri.penilaian.presentasi.perbaikan', $pengajuan->id) }}">Konfirmasi Perbaikan</button>
         @endif
     </form>
 </body>

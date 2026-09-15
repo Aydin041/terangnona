@@ -72,10 +72,12 @@ Route::prefix('juri')->name('juri.')->group(function () {
         Route::get('/penilaian/proposal/{id}', [JuriPenilaianController::class, 'proposalForm'])->name('penilaian.proposal');
         Route::post('/penilaian/proposal/{id}/draft', [JuriPenilaianController::class, 'proposalDraft'])->name('penilaian.proposal.draft');
         Route::post('/penilaian/proposal/{id}/submit', [JuriPenilaianController::class, 'proposalSubmit'])->name('penilaian.proposal.submit');
+        Route::post('/penilaian/proposal/{id}/perbaikan', [JuriPenilaianController::class, 'proposalPerbaikanSubmit'])->name('penilaian.proposal.perbaikan');
 
         Route::get('/penilaian/presentasi/{id}', [JuriPenilaianController::class, 'presentasiForm'])->name('penilaian.presentasi');
         Route::post('/penilaian/presentasi/{id}/draft', [JuriPenilaianController::class, 'presentasiDraft'])->name('penilaian.presentasi.draft');
         Route::post('/penilaian/presentasi/{id}/submit', [JuriPenilaianController::class, 'presentasiSubmit'])->name('penilaian.presentasi.submit');
+        Route::post('/penilaian/presentasi/{id}/perbaikan', [JuriPenilaianController::class, 'presentasiPerbaikanSubmit'])->name('penilaian.presentasi.perbaikan');
 
         Route::get('/koreksi/proposal/{id}', [JuriKoreksiController::class, 'ajukanProposalForm'])->name('koreksi.proposal.form');
         Route::post('/koreksi/proposal/{id}', [JuriKoreksiController::class, 'ajukanProposalSubmit'])->name('koreksi.proposal.submit');
