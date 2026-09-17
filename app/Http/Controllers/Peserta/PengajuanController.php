@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Peserta;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kategori;
+use App\Models\KomponenPenilaian;
+use App\Models\IsianProposal;
 use App\Models\Pengajuan;
 use App\Models\RiwayatStatus;
+use App\Models\UnitKerja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -36,6 +39,7 @@ class PengajuanController extends Controller
     public function step1Form($pengajuanId = null)
     {
         $kategoriList = Kategori::all();
+        $unitKerjaList = UnitKerja::orderBy('nama')->get();
         $pengajuan = null;
 
         if ($pengajuanId) {
@@ -45,7 +49,7 @@ class PengajuanController extends Controller
                 ->firstOrFail();
         }
 
-        return view('peserta.pengajuan.step1', compact('kategoriList', 'pengajuan'));
+        return view('peserta.pengajuan.step1', compact('kategoriList', 'unitKerjaList', 'pengajuan'));
     }
 
     public function step1Store(Request $request, $pengajuanId = null)
@@ -54,6 +58,7 @@ class PengajuanController extends Controller
             'nama_inovasi' => 'required|string|max:255',
             'akronim' => 'required|string|max:50',
             'kategori_id' => 'required|exists:kategori,id',
+            'unit_kerja_id' => 'required|exists:unit_kerja,id',
             'tahun_implementasi' => 'required|integer|min:2020|max:2030',
         ]);
 
@@ -69,6 +74,7 @@ class PengajuanController extends Controller
             $pengajuan = Pengajuan::create([
                 'peserta_id' => $peserta->id,
                 'kategori_id' => $validated['kategori_id'],
+                'unit_kerja_id' => $validated['unit_kerja_id'],
                 'nama_inovasi' => $validated['nama_inovasi'],
                 'akronim' => $validated['akronim'],
                 'tahun_implementasi' => $validated['tahun_implementasi'],
@@ -159,6 +165,16 @@ class PengajuanController extends Controller
         return redirect()->route('peserta.pengajuan.step4', $pengajuan->id);
     }
 
+    private function komponenBerlaku($pengajuan)
+    {
+        return KomponenPenilaian::all()->filter(function ($komponen) use ($pengajuan) {
+            if ($komponen->kolom_target === 'keduanya') {
+                return true;
+            }
+            return $pengajuan->bentuk_inovasi !== 'eksisting';
+        });
+    }
+
     public function step4Form($pengajuanId)
     {
         $peserta = Auth::guard('peserta')->user();
@@ -168,7 +184,18 @@ class PengajuanController extends Controller
 
         $dokumenTersimpan = $pengajuan->dokumen()->get()->keyBy('jenis_dokumen');
 
-        return view('peserta.pengajuan.step4', compact('pengajuan', 'dokumenTersimpan'));
+        $komponenList = $this->komponenBerlaku($pengajuan);
+        foreach ($komponenList as $komponen) {
+            IsianProposal::firstOrCreate(
+                ['pengajuan_id' => $pengajuan->id, 'komponen_id' => $komponen->id],
+                ['uraian' => null, 'link_bukti_dukung' => null]
+            );
+        }
+        $isianTersimpan = IsianProposal::where('pengajuan_id', $pengajuan->id)
+            ->get()
+            ->keyBy('komponen_id');
+
+        return view('peserta.pengajuan.step4', compact('pengajuan', 'dokumenTersimpan', 'komponenList', 'isianTersimpan'));
     }
 
     public function step4Store(Request $request, $pengajuanId)
@@ -179,10 +206,10 @@ class PengajuanController extends Controller
             ->firstOrFail();
 
         $rules = [
-            'proposal' => 'nullable|file|mimes:pdf|max:10240',
-            'bukti_dukung' => 'nullable|file|mimes:pdf|max:10240',
             'surat_identitas' => 'nullable|file|mimes:pdf|max:10240',
             'video_link' => 'required|url',
+            'uraian' => 'array',
+            'link_bukti_dukung' => 'array',
         ];
 
         if ($pengajuan->bentuk_inovasi === 'eksisting') {
@@ -198,7 +225,7 @@ class PengajuanController extends Controller
             ['file_path' => $validated['video_link'], 'uploaded_at' => now()]
         );
 
-        $jenisFileList = ['proposal', 'bukti_dukung', 'surat_identitas'];
+        $jenisFileList = ['surat_identitas'];
         $jenisFileList[] = $pengajuan->bentuk_inovasi === 'eksisting' ? 'surat_implementasi' : 'surat_komitmen';
 
         foreach ($jenisFileList as $jenis) {
@@ -214,12 +241,25 @@ class PengajuanController extends Controller
             }
         }
 
+        $uraianInput = $request->input('uraian', []);
+        $linkInput = $request->input('link_bukti_dukung', []);
+
+        foreach ($uraianInput as $komponenId => $uraian) {
+            IsianProposal::updateOrCreate(
+                ['pengajuan_id' => $pengajuan->id, 'komponen_id' => $komponenId],
+                [
+                    'uraian' => $uraian,
+                    'link_bukti_dukung' => $linkInput[$komponenId] ?? null,
+                ]
+            );
+        }
+
         return redirect()->route('peserta.pengajuan.step5', $pengajuan->id);
     }
 
     private function daftarDokumenWajib($pengajuan)
     {
-        $wajib = ['proposal', 'bukti_dukung', 'surat_identitas'];
+        $wajib = ['surat_identitas'];
         $wajib[] = $pengajuan->bentuk_inovasi === 'eksisting' ? 'surat_implementasi' : 'surat_komitmen';
         $wajib[] = 'video_link';
         return $wajib;
@@ -243,8 +283,18 @@ class PengajuanController extends Controller
             }
         }
 
+        $komponenList = $this->komponenBerlaku($pengajuan);
+        $isianTersimpan = IsianProposal::where('pengajuan_id', $pengajuan->id)->get()->keyBy('komponen_id');
+        $isianBelumLengkap = [];
+        foreach ($komponenList as $komponen) {
+            $isian = $isianTersimpan[$komponen->id] ?? null;
+            if (!$isian || empty($isian->uraian)) {
+                $isianBelumLengkap[] = $komponen->nama;
+            }
+        }
+
         return view('peserta.pengajuan.step5', compact(
-            'pengajuan', 'anggotaKelompok', 'dokumenTersimpan', 'dokumenBelumLengkap'
+            'pengajuan', 'anggotaKelompok', 'dokumenTersimpan', 'dokumenBelumLengkap', 'isianBelumLengkap'
         ));
     }
 
@@ -262,6 +312,17 @@ class PengajuanController extends Controller
             if (!isset($dokumenTersimpan[$jenis])) {
                 return back()->withErrors([
                     'dokumen' => 'Masih ada dokumen wajib yang belum lengkap. Silakan lengkapi dulu di Langkah 4.',
+                ]);
+            }
+        }
+
+        $komponenList = $this->komponenBerlaku($pengajuan);
+        $isianTersimpan = IsianProposal::where('pengajuan_id', $pengajuan->id)->get()->keyBy('komponen_id');
+        foreach ($komponenList as $komponen) {
+            $isian = $isianTersimpan[$komponen->id] ?? null;
+            if (!$isian || empty($isian->uraian)) {
+                return back()->withErrors([
+                    'isian' => 'Masih ada isian komponen proposal yang belum lengkap. Silakan lengkapi dulu di Langkah 4.',
                 ]);
             }
         }

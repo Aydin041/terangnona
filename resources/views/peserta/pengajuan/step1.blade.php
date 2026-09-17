@@ -44,6 +44,19 @@
         </div>
 
         <div>
+            <label>Unit Kerja Pengampu Inovasi</label><br>
+            <select name="unit_kerja_id" required>
+                <option value="">-- Pilih Unit Kerja --</option>
+                @foreach ($unitKerjaList as $unit)
+                    <option value="{{ $unit->id }}"
+                        {{ old('unit_kerja_id', $pengajuan->unit_kerja_id ?? '') == $unit->id ? 'selected' : '' }}>
+                        {{ $unit->nama }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div>
             <label>Tahun Implementasi/Rencana</label><br>
             <input type="number" name="tahun_implementasi" value="{{ old('tahun_implementasi', $pengajuan->tahun_implementasi ?? 2026) }}" required>
         </div>

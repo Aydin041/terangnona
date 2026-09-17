@@ -42,7 +42,6 @@
                     <li>{{ $jenis }}</li>
                 @endforeach
             </ul>
-            <p><a href="{{ route('peserta.pengajuan.step4', $pengajuan->id) }}">Kembali ke Langkah 4 untuk melengkapi</a></p>
         </div>
     @else
         <ul>
@@ -60,15 +59,29 @@
         </ul>
     @endif
 
+    <h3>Isian Proposal</h3>
+    @if (count($isianBelumLengkap) > 0)
+        <div style="color: red;">
+            <p><strong>Komponen berikut belum diisi uraiannya:</strong></p>
+            <ul>
+                @foreach ($isianBelumLengkap as $namaKomponen)
+                    <li>{{ $namaKomponen }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @else
+        <p style="color: green;">Semua komponen sudah diisi.</p>
+    @endif
+
     <hr>
 
-    @if (count($dokumenBelumLengkap) === 0)
+    @if (count($dokumenBelumLengkap) > 0 || count($isianBelumLengkap) > 0)
+        <p><a href="{{ route('peserta.pengajuan.step4', $pengajuan->id) }}"><button type="button">← Kembali ke Langkah 4 untuk Melengkapi</button></a></p>
+    @else
         <form method="POST" action="{{ route('peserta.pengajuan.step5.submit', $pengajuan->id) }}">
             @csrf
             <button type="submit">Submit Pengajuan</button>
         </form>
-    @else
-        <p><em>Tombol submit muncul setelah semua dokumen wajib lengkap.</em></p>
     @endif
 </body>
 </html>

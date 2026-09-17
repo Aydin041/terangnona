@@ -2,10 +2,10 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Pengajuan Baru - Langkah 4 - TERANG NONA</title>
+    <title>Pengajuan - Langkah 4 - TERANG NONA</title>
 </head>
 <body>
-    <h1>Pengajuan Baru — Langkah 4/5: Upload Dokumen</h1>
+    <h1>Pengajuan Baru — Langkah 4/5: Dokumen & Isian Proposal</h1>
     <p>{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }}) — Bentuk: {{ $pengajuan->bentuk_inovasi }}</p>
 
     @if ($errors->any())
@@ -21,27 +21,7 @@
     <form method="POST" action="{{ route('peserta.pengajuan.step4.submit', $pengajuan->id) }}" enctype="multipart/form-data">
         @csrf
 
-        <div>
-            <label>Proposal (PDF)</label><br>
-            @if (isset($dokumenTersimpan['proposal']))
-                <p>Sudah diupload: {{ $dokumenTersimpan['proposal']->nama_asli }}
-                    <a href="{{ asset('storage/' . $dokumenTersimpan['proposal']->file_path) }}" target="_blank">Lihat</a>
-                </p>
-            @endif
-            <input type="file" name="proposal" accept="application/pdf">
-        </div>
-        <br>
-
-        <div>
-            <label>Bukti Dukung (PDF)</label><br>
-            @if (isset($dokumenTersimpan['bukti_dukung']))
-                <p>Sudah diupload: {{ $dokumenTersimpan['bukti_dukung']->nama_asli }}
-                    <a href="{{ asset('storage/' . $dokumenTersimpan['bukti_dukung']->file_path) }}" target="_blank">Lihat</a>
-                </p>
-            @endif
-            <input type="file" name="bukti_dukung" accept="application/pdf">
-        </div>
-        <br>
+        <h2>Bagian A — Dokumen Administratif</h2>
 
         <div>
             <label>Surat Pernyataan Identitas Inovator (PDF)</label><br>
@@ -83,8 +63,29 @@
                 value="{{ isset($dokumenTersimpan['video_link']) ? $dokumenTersimpan['video_link']->file_path : old('video_link') }}"
                 placeholder="https://..." required>
         </div>
-        <br>
 
+        <hr>
+
+        <h2>Bagian B — Isian Proposal ({{ count($komponenList) }} Komponen)</h2>
+        <p><em>Isi uraian jawaban dan link bukti dukung (link Drive/dokumen pendukung) untuk setiap komponen di bawah.</em></p>
+
+        @foreach ($komponenList as $komponen)
+            @php $isianRow = $isianTersimpan[$komponen->id] ?? null; @endphp
+            <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                <strong>{{ $komponen->nama }}</strong> (Bobot {{ $komponen->bobot }}%)<br><br>
+
+                <label>Uraian/Isian Inovasi</label><br>
+                <textarea name="uraian[{{ $komponen->id }}]" rows="4" cols="70">{{ old("uraian.{$komponen->id}", $isianRow->uraian ?? '') }}</textarea>
+                <br><br>
+
+                <label>Link/Tautan Bukti Dukung</label><br>
+                <input type="text" name="link_bukti_dukung[{{ $komponen->id }}]"
+                    value="{{ old("link_bukti_dukung.{$komponen->id}", $isianRow->link_bukti_dukung ?? '') }}"
+                    placeholder="https://..." style="width: 400px;">
+            </div>
+        @endforeach
+
+        <br>
         <button type="submit">Simpan & Lanjut ke Langkah 5</button>
     </form>
 </body>

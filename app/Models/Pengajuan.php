@@ -11,6 +11,7 @@ class Pengajuan extends Model
     protected $fillable = [
         'peserta_id',
         'kategori_id',
+        'unit_kerja_id',
         'nama_inovasi',
         'akronim',
         'bentuk_inovasi',
@@ -29,6 +30,11 @@ class Pengajuan extends Model
         return $this->belongsTo(Kategori::class);
     }
 
+    public function unitKerja()
+    {
+        return $this->belongsTo(UnitKerja::class);
+    }
+
     public function anggotaKelompok()
     {
         return $this->hasMany(AnggotaKelompok::class);
@@ -37,6 +43,11 @@ class Pengajuan extends Model
     public function dokumen()
     {
         return $this->hasMany(Dokumen::class);
+    }
+
+    public function isianProposal()
+    {
+        return $this->hasMany(IsianProposal::class);
     }
 
     public function submissionProposal()
@@ -54,8 +65,6 @@ class Pengajuan extends Model
         return $this->hasMany(RiwayatStatus::class);
     }
 
-    // Menghitung kelompok penilaian dari bentuk_inovasi, TIDAK disimpan sebagai kolom
-    // (sesuai keputusan: dihitung ulang, bukan disimpan, supaya tidak ada risiko data tidak sinkron)
     public function getKelompokPenilaianAttribute()
     {
         return $this->bentuk_inovasi === 'eksisting' ? 'eksisting' : 'pengembangan_rancangan';
