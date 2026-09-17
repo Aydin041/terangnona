@@ -27,6 +27,13 @@
                     <strong>{{ $item->nama_inovasi }} ({{ $item->akronim }})</strong><br>
                     Status: {{ $item->status }}
 
+                    @if ($item->link_presentasi)
+                        <div style="background: #e0f0ff; padding: 8px; margin-top: 5px;">
+                            <strong>Link Zoom/Meet Presentasi:</strong>
+                            <a href="{{ $item->link_presentasi }}" target="_blank">{{ $item->link_presentasi }}</a>
+                        </div>
+                    @endif
+
                     @if ($item->status === 'perlu_perbaikan')
                         <div style="background: #ffe0e0; padding: 8px; margin-top: 5px;">
                             <strong>Alasan dari Panitia:</strong><br>

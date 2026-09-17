@@ -56,6 +56,7 @@ Route::prefix('panitia')->name('panitia.')->group(function () {
         Route::get('/pengajuan/{id}', [PanitiaPengajuanController::class, 'detail'])->name('pengajuan.detail');
         Route::post('/pengajuan/{id}/setujui', [PanitiaPengajuanController::class, 'setujui'])->name('pengajuan.setujui');
         Route::post('/pengajuan/{id}/kembalikan', [PanitiaPengajuanController::class, 'kembalikan'])->name('pengajuan.kembalikan');
+        Route::post('/pengajuan/{id}/link-presentasi', [PanitiaPengajuanController::class, 'presentasiLinkStore'])->name('pengajuan.link_presentasi');
         Route::get('/ranking', [PanitiaRankingController::class, 'index'])->name('ranking.index');
     });
 });

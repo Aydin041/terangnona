@@ -65,8 +65,41 @@
 
         @foreach ($komponenList as $komponen)
             @php $nilaiRow = $nilaiTersimpan[$komponen->id] ?? null; @endphp
+            @php $isianRow = $isianList[$komponen->id] ?? null; @endphp
             <div style="border-bottom: 1px solid #ccc; padding: 10px 0;">
                 <strong>{{ $komponen->nama }}</strong> — Bobot {{ $komponen->bobot }}%<br>
+
+                @if (array_key_exists($komponen->id, \App\Http\Controllers\Peserta\PengajuanController::KOMPONEN_LAMPIRAN))
+                    @php
+                        $jenisDok = \App\Http\Controllers\Peserta\PengajuanController::KOMPONEN_LAMPIRAN[$komponen->id];
+                        $dokLampiran = $dokumenKeyed[$jenisDok] ?? null;
+                    @endphp
+                    <div style="background: #f5f5f5; padding: 8px; margin: 8px 0;">
+                        <strong>Lampiran dari Peserta:</strong><br>
+                        @if ($dokLampiran)
+                            {{ $dokLampiran->nama_asli }}
+                            <a href="{{ asset('storage/' . $dokLampiran->file_path) }}" target="_blank">Lihat/Download</a>
+                        @else
+                            <span style="color: red;">Belum diupload peserta.</span>
+                        @endif
+                    </div>
+                @else
+                    <div style="background: #f5f5f5; padding: 8px; margin: 8px 0;">
+                        <strong>Uraian dari Peserta:</strong>
+                        @if ($isianRow && trim((string) $isianRow->uraian) !== '')
+                            <p style="white-space: pre-wrap;">{{ $isianRow->uraian }}</p>
+                        @else
+                            <p style="color: red;">Belum diisi peserta.</p>
+                        @endif
+
+                        <strong>Link/Tautan Bukti Dukung:</strong><br>
+                        @if ($isianRow && trim((string) $isianRow->link_bukti_dukung) !== '')
+                            <a href="{{ $isianRow->link_bukti_dukung }}" target="_blank">{{ $isianRow->link_bukti_dukung }}</a>
+                        @else
+                            <span style="color: red;">Belum diisi peserta.</span>
+                        @endif
+                    </div>
+                @endif
 
                 <label>Nilai (0-100)</label><br>
                 <input type="number" name="nilai[{{ $komponen->id }}]" min="0" max="100"

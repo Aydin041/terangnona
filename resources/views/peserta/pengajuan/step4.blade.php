@@ -66,15 +66,19 @@
 
         <hr>
 
-        <h2>Bagian B — Isian Proposal ({{ count($komponenList) }} Komponen)</h2>
-        <p><em>Isi uraian jawaban dan link bukti dukung (link Drive/dokumen pendukung) untuk setiap komponen di bawah.</em></p>
+        <h2>Bagian B — Isian Proposal ({{ count($komponenIsian) }} Komponen)</h2>
+        <p><em>Isi uraian jawaban dan link bukti dukung (link Drive/dokumen pendukung) untuk setiap komponen di bawah. Keduanya wajib diisi.</em></p>
 
-        @foreach ($komponenList as $komponen)
+        @foreach ($komponenIsian as $komponen)
             @php $isianRow = $isianTersimpan[$komponen->id] ?? null; @endphp
             <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
                 <strong>{{ $komponen->nama }}</strong> (Bobot {{ $komponen->bobot }}%)<br><br>
 
-                <label>Uraian/Isian Inovasi</label><br>
+                <label>Uraian/Isian Inovasi
+                    @if ($komponen->jumlah_kata_maksimal)
+                        <span style="color: #666;">(Maksimal {{ $komponen->jumlah_kata_maksimal }} kata)</span>
+                    @endif
+                </label><br>
                 <textarea name="uraian[{{ $komponen->id }}]" rows="4" cols="70">{{ old("uraian.{$komponen->id}", $isianRow->uraian ?? '') }}</textarea>
                 <br><br>
 
@@ -84,6 +88,29 @@
                     placeholder="https://..." style="width: 400px;">
             </div>
         @endforeach
+
+        @if (count($komponenLampiran) > 0)
+            <hr>
+            <h2>Bagian C — Lampiran Rencana Aksi & Rencana Anggaran</h2>
+            <p><em>Untuk 2 komponen ini, isian berupa lampiran PDF (bukan uraian teks), sesuai form resmi.</em></p>
+
+            @foreach ($komponenLampiran as $komponen)
+                @php
+                    $jenisDok = \App\Http\Controllers\Peserta\PengajuanController::KOMPONEN_LAMPIRAN[$komponen->id];
+                    $dokTersimpan = $dokumenTersimpan[$jenisDok] ?? null;
+                @endphp
+                <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                    <strong>{{ $komponen->nama }}</strong> (Bobot {{ $komponen->bobot }}%)<br><br>
+                    @if ($dokTersimpan)
+                        <p>Sudah diupload: {{ $dokTersimpan->nama_asli }}
+                            <a href="{{ asset('storage/' . $dokTersimpan->file_path) }}" target="_blank">Lihat</a>
+                        </p>
+                    @endif
+                    <label>Upload Lampiran (PDF)</label><br>
+                    <input type="file" name="{{ $jenisDok }}" accept="application/pdf">
+                </div>
+            @endforeach
+        @endif
 
         <br>
         <button type="submit">Simpan & Lanjut ke Langkah 5</button>

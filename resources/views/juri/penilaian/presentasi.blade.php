@@ -24,6 +24,15 @@
 
     <p><strong>Status penilaian:</strong> {{ $submission->status }}</p>
 
+    <p>
+        <strong>Link Zoom/Meet Presentasi:</strong>
+        @if ($pengajuan->link_presentasi)
+            <a href="{{ $pengajuan->link_presentasi }}" target="_blank">{{ $pengajuan->link_presentasi }}</a>
+        @else
+            <span style="color: red;">Belum diisi Panitia.</span>
+        @endif
+    </p>
+
     @if ($submission->status === 'submitted' && !$adaBarisTerbuka)
         <p>
             <em>Penilaian sudah disubmit dan terkunci.</em>

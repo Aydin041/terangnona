@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Juri;
 
 use App\Http\Controllers\Controller;
+use App\Models\IsianProposal;
 use App\Models\KomponenPenilaian;
 use App\Models\NilaiAspekPresentasi;
 use App\Models\NilaiKomponenProposal;
@@ -83,9 +84,16 @@ class PenilaianController extends Controller
         });
 
         $dokumenPengajuan = $pengajuan->dokumen()->get();
+        $dokumenKeyed = $dokumenPengajuan->keyBy('jenis_dokumen');
+
+        // Isian uraian + link bukti dukung yang diisi Peserta di Step 4, per komponen.
+        // Ini terpisah dari NilaiKomponenProposal (nilai dari Juri) — jangan digabung/ditimpa.
+        $isianList = IsianProposal::where('pengajuan_id', $pengajuan->id)
+            ->get()
+            ->keyBy('komponen_id');
 
         return view('juri.penilaian.proposal', compact(
-            'pengajuan', 'submission', 'komponenList', 'nilaiTersimpan', 'adaBarisTerbuka', 'dokumenPengajuan', 'juri'
+            'pengajuan', 'submission', 'komponenList', 'nilaiTersimpan', 'adaBarisTerbuka', 'dokumenPengajuan', 'dokumenKeyed', 'juri', 'isianList'
         ));
     }
 

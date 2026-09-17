@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AnggotaKelompok;
 use App\Models\Pengajuan;
 use App\Models\RiwayatStatus;
+use App\Services\RankingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -91,5 +92,27 @@ class PengajuanController extends Controller
         ]);
 
         return redirect()->route('panitia.pengajuan.index')->with('sukses', 'Pengajuan dikembalikan ke peserta.');
+    }
+
+    public function presentasiLinkStore(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'link_presentasi' => 'nullable|url',
+        ]);
+
+        $pengajuan = Pengajuan::findOrFail($id);
+
+        $rankingService = new RankingService();
+        $idLolos5Besar = $rankingService->idPengajuanLolos5Besar();
+
+        if (!in_array($pengajuan->id, $idLolos5Besar)) {
+            return back()->withErrors([
+                'link_presentasi' => 'Pengajuan ini belum lolos 5 besar, link presentasi belum bisa diisi.',
+            ]);
+        }
+
+        $pengajuan->update(['link_presentasi' => $validated['link_presentasi']]);
+
+        return back()->with('sukses', 'Link presentasi berhasil disimpan.');
     }
 }

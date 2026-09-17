@@ -18,6 +18,7 @@ class Pengajuan extends Model
         'tahun_implementasi',
         'deskripsi',
         'status',
+        'link_presentasi',
     ];
 
     public function peserta()

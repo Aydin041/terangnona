@@ -14,6 +14,19 @@ use Illuminate\Support\Facades\Auth;
 
 class PengajuanController extends Controller
 {
+    // Komponen #14 (Rencana Aksi) & #15 (Rencana Anggaran & Biaya) di form resmi statusnya
+    // "LAMPIRKAN DALAM PROPOSAL INI", bukan uraian+link seperti 13 komponen lain.
+    // ID diambil dari data aktual tabel komponen_penilaian (urutan DB terbalik dari form Word).
+    const KOMPONEN_LAMPIRAN = [
+        14 => 'lampiran_rencana_aksi',
+        15 => 'lampiran_rencana_anggaran',
+    ];
+
+    private function isKomponenLampiran($komponenId)
+    {
+        return array_key_exists($komponenId, self::KOMPONEN_LAMPIRAN);
+    }
+
     public function dashboard()
     {
         $peserta = Auth::guard('peserta')->user();
@@ -185,7 +198,10 @@ class PengajuanController extends Controller
         $dokumenTersimpan = $pengajuan->dokumen()->get()->keyBy('jenis_dokumen');
 
         $komponenList = $this->komponenBerlaku($pengajuan);
-        foreach ($komponenList as $komponen) {
+        $komponenIsian = $komponenList->reject(fn ($k) => $this->isKomponenLampiran($k->id));
+        $komponenLampiran = $komponenList->filter(fn ($k) => $this->isKomponenLampiran($k->id));
+
+        foreach ($komponenIsian as $komponen) {
             IsianProposal::firstOrCreate(
                 ['pengajuan_id' => $pengajuan->id, 'komponen_id' => $komponen->id],
                 ['uraian' => null, 'link_bukti_dukung' => null]
@@ -195,7 +211,7 @@ class PengajuanController extends Controller
             ->get()
             ->keyBy('komponen_id');
 
-        return view('peserta.pengajuan.step4', compact('pengajuan', 'dokumenTersimpan', 'komponenList', 'isianTersimpan'));
+        return view('peserta.pengajuan.step4', compact('pengajuan', 'dokumenTersimpan', 'komponenIsian', 'komponenLampiran', 'isianTersimpan'));
     }
 
     public function step4Store(Request $request, $pengajuanId)
@@ -216,9 +232,36 @@ class PengajuanController extends Controller
             $rules['surat_implementasi'] = 'nullable|file|mimes:pdf|max:10240';
         } else {
             $rules['surat_komitmen'] = 'nullable|file|mimes:pdf|max:10240';
+            $rules['lampiran_rencana_aksi'] = 'nullable|file|mimes:pdf|max:10240';
+            $rules['lampiran_rencana_anggaran'] = 'nullable|file|mimes:pdf|max:10240';
         }
 
         $validated = $request->validate($rules);
+
+        // Cek batas jumlah kata SEBELUM menyimpan apa pun, supaya tidak ada tulisan tersimpan
+        // sebagian kalau ternyata melebihi batas (video_link/dokumen/isian jadi konsisten sama-sama gagal atau sama-sama tersimpan).
+        $uraianInput = $request->input('uraian', []);
+        $linkInput = $request->input('link_bukti_dukung', []);
+
+        $komponenLimits = KomponenPenilaian::pluck('jumlah_kata_maksimal', 'id');
+        $komponenNama = KomponenPenilaian::pluck('nama', 'id');
+
+        $pesanKata = [];
+        foreach ($uraianInput as $komponenId => $uraian) {
+            $limit = $komponenLimits[$komponenId] ?? null;
+            if ($limit === null || trim((string) $uraian) === '') {
+                continue;
+            }
+            $jumlahKata = count(preg_split('/\s+/', trim($uraian)));
+            if ($jumlahKata > $limit) {
+                $nama = $komponenNama[$komponenId] ?? "Komponen #{$komponenId}";
+                $pesanKata[] = "{$nama}: {$jumlahKata} kata (maksimal {$limit} kata).";
+            }
+        }
+
+        if (!empty($pesanKata)) {
+            return back()->withErrors(['kata' => $pesanKata])->withInput();
+        }
 
         $pengajuan->dokumen()->updateOrCreate(
             ['jenis_dokumen' => 'video_link'],
@@ -226,7 +269,13 @@ class PengajuanController extends Controller
         );
 
         $jenisFileList = ['surat_identitas'];
-        $jenisFileList[] = $pengajuan->bentuk_inovasi === 'eksisting' ? 'surat_implementasi' : 'surat_komitmen';
+        if ($pengajuan->bentuk_inovasi === 'eksisting') {
+            $jenisFileList[] = 'surat_implementasi';
+        } else {
+            $jenisFileList[] = 'surat_komitmen';
+            $jenisFileList[] = 'lampiran_rencana_aksi';
+            $jenisFileList[] = 'lampiran_rencana_anggaran';
+        }
 
         foreach ($jenisFileList as $jenis) {
             if ($request->hasFile($jenis)) {
@@ -240,9 +289,6 @@ class PengajuanController extends Controller
                 );
             }
         }
-
-        $uraianInput = $request->input('uraian', []);
-        $linkInput = $request->input('link_bukti_dukung', []);
 
         foreach ($uraianInput as $komponenId => $uraian) {
             IsianProposal::updateOrCreate(
@@ -262,6 +308,10 @@ class PengajuanController extends Controller
         $wajib = ['surat_identitas'];
         $wajib[] = $pengajuan->bentuk_inovasi === 'eksisting' ? 'surat_implementasi' : 'surat_komitmen';
         $wajib[] = 'video_link';
+        if ($pengajuan->bentuk_inovasi !== 'eksisting') {
+            $wajib[] = 'lampiran_rencana_aksi';
+            $wajib[] = 'lampiran_rencana_anggaran';
+        }
         return $wajib;
     }
 
@@ -287,8 +337,11 @@ class PengajuanController extends Controller
         $isianTersimpan = IsianProposal::where('pengajuan_id', $pengajuan->id)->get()->keyBy('komponen_id');
         $isianBelumLengkap = [];
         foreach ($komponenList as $komponen) {
+            if ($this->isKomponenLampiran($komponen->id)) {
+                continue;
+            }
             $isian = $isianTersimpan[$komponen->id] ?? null;
-            if (!$isian || empty($isian->uraian)) {
+            if (!$isian || empty($isian->uraian) || empty($isian->link_bukti_dukung)) {
                 $isianBelumLengkap[] = $komponen->nama;
             }
         }
@@ -319,8 +372,11 @@ class PengajuanController extends Controller
         $komponenList = $this->komponenBerlaku($pengajuan);
         $isianTersimpan = IsianProposal::where('pengajuan_id', $pengajuan->id)->get()->keyBy('komponen_id');
         foreach ($komponenList as $komponen) {
+            if ($this->isKomponenLampiran($komponen->id)) {
+                continue;
+            }
             $isian = $isianTersimpan[$komponen->id] ?? null;
-            if (!$isian || empty($isian->uraian)) {
+            if (!$isian || empty($isian->uraian) || empty($isian->link_bukti_dukung)) {
                 return back()->withErrors([
                     'isian' => 'Masih ada isian komponen proposal yang belum lengkap. Silakan lengkapi dulu di Langkah 4.',
                 ]);
