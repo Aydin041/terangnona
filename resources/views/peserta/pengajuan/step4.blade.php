@@ -115,5 +115,6 @@
         <br>
         <button type="submit">Simpan & Lanjut ke Langkah 5</button>
     </form>
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

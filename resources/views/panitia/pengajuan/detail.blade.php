@@ -80,5 +80,6 @@
     @else
         <p><em>Pengajuan ini sudah diproses (status: {{ $pengajuan->status }}), tidak ada aksi tersedia.</em></p>
     @endif
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

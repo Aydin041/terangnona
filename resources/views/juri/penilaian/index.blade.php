@@ -6,6 +6,7 @@
 </head>
 <body>
     <h1>Daftar Penilaian</h1>
+    <p style="background: #eee; padding: 8px;">Login sebagai Juri: <strong>{{ Auth::guard('juri')->user()->nama }}</strong> ({{ Auth::guard('juri')->user()->email }})</p>
 
     <form method="POST" action="{{ route('juri.logout') }}">
         @csrf
@@ -18,26 +19,11 @@
 
     <hr>
 
-    @if ($daftarPengajuan->isEmpty())
-        <p>Belum ada pengajuan yang disetujui Panitia untuk dinilai.</p>
-    @else
-        <ul>
-            @foreach ($daftarPengajuan as $item)
-                <li>
-                    <strong>{{ $item->nama_inovasi }} ({{ $item->akronim }})</strong><br>
-                    Kategori: {{ $item->kategori->nama }} | Bentuk: {{ $item->bentuk_inovasi }}<br>
-                    Status penilaian proposal Anda: {{ $statusPenilaian[$item->id] }}<br>
-                    <a href="{{ route('juri.penilaian.proposal', $item->id) }}">Nilai Proposal</a>
-
-                    @if (in_array($item->id, $idLolos5Besar))
-                        | <a href="{{ route('juri.penilaian.presentasi', $item->id) }}">
-                            <strong style="color: green;">Nilai Presentasi (Lolos 5 Besar)</strong>
-                        </a>
-                    @endif
-                </li>
-                <hr>
-            @endforeach
-        </ul>
-    @endif
+    <h2>Pilih Jenis Penilaian</h2>
+    <ul>
+        <li><a href="{{ route('juri.penilaian.daftar.proposal') }}">Penilaian Proposal</a></li>
+        <li><a href="{{ route('juri.penilaian.daftar.presentasi') }}">Penilaian Presentasi (Lolos 5 Besar)</a></li>
+    </ul>
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

@@ -49,5 +49,6 @@
     </form>
 
     <p>Sudah punya akun? <a href="{{ route('peserta.login') }}">Login di sini</a></p>
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

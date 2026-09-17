@@ -24,6 +24,11 @@ class PenilaianController extends Controller
 
     public function index()
     {
+        return view('juri.penilaian.index');
+    }
+
+    public function indexProposal()
+    {
         $juri = Auth::guard('juri')->user();
 
         $daftarPengajuan = Pengajuan::where('status', 'disetujui')
@@ -40,10 +45,31 @@ class PenilaianController extends Controller
             $statusPenilaian[$item->id] = $submission ? $submission->status : 'belum_dinilai';
         }
 
+        return view('juri.penilaian.index_proposal', compact('daftarPengajuan', 'statusPenilaian'));
+    }
+
+    public function indexPresentasi()
+    {
+        $juri = Auth::guard('juri')->user();
+
         $rankingService = new RankingService();
         $idLolos5Besar = $rankingService->idPengajuanLolos5Besar();
 
-        return view('juri.penilaian.index', compact('daftarPengajuan', 'statusPenilaian', 'idLolos5Besar'));
+        $daftarPengajuan = Pengajuan::whereIn('id', $idLolos5Besar)
+            ->with('kategori')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $statusPenilaian = [];
+        foreach ($daftarPengajuan as $item) {
+            $submission = SubmissionPresentasi::where('pengajuan_id', $item->id)
+                ->where('juri_id', $juri->id)
+                ->first();
+
+            $statusPenilaian[$item->id] = $submission ? $submission->status : 'belum_dinilai';
+        }
+
+        return view('juri.penilaian.index_presentasi', compact('daftarPengajuan', 'statusPenilaian'));
     }
 
     private function komponenBerlaku($pengajuan)
@@ -173,7 +199,7 @@ class PenilaianController extends Controller
             'submitted_at' => now(),
         ]);
 
-        return redirect()->route('juri.penilaian.index')->with('sukses', 'Penilaian proposal berhasil disubmit dan terkunci.');
+        return redirect()->route('juri.penilaian.daftar.proposal')->with('sukses', 'Penilaian proposal berhasil disubmit dan terkunci.');
     }
 
     public function proposalPerbaikanSubmit(Request $request, $pengajuanId)
@@ -214,7 +240,7 @@ class PenilaianController extends Controller
             ]);
         }
 
-        return redirect()->route('juri.penilaian.index')->with('sukses', 'Perbaikan nilai berhasil dikonfirmasi dan terkunci kembali.');
+        return redirect()->route('juri.penilaian.daftar.proposal')->with('sukses', 'Perbaikan nilai berhasil dikonfirmasi dan terkunci kembali.');
     }
 
     public function presentasiForm($pengajuanId)
@@ -330,7 +356,7 @@ class PenilaianController extends Controller
             'submitted_at' => now(),
         ]);
 
-        return redirect()->route('juri.penilaian.index')->with('sukses', 'Penilaian presentasi berhasil disubmit dan terkunci.');
+        return redirect()->route('juri.penilaian.daftar.presentasi')->with('sukses', 'Penilaian presentasi berhasil disubmit dan terkunci.');
     }
 
     public function presentasiPerbaikanSubmit(Request $request, $pengajuanId)
@@ -371,6 +397,6 @@ class PenilaianController extends Controller
             ]);
         }
 
-        return redirect()->route('juri.penilaian.index')->with('sukses', 'Perbaikan nilai berhasil dikonfirmasi dan terkunci kembali.');
+        return redirect()->route('juri.penilaian.daftar.presentasi')->with('sukses', 'Perbaikan nilai berhasil dikonfirmasi dan terkunci kembali.');
     }
 }

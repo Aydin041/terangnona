@@ -34,5 +34,6 @@
     </form>
 
     <p>Belum punya akun? <a href="{{ route('peserta.register') }}">Daftar di sini</a></p>
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

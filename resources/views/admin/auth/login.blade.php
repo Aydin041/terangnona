@@ -29,5 +29,6 @@
         </div>
         <button type="submit">Masuk</button>
     </form>
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

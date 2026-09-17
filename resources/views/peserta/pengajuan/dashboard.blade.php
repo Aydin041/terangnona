@@ -27,6 +27,14 @@
                     <strong>{{ $item->nama_inovasi }} ({{ $item->akronim }})</strong><br>
                     Status: {{ $item->status }}
 
+                    @if ($item->status === 'draft')
+                        <div style="margin-top: 5px;">
+                            <a href="{{ route('peserta.pengajuan.step1.edit', $item->id) }}">
+                                <button type="button">Lanjutkan Pengajuan</button>
+                            </a>
+                        </div>
+                    @endif
+
                     @if ($item->link_presentasi)
                         <div style="background: #e0f0ff; padding: 8px; margin-top: 5px;">
                             <strong>Link Zoom/Meet Presentasi:</strong>
@@ -53,5 +61,6 @@
     <a href="{{ route('peserta.pengajuan.step1') }}">
         <button type="button">+ Buat Pengajuan Baru</button>
     </a>
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

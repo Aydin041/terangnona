@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\KoreksiController as AdminKoreksiController;
 use App\Http\Controllers\Admin\AkunController as AdminAkunController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 
 // Peserta
@@ -70,6 +70,8 @@ Route::prefix('juri')->name('juri.')->group(function () {
     Route::middleware('auth:juri')->group(function () {
         Route::get('/dashboard', [JuriPenilaianController::class, 'index'])->name('dashboard');
         Route::get('/penilaian', [JuriPenilaianController::class, 'index'])->name('penilaian.index');
+        Route::get('/penilaian/daftar-proposal', [JuriPenilaianController::class, 'indexProposal'])->name('penilaian.daftar.proposal');
+        Route::get('/penilaian/daftar-presentasi', [JuriPenilaianController::class, 'indexPresentasi'])->name('penilaian.daftar.presentasi');
 
         Route::get('/penilaian/proposal/{id}', [JuriPenilaianController::class, 'proposalForm'])->name('penilaian.proposal');
         Route::post('/penilaian/proposal/{id}/draft', [JuriPenilaianController::class, 'proposalDraft'])->name('penilaian.proposal.draft');

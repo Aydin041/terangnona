@@ -28,5 +28,6 @@
 
         <button type="submit">Reset Password</button>
     </form>
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

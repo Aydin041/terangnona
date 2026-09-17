@@ -6,6 +6,7 @@
 </head>
 <body>
     <h1>Ajukan Koreksi Nilai Presentasi</h1>
+    <p style="background: #eee; padding: 8px;">Login sebagai Juri: <strong>{{ Auth::guard('juri')->user()->nama }}</strong> ({{ Auth::guard('juri')->user()->email }})</p>
     <p>{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</p>
     <p><a href="{{ route('juri.penilaian.presentasi', $pengajuan->id) }}">← Kembali ke penilaian</a></p>
 
@@ -58,5 +59,6 @@
 
         <button type="submit">Kirim Permintaan ke Admin</button>
     </form>
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

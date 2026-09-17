@@ -63,5 +63,6 @@
 
         <button type="submit">Lanjut ke Langkah 2</button>
     </form>
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

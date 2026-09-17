@@ -8,7 +8,7 @@
     <p style="background: #eee; padding: 8px;">Login sebagai Juri: <strong>{{ $juri->nama }}</strong> ({{ $juri->email }})</p>
 
     <h1>Nilai Proposal — {{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</h1>
-    <p><a href="{{ route('juri.penilaian.index') }}">← Kembali ke daftar</a></p>
+    <p><a href="{{ route('juri.penilaian.daftar.proposal') }}">← Kembali ke daftar</a></p>
 
     @if ($errors->any())
         <div style="color: red;">
@@ -122,5 +122,6 @@
             <button type="submit" formaction="{{ route('juri.penilaian.proposal.perbaikan', $pengajuan->id) }}">Konfirmasi Perbaikan</button>
         @endif
     </form>
+    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>
