@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\AkunController as AdminAkunController;
 
 Route::get('/', function () {
     return view('landing');
-});
+})->name('landing');
 
 // Peserta
 Route::prefix('peserta')->name('peserta.')->group(function () {
