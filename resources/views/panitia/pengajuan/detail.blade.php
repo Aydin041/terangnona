@@ -2,84 +2,112 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Detail Pengajuan - Panitia - TERANG NONA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Detail Pengajuan</h1>
-    <p><a href="{{ route('panitia.pengajuan.index') }}">← Kembali ke daftar</a></p>
+<body class="bg-stone-50 min-h-screen">
 
-    @if ($errors->any())
-        <div style="color: red; border: 1px solid red; padding: 10px;">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+    <nav class="bg-white border-b border-stone-200">
+        <div class="max-w-2xl mx-auto px-4 py-3">
+            <a href="{{ route('landing') }}">
+                <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
+            </a>
         </div>
-    @endif
+    </nav>
 
-    <h3>Profil Inovasi</h3>
-    <p><strong>Nama Inovasi:</strong> {{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</p>
-    <p><strong>Kategori:</strong> {{ $pengajuan->kategori->nama }}</p>
-    <p><strong>Bentuk Inovasi:</strong> {{ $pengajuan->bentuk_inovasi }}</p>
-    <p><strong>Status Saat Ini:</strong> {{ $pengajuan->status }}</p>
-    <p><strong>Peserta:</strong> {{ $pengajuan->peserta->nama }} ({{ $pengajuan->peserta->email }})</p>
+    <main class="max-w-2xl mx-auto px-4 py-8">
+        <p class="mb-3"><a href="{{ route('panitia.pengajuan.index') }}" class="text-sm text-slate-500 hover:text-slate-900">← Kembali ke daftar</a></p>
+        <h1 class="text-2xl font-bold text-slate-900 mb-5">Detail Pengajuan</h1>
 
-    <h3>Ketua & Anggota</h3>
-    <ul>
-        @foreach ($pengajuan->anggotaKelompok as $anggota)
-            <li>
-                {{ $anggota->nama }} ({{ $anggota->kontak }})
-                @if ($anggota->adalah_ketua) <strong>— Ketua</strong> @endif
-            </li>
-        @endforeach
-    </ul>
+        @if ($errors->any())
+            <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm p-3">
+                <ul class="list-disc list-inside space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-    @if (count($peringatanDuplikasi) > 0)
-        <div style="background: yellow; padding: 10px;">
-            <strong>⚠ Peringatan: Ditemukan kemiripan nama dengan pengajuan lain (cek manual untuk BR01):</strong>
-            <ul>
-                @foreach ($peringatanDuplikasi as $pengajuanId => $info)
-                    <li>{{ $info }}</li>
-                @endforeach
-            </ul>
+        <div class="space-y-4">
+            <div class="bg-white border border-stone-200 rounded-xl p-6">
+                <h3 class="font-semibold text-slate-900 mb-3">Profil Inovasi</h3>
+                <dl class="text-sm space-y-1.5">
+                    <div class="flex gap-2"><dt class="text-slate-500 w-40 shrink-0">Nama Inovasi</dt><dd class="text-slate-800">{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</dd></div>
+                    <div class="flex gap-2"><dt class="text-slate-500 w-40 shrink-0">Kategori</dt><dd class="text-slate-800">{{ $pengajuan->kategori->nama }}</dd></div>
+                    <div class="flex gap-2"><dt class="text-slate-500 w-40 shrink-0">Bentuk Inovasi</dt><dd class="text-slate-800">{{ $pengajuan->bentuk_inovasi }}</dd></div>
+                    <div class="flex gap-2"><dt class="text-slate-500 w-40 shrink-0">Status Saat Ini</dt><dd class="text-slate-800">{{ $pengajuan->status }}</dd></div>
+                    <div class="flex gap-2"><dt class="text-slate-500 w-40 shrink-0">Peserta</dt><dd class="text-slate-800">{{ $pengajuan->peserta->nama }} ({{ $pengajuan->peserta->email }})</dd></div>
+                </dl>
+            </div>
+
+            <div class="bg-white border border-stone-200 rounded-xl p-6">
+                <h3 class="font-semibold text-slate-900 mb-3">Ketua & Anggota</h3>
+                <ul class="text-sm text-slate-700 space-y-1">
+                    @foreach ($pengajuan->anggotaKelompok as $anggota)
+                        <li>{{ $anggota->nama }} ({{ $anggota->kontak }}) @if ($anggota->adalah_ketua) <span class="text-amber-600 font-medium">— Ketua</span> @endif</li>
+                    @endforeach
+                </ul>
+            </div>
+
+            @if (count($peringatanDuplikasi) > 0)
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-4 text-sm text-amber-800">
+                    <strong>⚠ Peringatan: Ditemukan kemiripan nama dengan pengajuan lain (cek manual untuk BR01):</strong>
+                    <ul class="list-disc list-inside mt-1">
+                        @foreach ($peringatanDuplikasi as $pengajuanId => $info)
+                            <li>{{ $info }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <div class="bg-white border border-stone-200 rounded-xl p-6">
+                <h3 class="font-semibold text-slate-900 mb-3">Dokumen</h3>
+                <ul class="text-sm text-slate-700 space-y-1">
+                    @foreach ($pengajuan->dokumen as $dok)
+                        <li>
+                            <strong class="text-slate-900">{{ $dok->jenis_dokumen }}:</strong>
+                            @if ($dok->jenis_dokumen === 'video_link')
+                                <a href="{{ $dok->file_path }}" target="_blank" class="text-sky-700 underline break-all">{{ $dok->file_path }}</a>
+                            @else
+                                {{ $dok->nama_asli }}
+                                <a href="{{ asset('storage/' . $dok->file_path) }}" target="_blank" class="text-sky-700 underline">Lihat</a>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
         </div>
-    @endif
 
-    <h3>Dokumen</h3>
-    <ul>
-        @foreach ($pengajuan->dokumen as $dok)
-            <li>
-                {{ $dok->jenis_dokumen }}:
-                @if ($dok->jenis_dokumen === 'video_link')
-                    <a href="{{ $dok->file_path }}" target="_blank">{{ $dok->file_path }}</a>
-                @else
-                    {{ $dok->nama_asli }}
-                    <a href="{{ asset('storage/' . $dok->file_path) }}" target="_blank">Lihat</a>
-                @endif
-            </li>
-        @endforeach
-    </ul>
+        @if ($pengajuan->status === 'menunggu_pemeriksaan')
+            <div class="bg-white border border-stone-200 rounded-xl p-6 mt-4">
+                <h3 class="font-semibold text-slate-900 mb-4">Aksi</h3>
 
-    <hr>
+                <form method="POST" action="{{ route('panitia.pengajuan.setujui', $pengajuan->id) }}" class="mb-5">
+                    @csrf
+                    <button type="submit"
+                        class="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-5 py-2.5 transition-colors">
+                        Setujui
+                    </button>
+                </form>
 
-    @if ($pengajuan->status === 'menunggu_pemeriksaan')
-        <h3>Aksi</h3>
+                <form method="POST" action="{{ route('panitia.pengajuan.kembalikan', $pengajuan->id) }}">
+                    @csrf
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Alasan pengembalian (wajib diisi kalau mau kembalikan)</label>
+                    <textarea name="catatan_panitia" rows="3"
+                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">{{ old('catatan_panitia') }}</textarea>
+                    <button type="submit"
+                        class="mt-3 border border-red-300 text-red-700 hover:bg-red-50 font-semibold rounded-lg px-5 py-2.5 transition-colors">
+                        Kembalikan ke Peserta
+                    </button>
+                </form>
+            </div>
+        @else
+            <p class="mt-4 text-sm text-slate-500 italic">Pengajuan ini sudah diproses (status: {{ $pengajuan->status }}), tidak ada aksi tersedia.</p>
+        @endif
+    </main>
 
-        <form method="POST" action="{{ route('panitia.pengajuan.setujui', $pengajuan->id) }}" style="display:inline;">
-            @csrf
-            <button type="submit">Setujui</button>
-        </form>
-
-        <form method="POST" action="{{ route('panitia.pengajuan.kembalikan', $pengajuan->id) }}" style="margin-top: 10px;">
-            @csrf
-            <label>Alasan pengembalian (wajib diisi kalau mau kembalikan)</label><br>
-            <textarea name="catatan_panitia" rows="3" cols="50">{{ old('catatan_panitia') }}</textarea><br>
-            <button type="submit">Kembalikan ke Peserta</button>
-        </form>
-    @else
-        <p><em>Pengajuan ini sudah diproses (status: {{ $pengajuan->status }}), tidak ada aksi tersedia.</em></p>
-    @endif
     <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>
