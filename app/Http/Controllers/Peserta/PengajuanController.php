@@ -70,9 +70,14 @@ class PengajuanController extends Controller
         $validated = $request->validate([
             'nama_inovasi' => 'required|string|max:255',
             'akronim' => 'required|string|max:50',
+            'deskripsi' => 'required|string|max:2000',
+            'jenis_inovasi' => 'required|in:digital,non_digital',
             'kategori_id' => 'required|exists:kategori,id',
             'unit_kerja_id' => 'required|exists:unit_kerja,id',
             'tahun_implementasi' => 'required|integer|min:2020|max:2030',
+            'nama_narahubung' => 'required|string|max:255',
+            'kontak_narahubung' => 'required|string|max:50',
+            'email_narahubung' => 'required|email|max:255',
         ]);
 
         $peserta = Auth::guard('peserta')->user();
@@ -90,14 +95,39 @@ class PengajuanController extends Controller
                 'unit_kerja_id' => $validated['unit_kerja_id'],
                 'nama_inovasi' => $validated['nama_inovasi'],
                 'akronim' => $validated['akronim'],
+                'deskripsi' => $validated['deskripsi'],
+                'jenis_inovasi' => $validated['jenis_inovasi'],
+                'nama_narahubung' => $validated['nama_narahubung'],
+                'kontak_narahubung' => $validated['kontak_narahubung'],
+                'email_narahubung' => $validated['email_narahubung'],
                 'tahun_implementasi' => $validated['tahun_implementasi'],
                 'bentuk_inovasi' => 'belum_dipilih',
-                'deskripsi' => '',
                 'status' => 'draft',
             ]);
         }
 
         return redirect()->route('peserta.pengajuan.step2', $pengajuan->id);
+    }
+
+    public function hapus($pengajuanId)
+    {
+        $peserta = Auth::guard('peserta')->user();
+        $pengajuan = Pengajuan::where('id', $pengajuanId)
+            ->where('peserta_id', $peserta->id)
+            ->firstOrFail();
+
+        if ($pengajuan->status !== 'draft') {
+            return back()->withErrors([
+                'umum' => 'Hanya pengajuan berstatus draft yang bisa dihapus. Pengajuan ini statusnya: ' . $pengajuan->status . '.',
+            ]);
+        }
+
+        $pengajuan->anggotaKelompok()->delete();
+        $pengajuan->dokumen()->delete();
+        $pengajuan->isianProposal()->delete();
+        $pengajuan->delete();
+
+        return redirect()->route('peserta.dashboard')->with('sukses', 'Pengajuan draft berhasil dihapus.');
     }
 
     public function step2Form($pengajuanId)

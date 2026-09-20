@@ -10,7 +10,7 @@
 
     <nav class="bg-white border-b border-stone-200">
         <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
-            <a href="{{ route('landing') }}">
+            <a href="{{ route('admin.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
             <form method="POST" action="{{ route('admin.logout') }}">

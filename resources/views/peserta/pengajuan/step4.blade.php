@@ -10,13 +10,14 @@
 
     <nav class="bg-white border-b border-stone-200">
         <div class="max-w-2xl mx-auto px-4 py-3">
-            <a href="{{ route('landing') }}">
+            <a href="{{ route('peserta.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
         </div>
     </nav>
 
     <main class="max-w-2xl mx-auto px-4 py-8">
+        <p class="mb-3"><a href="{{ route('peserta.pengajuan.step3', $pengajuan->id) }}" class="text-sm text-slate-500 hover:text-slate-900">← Kembali ke Langkah 3</a></p>
         <div class="flex items-center gap-2 mb-2">
             @for ($i = 1; $i <= 5; $i++)
                 <div class="h-1.5 flex-1 rounded-full {{ $i <= 4 ? 'bg-amber-500' : 'bg-stone-200' }}"></div>

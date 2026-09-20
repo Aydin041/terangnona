@@ -59,6 +59,11 @@ class PengajuanController extends Controller
         $panitia = Auth::guard('panitia')->user();
         $pengajuan = Pengajuan::findOrFail($id);
 
+        if ($pengajuan->status !== 'menunggu_pemeriksaan') {
+            return redirect()->route('panitia.pengajuan.detail', $pengajuan->id)
+                ->withErrors(['umum' => 'Pengajuan ini sudah diproses sebelumnya (status saat ini: ' . $pengajuan->status . '), tidak bisa disetujui lagi.']);
+        }
+
         $pengajuan->update(['status' => 'disetujui']);
 
         RiwayatStatus::create([
@@ -80,6 +85,11 @@ class PengajuanController extends Controller
 
         $panitia = Auth::guard('panitia')->user();
         $pengajuan = Pengajuan::findOrFail($id);
+
+        if ($pengajuan->status !== 'menunggu_pemeriksaan') {
+            return redirect()->route('panitia.pengajuan.detail', $pengajuan->id)
+                ->withErrors(['umum' => 'Pengajuan ini sudah diproses sebelumnya (status saat ini: ' . $pengajuan->status . '), tidak bisa dikembalikan lagi.']);
+        }
 
         $pengajuan->update(['status' => 'perlu_perbaikan']);
 

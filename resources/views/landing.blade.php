@@ -9,8 +9,26 @@
 <body class="bg-stone-50 text-slate-800">
 
     <header class="bg-slate-900">
-        <div class="max-w-4xl mx-auto px-6 py-16 text-center">
-            <img src="{{ asset('images/logo-terang-nona-emas.png') }}" alt="TERANG NONA 2026" class="h-52 mx-auto mb-2">
+        <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+            <img src="{{ asset('images/logo-terang-nona-emas.png') }}" alt="TERANG NONA" class="h-10">
+
+            <div class="relative group">
+                <button type="button"
+                    class="flex items-center gap-1 text-sm text-white/90 hover:text-white border border-slate-600 hover:border-slate-400 rounded-lg px-4 py-2 transition-colors">
+                    Login
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </button>
+                <div class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-stone-200 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-opacity z-20">
+                    <a href="{{ route('peserta.login') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-stone-100">Peserta</a>
+                    <a href="{{ route('panitia.login') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-stone-100">Panitia</a>
+                    <a href="{{ route('juri.login') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-stone-100">Juri</a>
+                    <a href="{{ route('admin.login') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-stone-100">Admin</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-6 pb-16 pt-4 text-center">
+            <img src="{{ asset('images/logo-terang-nona-emas.png') }}" alt="TERANG NONA 2026" class="h-44 mx-auto mb-2">
             <p class="text-slate-300 text-lg max-w-xl mx-auto mt-4">
                 <!-- GANTI TEKS INI: tagline/nama panjang kompetisi sesuai dokumen resmi -->
                 Kompetisi Inovasi Disnakertrans Provinsi Jawa Tengah
@@ -19,10 +37,6 @@
                 <a href="{{ route('peserta.register') }}"
                     class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold rounded-lg px-5 py-2.5 transition-colors">
                     Daftar sebagai Peserta
-                </a>
-                <a href="{{ route('peserta.login') }}"
-                    class="border border-slate-600 hover:border-slate-400 text-white rounded-lg px-5 py-2.5 transition-colors">
-                    Login Peserta
                 </a>
             </div>
         </div>
@@ -98,20 +112,6 @@
         </section>
 
         <section class="py-14 border-b border-stone-200">
-            <h2 class="text-2xl font-bold text-slate-900 mb-5">Login Lainnya</h2>
-            <div class="flex flex-wrap gap-3">
-                <a href="{{ route('juri.login') }}"
-                    class="bg-white border border-stone-300 hover:border-slate-400 rounded-lg px-5 py-2.5 text-slate-800 transition-colors">
-                    Login Juri
-                </a>
-                <a href="{{ route('panitia.login') }}"
-                    class="bg-white border border-stone-300 hover:border-slate-400 rounded-lg px-5 py-2.5 text-slate-800 transition-colors">
-                    Login Panitia
-                </a>
-            </div>
-        </section>
-
-        <section class="py-14">
             <h2 class="text-2xl font-bold text-slate-900 mb-3">Kontak</h2>
             <p class="text-slate-600">
                 <!-- GANTI TEKS INI: kontak resmi Panitia (email/WA/telepon) -->

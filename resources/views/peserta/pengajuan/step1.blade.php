@@ -10,13 +10,14 @@
 
     <nav class="bg-white border-b border-stone-200">
         <div class="max-w-2xl mx-auto px-4 py-3">
-            <a href="{{ route('landing') }}">
+            <a href="{{ route('peserta.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
         </div>
     </nav>
 
     <main class="max-w-2xl mx-auto px-4 py-8">
+        <p class="mb-3"><a href="{{ route('peserta.dashboard') }}" class="text-sm text-slate-500 hover:text-slate-900">← Kembali ke Dashboard</a></p>
         <div class="flex items-center gap-2 mb-2">
             @for ($i = 1; $i <= 5; $i++)
                 <div class="h-1.5 flex-1 rounded-full {{ $i <= 1 ? 'bg-amber-500' : 'bg-stone-200' }}"></div>
@@ -55,6 +56,28 @@
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi Singkat (Abstrak)</label>
+                    <textarea name="deskripsi" rows="4" required
+                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">{{ old('deskripsi', $pengajuan->deskripsi ?? '') }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Inovasi</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="jenis_inovasi" value="digital" class="accent-amber-500" required
+                                {{ old('jenis_inovasi', $pengajuan->jenis_inovasi ?? '') === 'digital' ? 'checked' : '' }}>
+                            Digital
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="radio" name="jenis_inovasi" value="non_digital" class="accent-amber-500" required
+                                {{ old('jenis_inovasi', $pengajuan->jenis_inovasi ?? '') === 'non_digital' ? 'checked' : '' }}>
+                            Non-Digital
+                        </label>
+                    </div>
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
                     <select name="kategori_id" required
                         class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
@@ -85,6 +108,22 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Tahun Implementasi/Rencana</label>
                     <input type="number" name="tahun_implementasi" value="{{ old('tahun_implementasi', $pengajuan->tahun_implementasi ?? 2026) }}" required
+                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                </div>
+
+                <div class="pt-2 border-t border-stone-200">
+                    <p class="font-medium text-slate-900 mb-3">Nama Inovator/Narahubung</p>
+
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Nama</label>
+                    <input type="text" name="nama_narahubung" value="{{ old('nama_narahubung', $pengajuan->nama_narahubung ?? '') }}" required
+                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 mb-3">
+
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Kontak (No. HP/WA)</label>
+                    <input type="text" name="kontak_narahubung" value="{{ old('kontak_narahubung', $pengajuan->kontak_narahubung ?? '') }}" required
+                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 mb-3">
+
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                    <input type="email" name="email_narahubung" value="{{ old('email_narahubung', $pengajuan->email_narahubung ?? '') }}" required
                         class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                 </div>
 

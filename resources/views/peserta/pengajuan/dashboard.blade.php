@@ -10,7 +10,7 @@
 
     <nav class="bg-white border-b border-stone-200">
         <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="{{ route('landing') }}">
+            <a href="{{ route('peserta.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
             <form method="POST" action="{{ route('peserta.logout') }}">
@@ -22,6 +22,16 @@
 
     <main class="max-w-3xl mx-auto px-4 py-8">
         <h1 class="text-2xl font-bold text-slate-900 mb-5">Dashboard Saya</h1>
+
+        @if ($errors->any())
+            <div class="mb-5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm p-3">
+                <ul class="list-disc list-inside space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         @if (session('sukses'))
             <div class="mb-5 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm p-3">
@@ -51,11 +61,19 @@
                         </div>
 
                         @if ($item->status === 'draft')
-                            <div class="mt-3">
+                            <div class="mt-3 flex gap-2">
                                 <a href="{{ route('peserta.pengajuan.step1.edit', $item->id) }}"
                                     class="inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm font-semibold rounded-lg px-4 py-2 transition-colors">
                                     Lanjutkan Pengajuan
                                 </a>
+                                <form method="POST" action="{{ route('peserta.pengajuan.hapus', $item->id) }}"
+                                    onsubmit="return confirm('Yakin mau hapus pengajuan draft ini? Tidak bisa dikembalikan.');">
+                                    @csrf
+                                    <button type="submit"
+                                        class="border border-red-300 text-red-700 hover:bg-red-50 text-sm font-semibold rounded-lg px-4 py-2 transition-colors">
+                                        Hapus
+                                    </button>
+                                </form>
                             </div>
                         @endif
 

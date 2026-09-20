@@ -32,6 +32,7 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
         Route::post('/pengajuan/step1', [PesertaPengajuanController::class, 'step1Store'])->name('pengajuan.step1.submit');
         Route::get('/pengajuan/step1/edit/{id}', [PesertaPengajuanController::class, 'step1Form'])->name('pengajuan.step1.edit');
         Route::post('/pengajuan/step1/edit/{id}', [PesertaPengajuanController::class, 'step1Store'])->name('pengajuan.step1.update');
+        Route::post('/pengajuan/{id}/hapus', [PesertaPengajuanController::class, 'hapus'])->name('pengajuan.hapus');
 
         Route::get('/pengajuan/step2/{id}', [PesertaPengajuanController::class, 'step2Form'])->name('pengajuan.step2');
         Route::post('/pengajuan/step2/{id}', [PesertaPengajuanController::class, 'step2Store'])->name('pengajuan.step2.submit');
