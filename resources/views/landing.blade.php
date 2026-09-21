@@ -55,7 +55,7 @@
     <main class="max-w-4xl mx-auto px-6">
 
         <section class="py-14 border-b border-stone-200">
-            <h2 class="text-2xl font-bold text-slate-900 mb-3">Tentang TERANG NONA</h2>
+            <h2 class="text-2xl font-bold text-slate-900 mb-3">Tentang TERANG NONA 2026</h2>
             <p class="text-slate-600 leading-relaxed max-w-2xl">
                 <!-- GANTI TEKS INI: deskripsi/latar belakang kompetisi, 2-3 paragraf,
                      ambil dari dokumen panduan resmi -->
@@ -102,30 +102,11 @@
         </section>
 
         <section class="py-14 border-b border-stone-200">
-            <h2 class="text-2xl font-bold text-slate-900 mb-5">Kategori Inovasi</h2>
-            <!-- Sudah sesuai bentuk_inovasi yang dipakai di sistem, tidak perlu diganti
-                 kecuali istilahnya mau disesuaikan dengan dokumen resmi -->
-            <div class="grid sm:grid-cols-3 gap-4">
-                <div class="bg-white border border-stone-200 rounded-xl p-5">
-                    <h3 class="font-semibold text-slate-900 mb-1">Eksisting</h3>
-                    <p class="text-sm text-slate-500">Inovasi yang sudah berjalan</p>
-                </div>
-                <div class="bg-white border border-stone-200 rounded-xl p-5">
-                    <h3 class="font-semibold text-slate-900 mb-1">Pengembangan</h3>
-                    <p class="text-sm text-slate-500">Inovasi yang sedang dikembangkan</p>
-                </div>
-                <div class="bg-white border border-stone-200 rounded-xl p-5">
-                    <h3 class="font-semibold text-slate-900 mb-1">Rancangan Inovasi</h3>
-                    <p class="text-sm text-slate-500">Ide/rancangan baru</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-14 border-b border-stone-200">
             <h2 class="text-2xl font-bold text-slate-900 mb-3">Kontak</h2>
             <p class="text-slate-600">
                 <!-- GANTI TEKS INI: kontak resmi Panitia (email/WA/telepon) -->
-                [Kontak Panitia belum diisi. Ganti dengan email/nomor WhatsApp resmi.]
+                Phone : (024) 8311174 <br>
+                Email  : setda@jatengprov.go.id
             </p>
         </section>
 

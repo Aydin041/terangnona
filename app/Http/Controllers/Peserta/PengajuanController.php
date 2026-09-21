@@ -75,9 +75,6 @@ class PengajuanController extends Controller
             'kategori_id' => 'required|exists:kategori,id',
             'unit_kerja_id' => 'required|exists:unit_kerja,id',
             'tahun_implementasi' => 'required|integer|min:2020|max:2030',
-            'nama_narahubung' => 'required|string|max:255',
-            'kontak_narahubung' => 'required|string|max:50',
-            'email_narahubung' => 'required|email|max:255',
         ]);
 
         $peserta = Auth::guard('peserta')->user();
@@ -97,9 +94,6 @@ class PengajuanController extends Controller
                 'akronim' => $validated['akronim'],
                 'deskripsi' => $validated['deskripsi'],
                 'jenis_inovasi' => $validated['jenis_inovasi'],
-                'nama_narahubung' => $validated['nama_narahubung'],
-                'kontak_narahubung' => $validated['kontak_narahubung'],
-                'email_narahubung' => $validated['email_narahubung'],
                 'tahun_implementasi' => $validated['tahun_implementasi'],
                 'bentuk_inovasi' => 'belum_dipilih',
                 'status' => 'draft',

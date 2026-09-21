@@ -17,7 +17,7 @@
         </div>
 
         <div class="bg-white border border-stone-200 border-t-4 border-t-amber-500 rounded-xl p-6 shadow-sm">
-            <h1 class="text-xl font-bold text-slate-900 mb-5">Registrasi Peserta</h1>
+            <h1 class="text-xl font-bold text-slate-900 mb-5">Registrasi Akun</h1>
 
             @if ($errors->any())
                 <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm p-3">

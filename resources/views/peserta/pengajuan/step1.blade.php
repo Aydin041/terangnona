@@ -111,22 +111,6 @@
                         class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                 </div>
 
-                <div class="pt-2 border-t border-stone-200">
-                    <p class="font-medium text-slate-900 mb-3">Nama Inovator/Narahubung</p>
-
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Nama</label>
-                    <input type="text" name="nama_narahubung" value="{{ old('nama_narahubung', $pengajuan->nama_narahubung ?? '') }}" required
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 mb-3">
-
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Kontak (No. HP/WA)</label>
-                    <input type="text" name="kontak_narahubung" value="{{ old('kontak_narahubung', $pengajuan->kontak_narahubung ?? '') }}" required
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 mb-3">
-
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                    <input type="email" name="email_narahubung" value="{{ old('email_narahubung', $pengajuan->email_narahubung ?? '') }}" required
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-                </div>
-
                 <button type="submit"
                     class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg py-2.5 transition-colors">
                     Lanjut ke Langkah 2
