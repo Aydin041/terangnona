@@ -25,6 +25,7 @@
         <p class="mb-5 flex gap-3 text-sm">
             <a href="{{ route('admin.akun.panitia.index') }}" class="text-sky-700 hover:underline">Kelola Akun Panitia</a>
             <a href="{{ route('admin.akun.juri.index') }}" class="text-sky-700 hover:underline">Kelola Akun Juri</a>
+            <a href="{{ route('admin.akun.peserta.index') }}" class="text-sky-700 hover:underline">Kelola Akun Peserta</a>
         </p>
 
         @if (session('sukses'))

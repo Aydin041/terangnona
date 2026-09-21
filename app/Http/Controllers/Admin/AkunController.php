@@ -4,7 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Juri;
+use App\Models\NilaiAspekPresentasi;
+use App\Models\NilaiKomponenProposal;
 use App\Models\Panitia;
+use App\Models\Pengajuan;
+use App\Models\Peserta;
+use App\Models\PermintaanBukaKunci;
+use App\Models\RiwayatStatus;
+use App\Models\SubmissionPresentasi;
+use App\Models\SubmissionProposal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -67,6 +75,21 @@ class AkunController extends Controller
             ->with('sukses', "Password untuk {$panitia->nama} ({$panitia->email}) berhasil direset. Password baru: {$passwordBaru} (catat sekarang, tidak akan ditampilkan lagi)");
     }
 
+    public function panitiaHapus($id)
+    {
+        $panitia = Panitia::findOrFail($id);
+
+        if (RiwayatStatus::where('panitia_id', $id)->exists()) {
+            return back()->withErrors([
+                'umum' => "Akun {$panitia->nama} tidak bisa dihapus karena sudah pernah memproses pengajuan (riwayat status tercatat).",
+            ]);
+        }
+
+        $panitia->delete();
+
+        return redirect()->route('admin.akun.panitia.index')->with('sukses', "Akun Panitia {$panitia->nama} berhasil dihapus.");
+    }
+
     public function juriIndex()
     {
         $daftarJuri = Juri::orderBy('nama')->get();
@@ -121,5 +144,57 @@ class AkunController extends Controller
         return redirect()
             ->route('admin.akun.juri.index')
             ->with('sukses', "Password untuk {$juri->nama} ({$juri->email}) berhasil direset. Password baru: {$passwordBaru} (catat sekarang, tidak akan ditampilkan lagi)");
+    }
+
+    public function juriHapus($id)
+    {
+        $juri = Juri::findOrFail($id);
+
+        $sudahMenilai = SubmissionProposal::where('juri_id', $id)->where('status', 'submitted')->exists()
+            || SubmissionPresentasi::where('juri_id', $id)->where('status', 'submitted')->exists();
+
+        if ($sudahMenilai) {
+            return back()->withErrors([
+                'umum' => "Akun {$juri->nama} tidak bisa dihapus karena sudah pernah submit penilaian (proposal atau presentasi).",
+            ]);
+        }
+
+        // Bersihkan baris draft yang belum pernah disubmit, supaya tidak kena constraint foreign key.
+        $submissionProposalIds = SubmissionProposal::where('juri_id', $id)->pluck('id');
+        NilaiKomponenProposal::whereIn('submission_id', $submissionProposalIds)->delete();
+        SubmissionProposal::where('juri_id', $id)->delete();
+
+        $submissionPresentasiIds = SubmissionPresentasi::where('juri_id', $id)->pluck('id');
+        NilaiAspekPresentasi::whereIn('submission_id', $submissionPresentasiIds)->delete();
+        SubmissionPresentasi::where('juri_id', $id)->delete();
+
+        PermintaanBukaKunci::where('juri_id', $id)->delete();
+
+        $juri->delete();
+
+        return redirect()->route('admin.akun.juri.index')->with('sukses', "Akun Juri {$juri->nama} berhasil dihapus.");
+    }
+
+    public function pesertaIndex()
+    {
+        $daftarPeserta = Peserta::orderBy('nama')->get();
+        return view('admin.akun.peserta_index', compact('daftarPeserta'));
+    }
+
+    public function pesertaHapus($id)
+    {
+        $peserta = Peserta::findOrFail($id);
+
+        $jumlahPengajuan = Pengajuan::where('peserta_id', $id)->count();
+
+        if ($jumlahPengajuan > 0) {
+            return back()->withErrors([
+                'umum' => "Akun {$peserta->nama} tidak bisa dihapus karena sudah punya {$jumlahPengajuan} pengajuan. Kalau semuanya masih berstatus draft, peserta bisa hapus sendiri lewat dashboard-nya dulu.",
+            ]);
+        }
+
+        $peserta->delete();
+
+        return redirect()->route('admin.akun.peserta.index')->with('sukses', "Akun Peserta {$peserta->nama} berhasil dihapus.");
     }
 }

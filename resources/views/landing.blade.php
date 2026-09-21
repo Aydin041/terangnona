@@ -12,13 +12,13 @@
         <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
             <img src="{{ asset('images/logo-terang-nona-emas.png') }}" alt="TERANG NONA" class="h-10">
 
-            <div class="relative group">
-                <button type="button"
+            <div class="relative">
+                <button type="button" onclick="document.getElementById('menu-login').classList.toggle('hidden')"
                     class="flex items-center gap-1 text-sm text-white/90 hover:text-white border border-slate-600 hover:border-slate-400 rounded-lg px-4 py-2 transition-colors">
                     Login
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-stone-200 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-opacity z-20">
+                <div id="menu-login" class="hidden absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-stone-200 py-1 z-20">
                     <a href="{{ route('peserta.login') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-stone-100">Peserta</a>
                     <a href="{{ route('panitia.login') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-stone-100">Panitia</a>
                     <a href="{{ route('juri.login') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-stone-100">Juri</a>
@@ -26,6 +26,16 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            document.addEventListener('click', function (e) {
+                const menu = document.getElementById('menu-login');
+                const tombol = e.target.closest('button');
+                if (!menu.contains(e.target) && !(tombol && tombol.getAttribute('onclick'))) {
+                    menu.classList.add('hidden');
+                }
+            });
+        </script>
 
         <div class="max-w-4xl mx-auto px-6 pb-16 pt-4 text-center">
             <img src="{{ asset('images/logo-terang-nona-emas.png') }}" alt="TERANG NONA 2026" class="h-44 mx-auto mb-2">
