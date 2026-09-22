@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AnggotaKelompok;
 use App\Models\Pengajuan;
 use App\Models\RiwayatStatus;
-use App\Services\RankingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -104,25 +103,83 @@ class PengajuanController extends Controller
         return redirect()->route('panitia.pengajuan.index')->with('sukses', 'Pengajuan dikembalikan ke peserta.');
     }
 
-    public function presentasiLinkStore(Request $request, $id)
+    public function tolak(Request $request, $id)
     {
         $validated = $request->validate([
-            'link_presentasi' => 'nullable|url',
+            'catatan_panitia' => 'required|string|max:1000',
         ]);
 
+        $panitia = Auth::guard('panitia')->user();
         $pengajuan = Pengajuan::findOrFail($id);
 
-        $rankingService = new RankingService();
-        $idLolos5Besar = $rankingService->idPengajuanLolos5Besar();
-
-        if (!in_array($pengajuan->id, $idLolos5Besar)) {
-            return back()->withErrors([
-                'link_presentasi' => 'Pengajuan ini belum lolos 5 besar, link presentasi belum bisa diisi.',
-            ]);
+        if ($pengajuan->status !== 'menunggu_pemeriksaan') {
+            return redirect()->route('panitia.pengajuan.detail', $pengajuan->id)
+                ->withErrors(['umum' => 'Pengajuan ini sudah diproses sebelumnya (status saat ini: ' . $pengajuan->status . '), tidak bisa ditolak lagi.']);
         }
 
-        $pengajuan->update(['link_presentasi' => $validated['link_presentasi']]);
+        $pengajuan->update(['status' => 'ditolak']);
 
-        return back()->with('sukses', 'Link presentasi berhasil disimpan.');
+        RiwayatStatus::create([
+            'pengajuan_id' => $pengajuan->id,
+            'status' => 'ditolak',
+            'catatan_panitia' => $validated['catatan_panitia'],
+            'panitia_id' => $panitia->id,
+            'changed_at' => now(),
+        ]);
+
+        return redirect()->route('panitia.pengajuan.index')->with('sukses', 'Pengajuan ditolak.');
+    }
+
+    public function exportNilaiProposal()
+    {
+        $rows = \App\Models\NilaiKomponenProposal::with(['submission.pengajuan.kategori', 'submission.juri', 'komponen'])
+            ->whereNotNull('nilai')
+            ->get();
+
+        return response()->streamDownload(function () use ($rows) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['Nama Inovasi', 'Akronim', 'Kategori', 'Nama Juri', 'Komponen', 'Bobot (%)', 'Nilai', 'Komentar']);
+            foreach ($rows as $row) {
+                $pengajuan = $row->submission->pengajuan;
+                fputcsv($out, [
+                    $pengajuan->nama_inovasi,
+                    $pengajuan->akronim,
+                    $pengajuan->kategori->nama ?? '-',
+                    $row->submission->juri->nama,
+                    $row->komponen->nama,
+                    $row->komponen->bobot,
+                    $row->nilai,
+                    $row->komentar,
+                ]);
+            }
+            fclose($out);
+        }, 'nilai-proposal-terang-nona.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function exportNilaiPresentasi()
+    {
+        $rows = \App\Models\NilaiAspekPresentasi::with(['submission.pengajuan.kategori', 'submission.juri'])
+            ->whereNotNull('nilai')
+            ->get();
+
+        $labelAspek = \App\Http\Controllers\Juri\PenilaianController::ASPEK_PRESENTASI;
+
+        return response()->streamDownload(function () use ($rows, $labelAspek) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['Nama Inovasi', 'Akronim', 'Kategori', 'Nama Juri', 'Aspek', 'Nilai', 'Catatan']);
+            foreach ($rows as $row) {
+                $pengajuan = $row->submission->pengajuan;
+                fputcsv($out, [
+                    $pengajuan->nama_inovasi,
+                    $pengajuan->akronim,
+                    $pengajuan->kategori->nama ?? '-',
+                    $row->submission->juri->nama,
+                    $labelAspek[$row->aspek] ?? $row->aspek,
+                    $row->nilai,
+                    $row->catatan,
+                ]);
+            }
+            fclose($out);
+        }, 'nilai-presentasi-terang-nona.csv', ['Content-Type' => 'text/csv']);
     }
 }

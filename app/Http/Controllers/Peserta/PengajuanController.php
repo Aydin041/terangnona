@@ -46,7 +46,9 @@ class PengajuanController extends Controller
             }
         }
 
-        return view('peserta.pengajuan.dashboard', compact('daftarPengajuan', 'catatanPengembalian'));
+        $sudahLewatDeadline = \App\Models\Pengaturan::sudahLewatDeadline();
+
+        return view('peserta.pengajuan.dashboard', compact('daftarPengajuan', 'catatanPengembalian', 'sudahLewatDeadline'));
     }
 
     public function step1Form($pengajuanId = null)
@@ -76,6 +78,12 @@ class PengajuanController extends Controller
             'unit_kerja_id' => 'required|exists:unit_kerja,id',
             'tahun_implementasi' => 'required|integer|min:2020|max:2030',
         ]);
+
+        if (!$pengajuanId && \App\Models\Pengaturan::sudahLewatDeadline()) {
+            return back()->withErrors([
+                'umum' => 'Sudah lewat deadline pengajuan. Tidak bisa membuat pengajuan baru lagi.',
+            ])->withInput();
+        }
 
         $peserta = Auth::guard('peserta')->user();
 

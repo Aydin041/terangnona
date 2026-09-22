@@ -13,6 +13,7 @@
             <a href="{{ route('admin.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
+            <span class="text-sm text-slate-500">Login sebagai: <strong class="text-slate-700">{{ Auth::guard('admin')->user()->nama }}</strong></span>
         </div>
     </nav>
 
@@ -53,13 +54,19 @@
                             <p class="font-medium text-slate-900">{{ $item->nama }}</p>
                             <p class="text-sm text-slate-500">{{ $item->email }} @if($item->kontak) | {{ $item->kontak }} @endif</p>
                         </div>
-                        <form method="POST" action="{{ route('admin.akun.peserta.hapus', $item->id) }}"
-                            onsubmit="return confirm('Yakin mau hapus akun Peserta {{ $item->nama }}? Tidak bisa dikembalikan.');">
-                            @csrf
-                            <button type="submit" class="text-sm border border-red-300 text-red-700 hover:bg-red-50 rounded-lg px-3 py-1.5">
-                                Hapus
-                            </button>
-                        </form>
+                        <div class="flex gap-2">
+                            <a href="{{ route('admin.akun.peserta.reset.form', $item->id) }}"
+                                class="text-sm border border-stone-300 text-slate-700 hover:bg-stone-100 rounded-lg px-3 py-1.5">
+                                Reset Password
+                            </a>
+                            <form method="POST" action="{{ route('admin.akun.peserta.hapus', $item->id) }}"
+                                onsubmit="return confirm('Yakin mau hapus akun Peserta {{ $item->nama }}? Tidak bisa dikembalikan.');">
+                                @csrf
+                                <button type="submit" class="text-sm border border-red-300 text-red-700 hover:bg-red-50 rounded-lg px-3 py-1.5">
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 @endforeach
             </div>

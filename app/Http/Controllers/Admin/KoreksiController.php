@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\NilaiAspekPresentasi;
 use App\Models\NilaiKomponenProposal;
+use App\Models\Pengajuan;
 use App\Models\PermintaanBukaKunci;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,16 @@ class KoreksiController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('admin.koreksi.index', compact('daftarPermintaan'));
+        $jumlahPerStatus = Pengajuan::selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $jumlahPerKategori = Pengajuan::join('kategori', 'kategori.id', '=', 'pengajuan.kategori_id')
+            ->selectRaw('kategori.nama as kategori, count(*) as total')
+            ->groupBy('kategori.nama')
+            ->pluck('total', 'kategori');
+
+        return view('admin.koreksi.index', compact('daftarPermintaan', 'jumlahPerStatus', 'jumlahPerKategori'));
     }
 
     public function setujui($id)

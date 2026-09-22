@@ -13,12 +13,24 @@
             <a href="{{ route('panitia.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
+            <span class="text-sm text-slate-500">Login sebagai: <strong class="text-slate-700">{{ Auth::guard('panitia')->user()->nama }}</strong></span>
         </div>
     </nav>
 
     <main class="max-w-2xl mx-auto px-4 py-8">
         <p class="mb-3"><a href="{{ route('panitia.pengajuan.index') }}" class="text-sm text-slate-500 hover:text-slate-900">← Kembali ke Daftar Pengajuan</a></p>
-        <h1 class="text-2xl font-bold text-slate-900 mb-5">Ranking Peserta</h1>
+        <h1 class="text-2xl font-bold text-slate-900 mb-3">Ranking Peserta</h1>
+
+        <div class="flex flex-wrap gap-2 mb-5">
+            <a href="{{ route('panitia.export.nilai.proposal') }}"
+                class="text-sm border border-stone-300 text-slate-700 hover:bg-stone-100 rounded-lg px-3 py-1.5">
+                Export Nilai Proposal (CSV)
+            </a>
+            <a href="{{ route('panitia.export.nilai.presentasi') }}"
+                class="text-sm border border-stone-300 text-slate-700 hover:bg-stone-100 rounded-lg px-3 py-1.5">
+                Export Nilai Presentasi (CSV)
+            </a>
+        </div>
 
         @if ($errors->any())
             <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm p-3">
@@ -53,16 +65,6 @@
                                     — Nilai Proposal: {{ $item['nilai_proposal'] }}
                                     @if (in_array($item['pengajuan']->id, $idLolos5Besar))
                                         <span class="ml-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800">LOLOS 5 BESAR</span>
-                                        <div class="mt-2 ml-4">
-                                            <form method="POST" action="{{ route('panitia.pengajuan.link_presentasi', $item['pengajuan']->id) }}" class="flex flex-wrap gap-2">
-                                                @csrf
-                                                <input type="text" name="link_presentasi"
-                                                    value="{{ $item['pengajuan']->link_presentasi }}"
-                                                    placeholder="Link Zoom/Meet Presentasi"
-                                                    class="rounded-lg border border-stone-300 px-3 py-1.5 text-sm w-72 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-                                                <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm font-semibold rounded-lg px-3 py-1.5">Simpan Link</button>
-                                            </form>
-                                        </div>
                                     @endif
                                 </li>
                             @endforeach
@@ -82,16 +84,6 @@
                                     — Nilai Proposal: {{ $item['nilai_proposal'] }}
                                     @if (in_array($item['pengajuan']->id, $idLolos5Besar))
                                         <span class="ml-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800">LOLOS 5 BESAR</span>
-                                        <div class="mt-2 ml-4">
-                                            <form method="POST" action="{{ route('panitia.pengajuan.link_presentasi', $item['pengajuan']->id) }}" class="flex flex-wrap gap-2">
-                                                @csrf
-                                                <input type="text" name="link_presentasi"
-                                                    value="{{ $item['pengajuan']->link_presentasi }}"
-                                                    placeholder="Link Zoom/Meet Presentasi"
-                                                    class="rounded-lg border border-stone-300 px-3 py-1.5 text-sm w-72 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-                                                <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm font-semibold rounded-lg px-3 py-1.5">Simpan Link</button>
-                                            </form>
-                                        </div>
                                     @endif
                                 </li>
                             @endforeach

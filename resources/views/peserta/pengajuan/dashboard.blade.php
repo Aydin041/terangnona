@@ -13,6 +13,7 @@
             <a href="{{ route('peserta.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
+            <span class="text-sm text-slate-500">Login sebagai: <strong class="text-slate-700">{{ Auth::guard('peserta')->user()->nama }}</strong></span>
             <form method="POST" action="{{ route('peserta.logout') }}">
                 @csrf
                 <button type="submit" class="text-sm text-slate-600 hover:text-slate-900 border border-stone-300 rounded-lg px-3 py-1.5">Logout</button>
@@ -52,6 +53,7 @@
                             'menunggu_pemeriksaan' => 'bg-sky-100 text-sky-800',
                             'disetujui' => 'bg-green-100 text-green-800',
                             'perlu_perbaikan' => 'bg-red-100 text-red-800',
+                            'ditolak' => 'bg-stone-800 text-white',
                         ][$item->status] ?? 'bg-stone-100 text-stone-700';
                     @endphp
                     <div class="bg-white border border-stone-200 rounded-xl p-5">
@@ -77,13 +79,6 @@
                             </div>
                         @endif
 
-                        @if ($item->link_presentasi)
-                            <div class="mt-3 bg-sky-50 border border-sky-200 rounded-lg p-3 text-sm">
-                                <strong class="text-sky-900">Link Zoom/Meet Presentasi:</strong>
-                                <a href="{{ $item->link_presentasi }}" target="_blank" class="text-sky-700 underline break-all">{{ $item->link_presentasi }}</a>
-                            </div>
-                        @endif
-
                         @if ($item->status === 'perlu_perbaikan')
                             <div class="mt-3 bg-red-50 border border-red-200 rounded-lg p-3 text-sm">
                                 <strong class="text-red-800">Alasan dari Panitia:</strong>
@@ -99,10 +94,16 @@
             </div>
         @endif
 
-        <a href="{{ route('peserta.pengajuan.step1') }}"
-            class="inline-block mt-6 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg px-5 py-2.5 transition-colors">
-            + Buat Pengajuan Baru
-        </a>
+        @if ($sudahLewatDeadline)
+            <div class="mt-6 bg-stone-800 text-white rounded-lg px-5 py-3 text-sm">
+                Sudah lewat deadline pengajuan — tidak bisa membuat pengajuan baru lagi.
+            </div>
+        @else
+            <a href="{{ route('peserta.pengajuan.step1') }}"
+                class="inline-block mt-6 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg px-5 py-2.5 transition-colors">
+                + Buat Pengajuan Baru
+            </a>
+        @endif
     </main>
 
     <script src="{{ asset('js/prevent-double-submit.js') }}"></script>

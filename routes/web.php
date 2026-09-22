@@ -6,12 +6,15 @@ use App\Http\Controllers\Peserta\PengajuanController as PesertaPengajuanControll
 use App\Http\Controllers\Panitia\AuthController as PanitiaAuthController;
 use App\Http\Controllers\Panitia\PengajuanController as PanitiaPengajuanController;
 use App\Http\Controllers\Panitia\RankingController as PanitiaRankingController;
+use App\Http\Controllers\Panitia\LaporanController as PanitiaLaporanController;
 use App\Http\Controllers\Juri\AuthController as JuriAuthController;
 use App\Http\Controllers\Juri\PenilaianController as JuriPenilaianController;
 use App\Http\Controllers\Juri\KoreksiController as JuriKoreksiController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\KoreksiController as AdminKoreksiController;
 use App\Http\Controllers\Admin\AkunController as AdminAkunController;
+use App\Http\Controllers\Admin\PengaturanController as AdminPengaturanController;
+use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
 
 Route::get('/', function () {
     return view('landing');
@@ -57,7 +60,10 @@ Route::prefix('panitia')->name('panitia.')->group(function () {
         Route::get('/pengajuan/{id}', [PanitiaPengajuanController::class, 'detail'])->name('pengajuan.detail');
         Route::post('/pengajuan/{id}/setujui', [PanitiaPengajuanController::class, 'setujui'])->name('pengajuan.setujui');
         Route::post('/pengajuan/{id}/kembalikan', [PanitiaPengajuanController::class, 'kembalikan'])->name('pengajuan.kembalikan');
-        Route::post('/pengajuan/{id}/link-presentasi', [PanitiaPengajuanController::class, 'presentasiLinkStore'])->name('pengajuan.link_presentasi');
+        Route::post('/pengajuan/{id}/tolak', [PanitiaPengajuanController::class, 'tolak'])->name('pengajuan.tolak');
+        Route::get('/export/nilai-proposal', [PanitiaPengajuanController::class, 'exportNilaiProposal'])->name('export.nilai.proposal');
+        Route::get('/export/nilai-presentasi', [PanitiaPengajuanController::class, 'exportNilaiPresentasi'])->name('export.nilai.presentasi');
+        Route::get('/laporan-nilai', [PanitiaLaporanController::class, 'index'])->name('laporan.index');
         Route::get('/ranking', [PanitiaRankingController::class, 'index'])->name('ranking.index');
     });
 });
@@ -119,6 +125,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/akun/juri/{id}/hapus', [AdminAkunController::class, 'juriHapus'])->name('akun.juri.hapus');
 
         Route::get('/akun/peserta', [AdminAkunController::class, 'pesertaIndex'])->name('akun.peserta.index');
+        Route::get('/akun/peserta/{id}/reset', [AdminAkunController::class, 'pesertaResetForm'])->name('akun.peserta.reset.form');
+        Route::post('/akun/peserta/{id}/reset', [AdminAkunController::class, 'pesertaReset'])->name('akun.peserta.reset');
         Route::post('/akun/peserta/{id}/hapus', [AdminAkunController::class, 'pesertaHapus'])->name('akun.peserta.hapus');
+
+        Route::get('/pengaturan', [AdminPengaturanController::class, 'form'])->name('pengaturan.form');
+        Route::post('/pengaturan', [AdminPengaturanController::class, 'update'])->name('pengaturan.update');
+
+        Route::get('/laporan-nilai', [AdminLaporanController::class, 'index'])->name('laporan.index');
     });
 });

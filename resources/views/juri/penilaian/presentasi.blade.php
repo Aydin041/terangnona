@@ -39,15 +39,6 @@
 
         <p class="text-sm text-slate-600 mb-2"><strong class="text-slate-900">Status penilaian:</strong> {{ $submission->status }}</p>
 
-        <div class="mb-4 bg-white border border-stone-200 rounded-xl p-4 text-sm">
-            <strong class="text-slate-900">Link Zoom/Meet Presentasi:</strong>
-            @if ($pengajuan->link_presentasi)
-                <a href="{{ $pengajuan->link_presentasi }}" target="_blank" class="text-sky-700 underline break-all">{{ $pengajuan->link_presentasi }}</a>
-            @else
-                <span class="text-red-600">Belum diisi Panitia.</span>
-            @endif
-        </div>
-
         @if ($submission->status === 'submitted' && !$adaBarisTerbuka)
             <div class="mb-4 rounded-lg bg-sky-50 border border-sky-200 text-sky-800 text-sm p-3">
                 Penilaian sudah disubmit dan terkunci.

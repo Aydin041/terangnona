@@ -13,6 +13,7 @@
             <a href="{{ route('panitia.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
+            <span class="text-sm text-slate-500">Login sebagai: <strong class="text-slate-700">{{ Auth::guard('panitia')->user()->nama }}</strong></span>
             <form method="POST" action="{{ route('panitia.logout') }}">
                 @csrf
                 <button type="submit" class="text-sm text-slate-600 hover:text-slate-900 border border-stone-300 rounded-lg px-3 py-1.5">Logout</button>
@@ -41,6 +42,7 @@
             <a href="{{ route('panitia.pengajuan.index', ['status' => 'menunggu_pemeriksaan']) }}" class="text-sm rounded-lg px-3 py-1.5 {{ $filterClass('menunggu_pemeriksaan') }}">Menunggu Pemeriksaan</a>
             <a href="{{ route('panitia.pengajuan.index', ['status' => 'disetujui']) }}" class="text-sm rounded-lg px-3 py-1.5 {{ $filterClass('disetujui') }}">Disetujui</a>
             <a href="{{ route('panitia.pengajuan.index', ['status' => 'perlu_perbaikan']) }}" class="text-sm rounded-lg px-3 py-1.5 {{ $filterClass('perlu_perbaikan') }}">Perlu Perbaikan</a>
+            <a href="{{ route('panitia.pengajuan.index', ['status' => 'ditolak']) }}" class="text-sm rounded-lg px-3 py-1.5 {{ $filterClass('ditolak') }}">Ditolak</a>
         </div>
 
         @if ($daftarPengajuan->isEmpty())
@@ -54,6 +56,7 @@
                     'menunggu_pemeriksaan' => 'bg-sky-100 text-sky-800',
                     'disetujui' => 'bg-green-100 text-green-800',
                     'perlu_perbaikan' => 'bg-red-100 text-red-800',
+                    'ditolak' => 'bg-stone-800 text-white',
                 ];
             @endphp
             <div class="space-y-3">

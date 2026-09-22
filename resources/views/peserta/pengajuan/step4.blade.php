@@ -13,6 +13,7 @@
             <a href="{{ route('peserta.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
+            <span class="text-sm text-slate-500">Login sebagai: <strong class="text-slate-700">{{ Auth::guard('peserta')->user()->nama }}</strong></span>
         </div>
     </nav>
 

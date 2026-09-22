@@ -13,6 +13,7 @@
             <a href="{{ route('panitia.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
+            <span class="text-sm text-slate-500">Login sebagai: <strong class="text-slate-700">{{ Auth::guard('panitia')->user()->nama }}</strong></span>
             <form method="POST" action="{{ route('panitia.logout') }}">
                 @csrf
                 <button type="submit" class="text-sm text-slate-600 hover:text-slate-900 border border-stone-300 rounded-lg px-3 py-1.5">Logout</button>
@@ -34,6 +35,11 @@
                 class="bg-white border border-stone-200 hover:border-amber-400 rounded-xl p-6 transition-colors">
                 <h2 class="font-semibold text-slate-900">Ranking Peserta</h2>
                 <p class="text-sm text-slate-500 mt-1">Lihat ranking proposal & presentasi</p>
+            </a>
+            <a href="{{ route('panitia.laporan.index') }}"
+                class="bg-white border border-stone-200 hover:border-amber-400 rounded-xl p-6 transition-colors">
+                <h2 class="font-semibold text-slate-900">Laporan Nilai</h2>
+                <p class="text-sm text-slate-500 mt-1">Lihat semua nilai dari semua Juri (lihat-saja)</p>
             </a>
         </div>
     </main>

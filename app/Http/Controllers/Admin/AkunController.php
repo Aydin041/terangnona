@@ -181,6 +181,30 @@ class AkunController extends Controller
         return view('admin.akun.peserta_index', compact('daftarPeserta'));
     }
 
+    public function pesertaResetForm($id)
+    {
+        $peserta = Peserta::findOrFail($id);
+        return view('admin.akun.peserta_reset', compact('peserta'));
+    }
+
+    public function pesertaReset(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $peserta = Peserta::findOrFail($id);
+        $passwordBaru = !empty($validated['password']) ? $validated['password'] : Str::random(10);
+
+        $peserta->update([
+            'password_hash' => Hash::make($passwordBaru),
+        ]);
+
+        return redirect()
+            ->route('admin.akun.peserta.index')
+            ->with('sukses', "Password untuk {$peserta->nama} ({$peserta->email}) berhasil direset. Password baru: {$passwordBaru} (catat sekarang, tidak akan ditampilkan lagi)");
+    }
+
     public function pesertaHapus($id)
     {
         $peserta = Peserta::findOrFail($id);

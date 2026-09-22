@@ -13,6 +13,7 @@
             <a href="{{ route('panitia.dashboard') }}">
                 <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
             </a>
+            <span class="text-sm text-slate-500">Login sebagai: <strong class="text-slate-700">{{ Auth::guard('panitia')->user()->nama }}</strong></span>
         </div>
     </nav>
 
@@ -100,6 +101,18 @@
                     <button type="submit"
                         class="mt-3 border border-red-300 text-red-700 hover:bg-red-50 font-semibold rounded-lg px-5 py-2.5 transition-colors">
                         Kembalikan ke Peserta
+                    </button>
+                </form>
+
+                <form method="POST" action="{{ route('panitia.pengajuan.tolak', $pengajuan->id) }}" class="mt-6 pt-6 border-t border-stone-200"
+                    onsubmit="return confirm('Yakin mau tolak pengajuan ini? Peserta tidak bisa lanjut/edit lagi setelah ditolak.');">
+                    @csrf
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Alasan penolakan (wajib diisi kalau mau tolak)</label>
+                    <textarea name="catatan_panitia" rows="3"
+                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">{{ old('catatan_panitia') }}</textarea>
+                    <button type="submit"
+                        class="mt-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg px-5 py-2.5 transition-colors">
+                        Tolak Pengajuan
                     </button>
                 </form>
             </div>
