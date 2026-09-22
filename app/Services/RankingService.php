@@ -124,19 +124,43 @@ class RankingService
         return $hasil;
     }
 
+    /**
+     * Ambil top-N dari masing-masing kelompok (daftar sudah terurut desc).
+     * Kalau salah satu kelompok kurang dari kuota, sisanya dipinjam dari
+     * peringkat berikutnya di kelompok lain (Opsi 1: kuota per kelompok
+     * tetap jadi acuan, cross-kelompok cuma cadangan kalau ada kekurangan).
+     */
+    private function ambilDenganPinjamAntarKelompok(array $daftarA, array $daftarB, int $kuota): array
+    {
+        $ambil = array_merge(
+            array_slice($daftarA, 0, $kuota),
+            array_slice($daftarB, 0, $kuota)
+        );
+
+        $kekuranganA = $kuota - min($kuota, count($daftarA));
+        $kekuranganB = $kuota - min($kuota, count($daftarB));
+
+        if ($kekuranganA > 0) {
+            $ambil = array_merge($ambil, array_slice($daftarB, $kuota, $kekuranganA));
+        }
+        if ($kekuranganB > 0) {
+            $ambil = array_merge($ambil, array_slice($daftarA, $kuota, $kekuranganB));
+        }
+
+        return $ambil;
+    }
+
     public function idPengajuanLolos5Besar(): array
     {
         $ranking = $this->rankingPerKelompok();
-        $lolos = [];
 
-        foreach ($ranking as $kelompok => $daftar) {
-            $batas = min(5, count($daftar));
-            for ($i = 0; $i < $batas; $i++) {
-                $lolos[] = $daftar[$i]['pengajuan']->id;
-            }
-        }
+        $gabungan = $this->ambilDenganPinjamAntarKelompok(
+            $ranking['eksisting'],
+            $ranking['pengembangan_rancangan'],
+            5
+        );
 
-        return $lolos;
+        return array_map(fn ($item) => $item['pengajuan']->id, $gabungan);
     }
 
     public function rankingAkhirPerKelompok(): array
@@ -177,15 +201,13 @@ class RankingService
     public function idPengajuan3Besar(): array
     {
         $ranking = $this->rankingAkhirPerKelompok();
-        $juara = [];
 
-        foreach ($ranking as $kelompok => $daftar) {
-            $batas = min(3, count($daftar));
-            for ($i = 0; $i < $batas; $i++) {
-                $juara[] = $daftar[$i]['pengajuan']->id;
-            }
-        }
+        $gabungan = $this->ambilDenganPinjamAntarKelompok(
+            $ranking['eksisting'],
+            $ranking['pengembangan_rancangan'],
+            3
+        );
 
-        return $juara;
+        return array_map(fn ($item) => $item['pengajuan']->id, $gabungan);
     }
 }
