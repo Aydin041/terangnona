@@ -93,7 +93,7 @@
 
             <div class="bg-white border border-stone-200 rounded-xl p-6">
                 <h2 class="font-semibold text-slate-900 mb-1">Bagian B — Isian Proposal ({{ count($komponenIsian) }} Komponen)</h2>
-                <p class="text-sm text-slate-500 mb-4">Isi uraian jawaban dan link bukti dukung (link Drive/dokumen pendukung) untuk setiap komponen di bawah. Keduanya wajib diisi.</p>
+                <p class="text-sm text-slate-500 mb-4">Isi uraian jawaban dan minimal 1 link bukti dukung (link Drive/dokumen pendukung) untuk setiap komponen di bawah. Bisa tambah lebih dari 1 link kalau perlu.</p>
 
                 <div class="space-y-4">
                     @foreach ($komponenIsian as $komponen)
@@ -111,10 +111,32 @@
                                 class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">{{ old("uraian.{$komponen->id}", $isianRow->uraian ?? '') }}</textarea>
 
                             <label class="block text-sm font-medium text-slate-700 mb-1 mt-3">Link/Tautan Bukti Dukung</label>
-                            <input type="text" name="link_bukti_dukung[{{ $komponen->id }}]"
-                                value="{{ old("link_bukti_dukung.{$komponen->id}", $isianRow->link_bukti_dukung ?? '') }}"
-                                placeholder="https://..."
-                                class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                            <div id="links-container-{{ $komponen->id }}" class="space-y-2">
+                                @php $linkList = $isianRow->links ?? collect(); @endphp
+                                @forelse ($linkList as $linkItem)
+                                    <div class="flex gap-2">
+                                        <input type="text" name="link_judul[{{ $komponen->id }}][]" value="{{ $linkItem->judul }}" placeholder="Judul"
+                                            class="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                        <input type="text" name="link_url[{{ $komponen->id }}][]" value="{{ $linkItem->link }}" placeholder="https://..."
+                                            class="flex-[2] rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                        <button type="button" onclick="this.parentElement.remove()"
+                                            class="text-red-600 hover:text-red-800 border border-red-200 rounded-lg px-3 text-sm">−</button>
+                                    </div>
+                                @empty
+                                    <div class="flex gap-2">
+                                        <input type="text" name="link_judul[{{ $komponen->id }}][]" placeholder="Judul"
+                                            class="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                        <input type="text" name="link_url[{{ $komponen->id }}][]" placeholder="https://..."
+                                            class="flex-[2] rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                        <button type="button" onclick="this.parentElement.remove()"
+                                            class="text-red-600 hover:text-red-800 border border-red-200 rounded-lg px-3 text-sm">−</button>
+                                    </div>
+                                @endforelse
+                            </div>
+                            <button type="button" onclick="tambahLinkRow({{ $komponen->id }})"
+                                class="mt-2 text-sm text-amber-700 border border-amber-300 rounded-lg px-3 py-1.5 hover:bg-amber-50">
+                                + Tambah Link
+                            </button>
                         </div>
                     @endforeach
                 </div>
@@ -154,6 +176,22 @@
         </form>
     </main>
 
+    <script>
+        function tambahLinkRow(komponenId) {
+            const container = document.getElementById('links-container-' + komponenId);
+            const div = document.createElement('div');
+            div.className = 'flex gap-2';
+            div.innerHTML = `
+                <input type="text" name="link_judul[${komponenId}][]" placeholder="Judul"
+                    class="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                <input type="text" name="link_url[${komponenId}][]" placeholder="https://..."
+                    class="flex-[2] rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                <button type="button" onclick="this.parentElement.remove()"
+                    class="text-red-600 hover:text-red-800 border border-red-200 rounded-lg px-3 text-sm">−</button>
+            `;
+            container.appendChild(div);
+        }
+    </script>
     <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
 </body>
 </html>

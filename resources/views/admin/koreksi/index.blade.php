@@ -38,7 +38,7 @@
                 <canvas id="chartStatus" height="200"></canvas>
             </div>
             <div class="bg-white border border-stone-200 rounded-xl p-4">
-                <h2 class="font-semibold text-slate-900 mb-3 text-sm">Pengajuan per Kategori</h2>
+                <h2 class="font-semibold text-slate-900 mb-3 text-sm">Kategori Inovasi</h2>
                 <canvas id="chartKategori" height="200"></canvas>
             </div>
         </div>
@@ -120,7 +120,13 @@
                     backgroundColor: '#f59e0b',
                 }],
             },
-            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { precision: 0 } },
+                    x: { ticks: { maxRotation: 0, minRotation: 0, autoSkip: false } },
+                },
+            },
         });
 
         new Chart(document.getElementById('chartKategori'), {
@@ -133,7 +139,10 @@
                     backgroundColor: '#0284c7',
                 }],
             },
-            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+            },
         });
     </script>
 </body>

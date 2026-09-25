@@ -115,6 +115,7 @@ class PenilaianController extends Controller
         // Isian uraian + link bukti dukung yang diisi Peserta di Step 4, per komponen.
         // Ini terpisah dari NilaiKomponenProposal (nilai dari Juri) — jangan digabung/ditimpa.
         $isianList = IsianProposal::where('pengajuan_id', $pengajuan->id)
+            ->with('links')
             ->get()
             ->keyBy('komponen_id');
 

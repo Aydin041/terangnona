@@ -18,14 +18,37 @@ class KoreksiController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $jumlahPerStatus = Pengajuan::selectRaw('status, count(*) as total')
+        $labelStatus = [
+            'draft' => 'Draft',
+            'menunggu_pemeriksaan' => 'Menunggu Pemeriksaan',
+            'disetujui' => 'Disetujui',
+            'perlu_perbaikan' => 'Perlu Perbaikan',
+            'ditolak' => 'Ditolak',
+        ];
+
+        $jumlahPerStatusMentah = Pengajuan::selectRaw('status, count(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
 
-        $jumlahPerKategori = Pengajuan::join('kategori', 'kategori.id', '=', 'pengajuan.kategori_id')
-            ->selectRaw('kategori.nama as kategori, count(*) as total')
-            ->groupBy('kategori.nama')
-            ->pluck('total', 'kategori');
+        $jumlahPerStatus = collect();
+        foreach ($labelStatus as $kunci => $label) {
+            $jumlahPerStatus->put($label, $jumlahPerStatusMentah[$kunci] ?? 0);
+        }
+
+        $labelBentuk = [
+            'eksisting' => 'Eksisting',
+            'pengembangan' => 'Pengembangan',
+            'rancangan' => 'Rancangan',
+        ];
+
+        $jumlahPerBentukMentah = Pengajuan::selectRaw('bentuk_inovasi, count(*) as total')
+            ->groupBy('bentuk_inovasi')
+            ->pluck('total', 'bentuk_inovasi');
+
+        $jumlahPerKategori = collect();
+        foreach ($labelBentuk as $kunci => $label) {
+            $jumlahPerKategori->put($label, $jumlahPerBentukMentah[$kunci] ?? 0);
+        }
 
         return view('admin.koreksi.index', compact('daftarPermintaan', 'jumlahPerStatus', 'jumlahPerKategori'));
     }

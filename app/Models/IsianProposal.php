@@ -12,7 +12,6 @@ class IsianProposal extends Model
         'pengajuan_id',
         'komponen_id',
         'uraian',
-        'link_bukti_dukung',
     ];
 
     public function pengajuan()
@@ -23,5 +22,10 @@ class IsianProposal extends Model
     public function komponen()
     {
         return $this->belongsTo(KomponenPenilaian::class, 'komponen_id');
+    }
+
+    public function links()
+    {
+        return $this->hasMany(IsianProposalLink::class, 'isian_proposal_id');
     }
 }

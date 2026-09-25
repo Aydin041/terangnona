@@ -89,6 +89,13 @@
                                 </a>
                             </div>
                         @endif
+
+                        @if ($item->status === 'ditolak')
+                            <div class="mt-3 bg-stone-100 border border-stone-300 rounded-lg p-3 text-sm">
+                                <strong class="text-stone-800">Alasan Ditolak:</strong>
+                                <p class="text-stone-700 mt-1">{{ $catatanPengembalian[$item->id] ?? '(tidak ada catatan)' }}</p>
+                            </div>
+                        @endif
                     </div>
                 @endforeach
             </div>
