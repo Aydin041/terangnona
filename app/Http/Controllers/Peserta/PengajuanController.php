@@ -14,12 +14,19 @@ use Illuminate\Support\Facades\Auth;
 
 class PengajuanController extends Controller
 {
-    // Komponen #14 (Rencana Aksi) & #15 (Rencana Anggaran & Biaya) di form resmi statusnya
-    // "LAMPIRKAN DALAM PROPOSAL INI", bukan uraian+link seperti 13 komponen lain.
-    // ID diambil dari data aktual tabel komponen_penilaian (urutan DB terbalik dari form Word).
+    // Komponen #14 (Rencana Aksi) statusnya "LAMPIRKAN DALAM PROPOSAL INI"
+    // (upload PDF), bukan uraian+link seperti komponen lain.
+    // Rencana Anggaran & Biaya (dulu komponen #15 terpisah) sekarang digabung
+    // jadi lampiran tambahan di komponen #7 (Sumberdaya/Proyeksinya/RAB) — lihat
+    // KOMPONEN_LAMPIRAN_TAMBAHAN di bawah, bukan komponen lampiran murni.
     const KOMPONEN_LAMPIRAN = [
         14 => 'lampiran_rencana_aksi',
-        15 => 'lampiran_rencana_anggaran',
+    ];
+
+    // Komponen isian biasa (uraian+link) yang JUGA butuh 1 lampiran tambahan
+    // menempel di kartu yang sama — bukan komponen lampiran murni seperti di atas.
+    const KOMPONEN_LAMPIRAN_TAMBAHAN = [
+        7 => 'lampiran_rab',
     ];
 
     private function isKomponenLampiran($komponenId)
@@ -262,12 +269,13 @@ class PengajuanController extends Controller
             'link_url' => 'array',
         ];
 
+        $rules['lampiran_rab'] = 'nullable|file|mimes:pdf|max:10240';
+
         if ($pengajuan->bentuk_inovasi === 'eksisting') {
             $rules['surat_implementasi'] = 'nullable|file|mimes:pdf|max:10240';
         } else {
             $rules['surat_komitmen'] = 'nullable|file|mimes:pdf|max:10240';
             $rules['lampiran_rencana_aksi'] = 'nullable|file|mimes:pdf|max:10240';
-            $rules['lampiran_rencana_anggaran'] = 'nullable|file|mimes:pdf|max:10240';
         }
 
         $validated = $request->validate($rules);
@@ -301,13 +309,12 @@ class PengajuanController extends Controller
             ['file_path' => $validated['video_link'], 'uploaded_at' => now()]
         );
 
-        $jenisFileList = ['surat_identitas'];
+        $jenisFileList = ['surat_identitas', 'lampiran_rab'];
         if ($pengajuan->bentuk_inovasi === 'eksisting') {
             $jenisFileList[] = 'surat_implementasi';
         } else {
             $jenisFileList[] = 'surat_komitmen';
             $jenisFileList[] = 'lampiran_rencana_aksi';
-            $jenisFileList[] = 'lampiran_rencana_anggaran';
         }
 
         foreach ($jenisFileList as $jenis) {
@@ -351,12 +358,11 @@ class PengajuanController extends Controller
 
     private function daftarDokumenWajib($pengajuan)
     {
-        $wajib = ['surat_identitas'];
+        $wajib = ['surat_identitas', 'lampiran_rab'];
         $wajib[] = $pengajuan->bentuk_inovasi === 'eksisting' ? 'surat_implementasi' : 'surat_komitmen';
         $wajib[] = 'video_link';
         if ($pengajuan->bentuk_inovasi !== 'eksisting') {
             $wajib[] = 'lampiran_rencana_aksi';
-            $wajib[] = 'lampiran_rencana_anggaran';
         }
         return $wajib;
     }

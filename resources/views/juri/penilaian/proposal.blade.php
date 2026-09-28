@@ -106,10 +106,31 @@
                             @endif
 
                             <strong class="text-slate-800 block mt-2">Link/Tautan Bukti Dukung:</strong>
-                            @if ($isianRow && trim((string) $isianRow->link_bukti_dukung) !== '')
-                                <a href="{{ $isianRow->link_bukti_dukung }}" target="_blank" class="text-sky-700 underline break-all">{{ $isianRow->link_bukti_dukung }}</a>
+                            @if ($isianRow && $isianRow->links->isNotEmpty())
+                                <ul class="list-disc list-inside">
+                                    @foreach ($isianRow->links as $linkItem)
+                                        <li>
+                                            {{ $linkItem->judul }}:
+                                            <a href="{{ $linkItem->link }}" target="_blank" class="text-sky-700 underline break-all">{{ $linkItem->link }}</a>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             @else
                                 <span class="text-red-600">Belum diisi peserta.</span>
+                            @endif
+
+                            @php
+                                $jenisTambahan = \App\Http\Controllers\Peserta\PengajuanController::KOMPONEN_LAMPIRAN_TAMBAHAN[$komponen->id] ?? null;
+                                $dokTambahan = $jenisTambahan ? ($dokumenKeyed[$jenisTambahan] ?? null) : null;
+                            @endphp
+                            @if ($jenisTambahan)
+                                <strong class="text-slate-800 block mt-2">Dokumen RAB:</strong>
+                                @if ($dokTambahan)
+                                    {{ $dokTambahan->nama_asli }}
+                                    <a href="{{ asset('storage/' . $dokTambahan->file_path) }}" target="_blank" class="text-sky-700 underline">Lihat/Download</a>
+                                @else
+                                    <span class="text-red-600">Belum diupload peserta.</span>
+                                @endif
                             @endif
                         </div>
                     @endif

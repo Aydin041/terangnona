@@ -65,19 +65,24 @@ class RankingService
             return null;
         }
 
-        $aspekList = ['teknik_penyajian', 'substansi_materi', 'komitmen_pimpinan'];
+        // Bobot resmi per aspek (total 100%) — dulu dianggap sama rata, sekarang ditimbang.
+        $aspekBobot = [
+            'teknik_penyajian' => 20,
+            'substansi_materi' => 70,
+            'komitmen_pimpinan' => 10,
+        ];
         $totalNilai = 0;
 
-        foreach ($aspekList as $aspek) {
+        foreach ($aspekBobot as $aspek => $bobot) {
             $rataRata = NilaiAspekPresentasi::whereIn('submission_id', $submissionSubmitted)
                 ->where('aspek', $aspek)
                 ->avg('nilai');
 
             $rataRata = $rataRata ?? 0;
-            $totalNilai += $rataRata;
+            $totalNilai += ($bobot / 100) * $rataRata;
         }
 
-        return round($totalNilai / count($aspekList), 2);
+        return round($totalNilai, 2);
     }
 
     public function hitungNilaiAkhir(Pengajuan $pengajuan): ?float

@@ -137,6 +137,24 @@
                                 class="mt-2 text-sm text-amber-700 border border-amber-300 rounded-lg px-3 py-1.5 hover:bg-amber-50">
                                 + Tambah Link
                             </button>
+
+                            @php
+                                $jenisTambahan = \App\Http\Controllers\Peserta\PengajuanController::KOMPONEN_LAMPIRAN_TAMBAHAN[$komponen->id] ?? null;
+                                $dokTambahan = $jenisTambahan ? ($dokumenTersimpan[$jenisTambahan] ?? null) : null;
+                            @endphp
+                            @if ($jenisTambahan)
+                                <div class="mt-4 pt-4 border-t border-stone-200">
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Upload Dokumen RAB (PDF)</label>
+                                    @if ($dokTambahan)
+                                        <p class="text-xs text-green-700 mb-1">Sudah diupload: {{ $dokTambahan->nama_asli }}
+                                            <a href="{{ asset('storage/' . $dokTambahan->file_path) }}" target="_blank" class="underline">Lihat</a>
+                                        </p>
+                                    @endif
+                                    <input type="file" name="{{ $jenisTambahan }}" accept="application/pdf"
+                                        class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-stone-100 file:text-slate-700 hover:file:bg-stone-200">
+                                    <p class="text-xs text-slate-400 mt-1">Semakin rinci RAB-nya, semakin besar peluang nilai bagus.</p>
+                                </div>
+                            @endif
                         </div>
                     @endforeach
                 </div>

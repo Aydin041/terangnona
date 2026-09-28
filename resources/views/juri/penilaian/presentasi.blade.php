@@ -55,10 +55,11 @@
         <form method="POST" class="space-y-4">
             @csrf
 
+            @php $aspekBobot = ['teknik_penyajian' => 20, 'substansi_materi' => 70, 'komitmen_pimpinan' => 10]; @endphp
             @foreach ($aspekList as $kode => $label)
                 @php $nilaiRow = $nilaiTersimpan[$kode] ?? null; @endphp
                 <div class="bg-white border border-stone-200 rounded-xl p-5">
-                    <p class="font-medium text-slate-900 mb-3">{{ $label }}</p>
+                    <p class="font-medium text-slate-900 mb-3">{{ $label }} <span class="text-slate-400 font-normal">(Bobot {{ $aspekBobot[$kode] ?? '-' }}%)</span></p>
 
                     <label class="block text-sm font-medium text-slate-700 mb-1">Nilai (0-100)</label>
                     <input type="number" name="nilai[{{ $kode }}]" min="0" max="100"

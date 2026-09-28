@@ -134,52 +134,126 @@ class PengajuanController extends Controller
     {
         $rows = \App\Models\NilaiKomponenProposal::with(['submission.pengajuan.kategori', 'submission.juri', 'komponen'])
             ->whereNotNull('nilai')
-            ->get();
+            ->get()
+            ->sortBy([
+                fn ($r) => $r->submission->pengajuan->nama_inovasi,
+                fn ($r) => $r->submission->juri->nama,
+            ])
+            ->groupBy(fn ($r) => $r->submission->pengajuan_id . '-' . $r->submission->juri_id);
 
-        return response()->streamDownload(function () use ($rows) {
-            $out = fopen('php://output', 'w');
-            fputcsv($out, ['Nama Inovasi', 'Akronim', 'Kategori', 'Nama Juri', 'Komponen', 'Bobot (%)', 'Nilai', 'Komentar']);
-            foreach ($rows as $row) {
-                $pengajuan = $row->submission->pengajuan;
-                fputcsv($out, [
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Nilai Proposal');
+
+        $header = ['Nama Inovasi', 'Akronim', 'Kategori', 'Nama Juri', 'Komponen', 'Bobot (%)', 'Nilai', 'Nilai Tertimbang', 'Komentar'];
+        $sheet->fromArray($header, null, 'A1');
+        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:I1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('FEF3C7');
+
+        $baris = 2;
+        foreach ($rows as $kelompok) {
+            $barisAwal = $baris;
+            $pengajuan = $kelompok->first()->submission->pengajuan;
+            $juri = $kelompok->first()->submission->juri;
+
+            foreach ($kelompok as $row) {
+                $sheet->fromArray([
                     $pengajuan->nama_inovasi,
                     $pengajuan->akronim,
                     $pengajuan->kategori->nama ?? '-',
-                    $row->submission->juri->nama,
+                    $juri->nama,
                     $row->komponen->nama,
                     $row->komponen->bobot,
                     $row->nilai,
+                    null, // diisi rumus di bawah
                     $row->komentar,
-                ]);
+                ], null, "A{$baris}");
+                $sheet->setCellValue("H{$baris}", "=F{$baris}/100*G{$baris}");
+                $baris++;
             }
-            fclose($out);
-        }, 'nilai-proposal-terang-nona.csv', ['Content-Type' => 'text/csv']);
+
+            $barisAkhir = $baris - 1;
+            $sheet->setCellValue("G{$baris}", 'Total');
+            $sheet->getStyle("G{$baris}")->getFont()->setBold(true);
+            $sheet->setCellValue("H{$baris}", "=SUM(H{$barisAwal}:H{$barisAkhir})");
+            $sheet->getStyle("H{$baris}")->getFont()->setBold(true);
+            $baris++;
+        }
+
+        foreach (range('A', 'I') as $kolom) {
+            $sheet->getColumnDimension($kolom)->setAutoSize(true);
+        }
+        $sheet->getStyle("A1:I" . ($baris - 1))->getBorders()->getAllBorders()
+            ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+        return $this->unduhSpreadsheet($spreadsheet, 'nilai-proposal-terang-nona.xlsx');
     }
 
     public function exportNilaiPresentasi()
     {
-        $rows = \App\Models\NilaiAspekPresentasi::with(['submission.pengajuan.kategori', 'submission.juri'])
-            ->whereNotNull('nilai')
-            ->get();
-
         $labelAspek = \App\Http\Controllers\Juri\PenilaianController::ASPEK_PRESENTASI;
 
-        return response()->streamDownload(function () use ($rows, $labelAspek) {
-            $out = fopen('php://output', 'w');
-            fputcsv($out, ['Nama Inovasi', 'Akronim', 'Kategori', 'Nama Juri', 'Aspek', 'Nilai', 'Catatan']);
-            foreach ($rows as $row) {
-                $pengajuan = $row->submission->pengajuan;
-                fputcsv($out, [
+        $rows = \App\Models\NilaiAspekPresentasi::with(['submission.pengajuan.kategori', 'submission.juri'])
+            ->whereNotNull('nilai')
+            ->get()
+            ->sortBy([
+                fn ($r) => $r->submission->pengajuan->nama_inovasi,
+                fn ($r) => $r->submission->juri->nama,
+            ])
+            ->groupBy(fn ($r) => $r->submission->pengajuan_id . '-' . $r->submission->juri_id);
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Nilai Presentasi');
+
+        $header = ['Nama Inovasi', 'Akronim', 'Kategori', 'Nama Juri', 'Aspek', 'Nilai', 'Catatan'];
+        $sheet->fromArray($header, null, 'A1');
+        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:G1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('DBEAFE');
+
+        $baris = 2;
+        foreach ($rows as $kelompok) {
+            $barisAwal = $baris;
+            $pengajuan = $kelompok->first()->submission->pengajuan;
+            $juri = $kelompok->first()->submission->juri;
+
+            foreach ($kelompok as $row) {
+                $sheet->fromArray([
                     $pengajuan->nama_inovasi,
                     $pengajuan->akronim,
                     $pengajuan->kategori->nama ?? '-',
-                    $row->submission->juri->nama,
+                    $juri->nama,
                     $labelAspek[$row->aspek] ?? $row->aspek,
                     $row->nilai,
                     $row->catatan,
-                ]);
+                ], null, "A{$baris}");
+                $baris++;
             }
-            fclose($out);
-        }, 'nilai-presentasi-terang-nona.csv', ['Content-Type' => 'text/csv']);
+
+            $barisAkhir = $baris - 1;
+            $sheet->setCellValue("E{$baris}", 'Rata-rata');
+            $sheet->getStyle("E{$baris}")->getFont()->setBold(true);
+            $sheet->setCellValue("F{$baris}", "=AVERAGE(F{$barisAwal}:F{$barisAkhir})");
+            $sheet->getStyle("F{$baris}")->getFont()->setBold(true);
+            $baris++;
+        }
+
+        foreach (range('A', 'G') as $kolom) {
+            $sheet->getColumnDimension($kolom)->setAutoSize(true);
+        }
+        $sheet->getStyle("A1:G" . ($baris - 1))->getBorders()->getAllBorders()
+            ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+        return $this->unduhSpreadsheet($spreadsheet, 'nilai-presentasi-terang-nona.xlsx');
+    }
+
+    private function unduhSpreadsheet(\PhpOffice\PhpSpreadsheet\Spreadsheet $spreadsheet, string $namaFile)
+    {
+        return response()->streamDownload(function () use ($spreadsheet) {
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $namaFile, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 }
