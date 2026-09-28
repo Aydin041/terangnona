@@ -49,7 +49,10 @@ class RankingService
         }
 
         if ($pengajuan->bentuk_inovasi === 'eksisting') {
-            $totalNilai += (100 * 5 / 100);
+            // Komponen yang tidak berlaku untuk Eksisting (mis. Rencana Aksi) otomatis
+            // dapat nilai 100, tetap ditimbang sesuai bobotnya di database.
+            $bobotTidakBerlaku = (float) KomponenPenilaian::where('kolom_target', '!=', 'keduanya')->sum('bobot');
+            $totalNilai += (100 * $bobotTidakBerlaku / 100);
         }
 
         return round($totalNilai, 2);
