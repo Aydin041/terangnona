@@ -134,16 +134,35 @@ class PengajuanController extends Controller
     {
         $rows = \App\Models\NilaiKomponenProposal::with(['submission.pengajuan.kategori', 'submission.juri', 'komponen'])
             ->whereNotNull('nilai')
-            ->get()
-            ->sortBy([
-                fn ($r) => $r->submission->pengajuan->nama_inovasi,
-                fn ($r) => $r->submission->juri->nama,
-            ])
-            ->groupBy(fn ($r) => $r->submission->pengajuan_id . '-' . $r->submission->juri_id);
+            ->get();
+
+        $bentukLabel = [
+            'eksisting' => 'Eksisting',
+            'pengembangan' => 'Pengembangan',
+            'rancangan' => 'Rancangan',
+        ];
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Nilai Proposal');
+        $spreadsheet->removeSheetByIndex(0);
+
+        foreach ($bentukLabel as $kunciBentuk => $label) {
+            $rowsBentuk = $rows->filter(fn ($r) => $r->submission->pengajuan->bentuk_inovasi === $kunciBentuk)
+                ->sortBy([
+                    fn ($r) => $r->submission->pengajuan->nama_inovasi,
+                    fn ($r) => $r->submission->juri->nama,
+                ])
+                ->groupBy(fn ($r) => $r->submission->pengajuan_id . '-' . $r->submission->juri_id);
+
+            $this->tulisSheetNilaiProposal($spreadsheet, $label, $rowsBentuk);
+        }
+
+        return $this->unduhSpreadsheet($spreadsheet, 'nilai-proposal-terang-nona.xlsx');
+    }
+
+    private function tulisSheetNilaiProposal(\PhpOffice\PhpSpreadsheet\Spreadsheet $spreadsheet, string $judulSheet, $kelompokRows)
+    {
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle($judulSheet);
 
         $header = ['Nama Inovasi', 'Akronim', 'Kategori', 'Nama Juri', 'Komponen', 'Bobot (%)', 'Nilai', 'Nilai Tertimbang', 'Komentar'];
         $sheet->fromArray($header, null, 'A1');
@@ -151,7 +170,7 @@ class PengajuanController extends Controller
         $sheet->getStyle('A1:I1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('FEF3C7');
 
         $baris = 2;
-        foreach ($rows as $kelompok) {
+        foreach ($kelompokRows as $kelompok) {
             $barisAwal = $baris;
             $pengajuan = $kelompok->first()->submission->pengajuan;
             $juri = $kelompok->first()->submission->juri;
@@ -180,13 +199,15 @@ class PengajuanController extends Controller
             $baris++;
         }
 
+        if ($baris === 2) {
+            $sheet->setCellValue('A2', '(Belum ada nilai untuk kelompok ini)');
+        }
+
         foreach (range('A', 'I') as $kolom) {
             $sheet->getColumnDimension($kolom)->setAutoSize(true);
         }
         $sheet->getStyle("A1:I" . ($baris - 1))->getBorders()->getAllBorders()
             ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-        return $this->unduhSpreadsheet($spreadsheet, 'nilai-proposal-terang-nona.xlsx');
     }
 
     public function exportNilaiPresentasi()
@@ -195,16 +216,35 @@ class PengajuanController extends Controller
 
         $rows = \App\Models\NilaiAspekPresentasi::with(['submission.pengajuan.kategori', 'submission.juri'])
             ->whereNotNull('nilai')
-            ->get()
-            ->sortBy([
-                fn ($r) => $r->submission->pengajuan->nama_inovasi,
-                fn ($r) => $r->submission->juri->nama,
-            ])
-            ->groupBy(fn ($r) => $r->submission->pengajuan_id . '-' . $r->submission->juri_id);
+            ->get();
+
+        $bentukLabel = [
+            'eksisting' => 'Eksisting',
+            'pengembangan' => 'Pengembangan',
+            'rancangan' => 'Rancangan',
+        ];
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setTitle('Nilai Presentasi');
+        $spreadsheet->removeSheetByIndex(0);
+
+        foreach ($bentukLabel as $kunciBentuk => $label) {
+            $rowsBentuk = $rows->filter(fn ($r) => $r->submission->pengajuan->bentuk_inovasi === $kunciBentuk)
+                ->sortBy([
+                    fn ($r) => $r->submission->pengajuan->nama_inovasi,
+                    fn ($r) => $r->submission->juri->nama,
+                ])
+                ->groupBy(fn ($r) => $r->submission->pengajuan_id . '-' . $r->submission->juri_id);
+
+            $this->tulisSheetNilaiPresentasi($spreadsheet, $label, $rowsBentuk, $labelAspek);
+        }
+
+        return $this->unduhSpreadsheet($spreadsheet, 'nilai-presentasi-terang-nona.xlsx');
+    }
+
+    private function tulisSheetNilaiPresentasi(\PhpOffice\PhpSpreadsheet\Spreadsheet $spreadsheet, string $judulSheet, $kelompokRows, array $labelAspek)
+    {
+        $sheet = $spreadsheet->createSheet();
+        $sheet->setTitle($judulSheet);
 
         $header = ['Nama Inovasi', 'Akronim', 'Kategori', 'Nama Juri', 'Aspek', 'Nilai', 'Catatan'];
         $sheet->fromArray($header, null, 'A1');
@@ -212,7 +252,7 @@ class PengajuanController extends Controller
         $sheet->getStyle('A1:G1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('DBEAFE');
 
         $baris = 2;
-        foreach ($rows as $kelompok) {
+        foreach ($kelompokRows as $kelompok) {
             $barisAwal = $baris;
             $pengajuan = $kelompok->first()->submission->pengajuan;
             $juri = $kelompok->first()->submission->juri;
@@ -238,13 +278,15 @@ class PengajuanController extends Controller
             $baris++;
         }
 
+        if ($baris === 2) {
+            $sheet->setCellValue('A2', '(Belum ada nilai untuk kelompok ini)');
+        }
+
         foreach (range('A', 'G') as $kolom) {
             $sheet->getColumnDimension($kolom)->setAutoSize(true);
         }
         $sheet->getStyle("A1:G" . ($baris - 1))->getBorders()->getAllBorders()
             ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-        return $this->unduhSpreadsheet($spreadsheet, 'nilai-presentasi-terang-nona.xlsx');
     }
 
     private function unduhSpreadsheet(\PhpOffice\PhpSpreadsheet\Spreadsheet $spreadsheet, string $namaFile)
