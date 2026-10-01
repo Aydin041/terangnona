@@ -124,7 +124,7 @@
                 plugins: { legend: { display: false } },
                 scales: {
                     y: { beginAtZero: true, ticks: { precision: 0 } },
-                    x: { ticks: { maxRotation: 0, minRotation: 0, autoSkip: false } },
+                    x: { ticks: { autoSkip: false, font: { size: 11 } } },
                 },
             },
         });
