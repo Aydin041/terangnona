@@ -134,6 +134,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/akun/peserta/{id}/reset', [AdminAkunController::class, 'pesertaReset'])->name('akun.peserta.reset');
         Route::post('/akun/peserta/{id}/hapus', [AdminAkunController::class, 'pesertaHapus'])->name('akun.peserta.hapus');
 
+        Route::get('/akun/pimpinan', [AdminAkunController::class, 'pimpinanIndex'])->name('akun.pimpinan.index');
+        Route::get('/akun/pimpinan/create', [AdminAkunController::class, 'pimpinanCreateForm'])->name('akun.pimpinan.create');
+        Route::post('/akun/pimpinan', [AdminAkunController::class, 'pimpinanStore'])->name('akun.pimpinan.store');
+        Route::get('/akun/pimpinan/{id}/reset', [AdminAkunController::class, 'pimpinanResetForm'])->name('akun.pimpinan.reset.form');
+        Route::post('/akun/pimpinan/{id}/reset', [AdminAkunController::class, 'pimpinanReset'])->name('akun.pimpinan.reset');
+        Route::post('/akun/pimpinan/{id}/hapus', [AdminAkunController::class, 'pimpinanHapus'])->name('akun.pimpinan.hapus');
+
         Route::get('/pengaturan', [AdminPengaturanController::class, 'form'])->name('pengaturan.form');
         Route::post('/pengaturan', [AdminPengaturanController::class, 'update'])->name('pengaturan.update');
 

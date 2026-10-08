@@ -9,6 +9,7 @@ use App\Models\NilaiKomponenProposal;
 use App\Models\Panitia;
 use App\Models\Pengajuan;
 use App\Models\Peserta;
+use App\Models\Pimpinan;
 use App\Models\PermintaanBukaKunci;
 use App\Models\RiwayatStatus;
 use App\Models\SubmissionPresentasi;
@@ -220,5 +221,70 @@ class AkunController extends Controller
         $peserta->delete();
 
         return redirect()->route('admin.akun.peserta.index')->with('sukses', "Akun Peserta {$peserta->nama} berhasil dihapus.");
+    }
+
+    public function pimpinanIndex()
+    {
+        $daftarPimpinan = Pimpinan::orderBy('nama')->get();
+        return view('admin.akun.pimpinan_index', compact('daftarPimpinan'));
+    }
+
+    public function pimpinanCreateForm()
+    {
+        return view('admin.akun.pimpinan_create');
+    }
+
+    public function pimpinanStore(Request $request)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:pimpinan,email',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $passwordAsli = !empty($validated['password']) ? $validated['password'] : Str::random(10);
+
+        Pimpinan::create([
+            'nama' => $validated['nama'],
+            'email' => $validated['email'],
+            'password_hash' => Hash::make($passwordAsli),
+        ]);
+
+        return redirect()
+            ->route('admin.akun.pimpinan.index')
+            ->with('sukses', "Akun Pimpinan berhasil dibuat. Email: {$validated['email']} | Password: {$passwordAsli} (catat sekarang, tidak akan ditampilkan lagi)");
+    }
+
+    public function pimpinanResetForm($id)
+    {
+        $pimpinan = Pimpinan::findOrFail($id);
+        return view('admin.akun.pimpinan_reset', compact('pimpinan'));
+    }
+
+    public function pimpinanReset(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $pimpinan = Pimpinan::findOrFail($id);
+        $passwordBaru = !empty($validated['password']) ? $validated['password'] : Str::random(10);
+
+        $pimpinan->update([
+            'password_hash' => Hash::make($passwordBaru),
+        ]);
+
+        return redirect()
+            ->route('admin.akun.pimpinan.index')
+            ->with('sukses', "Password untuk {$pimpinan->nama} ({$pimpinan->email}) berhasil direset. Password baru: {$passwordBaru} (catat sekarang, tidak akan ditampilkan lagi)");
+    }
+
+    public function pimpinanHapus($id)
+    {
+        // Pimpinan hanya-lihat dan tidak meninggalkan data lain, jadi aman dihapus langsung.
+        $pimpinan = Pimpinan::findOrFail($id);
+        $pimpinan->delete();
+
+        return redirect()->route('admin.akun.pimpinan.index')->with('sukses', "Akun Pimpinan {$pimpinan->nama} berhasil dihapus.");
     }
 }

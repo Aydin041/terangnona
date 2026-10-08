@@ -18,10 +18,11 @@
     </nav>
 
     <main class="max-w-2xl mx-auto px-4 py-8">
-        <p class="mb-3 flex gap-3 text-sm">
+        <p class="mb-3 flex flex-wrap gap-x-3 gap-y-1 text-sm">
             <a href="{{ route('admin.dashboard') }}" class="text-slate-500 hover:text-slate-900">← Dashboard</a>
             <a href="{{ route('admin.akun.juri.index') }}" class="text-sky-700 hover:underline">Kelola Akun Juri</a>
             <a href="{{ route('admin.akun.peserta.index') }}" class="text-sky-700 hover:underline">Kelola Akun Peserta</a>
+            <a href="{{ route('admin.akun.pimpinan.index') }}" class="text-sky-700 hover:underline">Kelola Akun Pimpinan</a>
         </p>
         <h1 class="text-2xl font-bold text-slate-900 mb-5">Kelola Akun Panitia</h1>
 
