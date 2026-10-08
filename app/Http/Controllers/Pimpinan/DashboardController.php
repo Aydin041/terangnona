@@ -3,14 +3,19 @@
 namespace App\Http\Controllers\Pimpinan;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Pengajuan;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $pimpinan = Auth::guard('pimpinan')->user();
+        $jumlahPerStatus = Pengajuan::selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
 
-        return view('pimpinan.dashboard', compact('pimpinan'));
+        $jumlahDraft = (int) ($jumlahPerStatus['draft'] ?? 0);
+        $totalMasuk = (int) $jumlahPerStatus->except('draft')->sum();
+
+        return view('pimpinan.dashboard', compact('jumlahPerStatus', 'jumlahDraft', 'totalMasuk'));
     }
 }

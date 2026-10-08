@@ -8,26 +8,45 @@
 </head>
 <body class="bg-stone-50 min-h-screen">
 
-    <nav class="bg-white border-b border-stone-200">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
-            <a href="{{ route('pimpinan.dashboard') }}">
-                <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
-            </a>
-            <div class="flex items-center gap-3">
-                <span class="text-sm text-slate-500">Login sebagai: <strong class="text-slate-700">{{ $pimpinan->nama }}</strong></span>
-                <form method="POST" action="{{ route('pimpinan.logout') }}">
-                    @csrf
-                    <button type="submit" class="text-sm text-slate-600 border border-stone-300 rounded-lg px-3 py-1.5 hover:bg-stone-100">Keluar</button>
-                </form>
-            </div>
-        </div>
-    </nav>
+    @include('pimpinan._nav')
 
     <main class="max-w-4xl mx-auto px-4 py-8">
-        <h1 class="text-xl font-bold text-slate-900 mb-2">Dashboard Pimpinan</h1>
-        <div class="bg-white border border-stone-200 rounded-xl p-6">
-            <p class="text-slate-700">Login berhasil. Halaman ini bersifat hanya-lihat.</p>
-            <p class="text-sm text-slate-500 mt-2">Ringkasan, ranking, dan daftar pengajuan akan ditambahkan pada tahap berikutnya.</p>
+        <h1 class="text-2xl font-bold text-slate-900 mb-1">Ringkasan Kompetisi</h1>
+        <p class="text-sm text-slate-500 mb-6">Halaman ini bersifat hanya-lihat.</p>
+
+        @php
+            $kartu = [
+                ['label' => 'Menunggu Pemeriksaan', 'kunci' => 'menunggu_pemeriksaan', 'warna' => 'text-sky-700'],
+                ['label' => 'Disetujui', 'kunci' => 'disetujui', 'warna' => 'text-green-700'],
+                ['label' => 'Perlu Perbaikan', 'kunci' => 'perlu_perbaikan', 'warna' => 'text-red-700'],
+                ['label' => 'Ditolak', 'kunci' => 'ditolak', 'warna' => 'text-slate-800'],
+            ];
+        @endphp
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
+            <div class="bg-white border border-stone-200 border-t-4 border-t-amber-500 rounded-xl p-4 col-span-2 sm:col-span-1">
+                <p class="text-sm text-slate-500">Total Pengajuan Masuk</p>
+                <p class="text-3xl font-bold text-slate-900 mt-1">{{ $totalMasuk }}</p>
+            </div>
+            @foreach ($kartu as $k)
+                <a href="{{ route('pimpinan.pengajuan.index', ['status' => $k['kunci']]) }}"
+                    class="bg-white border border-stone-200 hover:border-amber-400 rounded-xl p-4 transition-colors">
+                    <p class="text-sm text-slate-500">{{ $k['label'] }}</p>
+                    <p class="text-3xl font-bold mt-1 {{ $k['warna'] }}">{{ $jumlahPerStatus[$k['kunci']] ?? 0 }}</p>
+                </a>
+            @endforeach
+        </div>
+        <p class="text-xs text-slate-400 mb-8">Draft yang belum dikirim peserta ({{ $jumlahDraft }}) tidak dihitung.</p>
+
+        <div class="grid sm:grid-cols-2 gap-3">
+            <a href="{{ route('pimpinan.pengajuan.index') }}" class="block bg-white border border-stone-200 hover:border-amber-400 rounded-xl p-5 transition-colors">
+                <p class="font-semibold text-slate-900">Daftar Pengajuan</p>
+                <p class="text-sm text-slate-500 mt-1">Lihat pengajuan beserta isi proposalnya.</p>
+            </a>
+            <a href="{{ route('pimpinan.ranking.index') }}" class="block bg-white border border-stone-200 hover:border-amber-400 rounded-xl p-5 transition-colors">
+                <p class="font-semibold text-slate-900">Ranking</p>
+                <p class="text-sm text-slate-500 mt-1">Lihat peringkat proposal dan hasil akhir.</p>
+            </a>
         </div>
     </main>
 

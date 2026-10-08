@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\PengaturanController as AdminPengaturanController
 use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
 use App\Http\Controllers\Pimpinan\AuthController as PimpinanAuthController;
 use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
+use App\Http\Controllers\Pimpinan\PengajuanController as PimpinanPengajuanController;
+use App\Http\Controllers\Pimpinan\RankingController as PimpinanRankingController;
 use App\Http\Middleware\PimpinanReadOnly;
 
 Route::get('/', function () {
@@ -147,5 +149,8 @@ Route::prefix('pimpinan')->name('pimpinan.')->group(function () {
 
     Route::middleware(['auth:pimpinan', PimpinanReadOnly::class])->group(function () {
         Route::get('/dashboard', [PimpinanDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/pengajuan', [PimpinanPengajuanController::class, 'index'])->name('pengajuan.index');
+        Route::get('/pengajuan/{id}', [PimpinanPengajuanController::class, 'detail'])->name('pengajuan.detail');
+        Route::get('/ranking', [PimpinanRankingController::class, 'index'])->name('ranking.index');
     });
 });
