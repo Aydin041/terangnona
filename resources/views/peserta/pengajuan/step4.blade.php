@@ -114,22 +114,22 @@
                             <div id="links-container-{{ $komponen->id }}" class="space-y-2">
                                 @php $linkList = $isianRow->links ?? collect(); @endphp
                                 @forelse ($linkList as $linkItem)
-                                    <div class="flex gap-2">
+                                    <div class="flex flex-col sm:flex-row gap-2">
                                         <input type="text" name="link_judul[{{ $komponen->id }}][]" value="{{ $linkItem->judul }}" placeholder="Judul"
-                                            class="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                            class="w-full min-w-0 sm:flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                                         <input type="text" name="link_url[{{ $komponen->id }}][]" value="{{ $linkItem->link }}" placeholder="https://..."
-                                            class="flex-[2] rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                            class="w-full min-w-0 sm:flex-[2] rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                                         <button type="button" onclick="this.parentElement.remove()"
-                                            class="text-red-600 hover:text-red-800 border border-red-200 rounded-lg px-3 text-sm">−</button>
+                                            class="self-end sm:self-auto text-red-600 hover:text-red-800 border border-red-200 rounded-lg px-3 py-2 sm:py-0 text-sm">−</button>
                                     </div>
                                 @empty
-                                    <div class="flex gap-2">
+                                    <div class="flex flex-col sm:flex-row gap-2">
                                         <input type="text" name="link_judul[{{ $komponen->id }}][]" placeholder="Judul"
-                                            class="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                            class="w-full min-w-0 sm:flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                                         <input type="text" name="link_url[{{ $komponen->id }}][]" placeholder="https://..."
-                                            class="flex-[2] rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                            class="w-full min-w-0 sm:flex-[2] rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                                         <button type="button" onclick="this.parentElement.remove()"
-                                            class="text-red-600 hover:text-red-800 border border-red-200 rounded-lg px-3 text-sm">−</button>
+                                            class="self-end sm:self-auto text-red-600 hover:text-red-800 border border-red-200 rounded-lg px-3 py-2 sm:py-0 text-sm">−</button>
                                     </div>
                                 @endforelse
                             </div>
@@ -198,14 +198,14 @@
         function tambahLinkRow(komponenId) {
             const container = document.getElementById('links-container-' + komponenId);
             const div = document.createElement('div');
-            div.className = 'flex gap-2';
+            div.className = 'flex flex-col sm:flex-row gap-2';
             div.innerHTML = `
                 <input type="text" name="link_judul[${komponenId}][]" placeholder="Judul"
-                    class="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                    class="w-full min-w-0 sm:flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                 <input type="text" name="link_url[${komponenId}][]" placeholder="https://..."
-                    class="flex-[2] rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                    class="w-full min-w-0 sm:flex-[2] rounded-lg border border-stone-300 px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                 <button type="button" onclick="this.parentElement.remove()"
-                    class="text-red-600 hover:text-red-800 border border-red-200 rounded-lg px-3 text-sm">−</button>
+                    class="self-end sm:self-auto text-red-600 hover:text-red-800 border border-red-200 rounded-lg px-3 py-2 sm:py-0 text-sm">−</button>
             `;
             container.appendChild(div);
         }
