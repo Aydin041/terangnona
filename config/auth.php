@@ -44,6 +44,11 @@ return [
             'driver' => 'session',
             'provider' => 'admin',
         ],
+
+        'pimpinan' => [
+            'driver' => 'session',
+            'provider' => 'pimpinan',
+        ],
     ],
 
     /*
@@ -76,6 +81,11 @@ return [
         'admin' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
+        ],
+
+        'pimpinan' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Pimpinan::class,
         ],
     ],
 

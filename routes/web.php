@@ -15,6 +15,9 @@ use App\Http\Controllers\Admin\KoreksiController as AdminKoreksiController;
 use App\Http\Controllers\Admin\AkunController as AdminAkunController;
 use App\Http\Controllers\Admin\PengaturanController as AdminPengaturanController;
 use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
+use App\Http\Controllers\Pimpinan\AuthController as PimpinanAuthController;
+use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
+use App\Http\Middleware\PimpinanReadOnly;
 
 Route::get('/', function () {
     return view('landing');
@@ -133,5 +136,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/pengaturan', [AdminPengaturanController::class, 'update'])->name('pengaturan.update');
 
         Route::get('/laporan-nilai', [AdminLaporanController::class, 'index'])->name('laporan.index');
+    });
+});
+
+// Pimpinan (hanya lihat — semua rute di dalam grup auth hanya boleh GET)
+Route::prefix('pimpinan')->name('pimpinan.')->group(function () {
+    Route::get('/login', [PimpinanAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [PimpinanAuthController::class, 'login'])->name('login.submit');
+    Route::post('/logout', [PimpinanAuthController::class, 'logout'])->name('logout');
+
+    Route::middleware(['auth:pimpinan', PimpinanReadOnly::class])->group(function () {
+        Route::get('/dashboard', [PimpinanDashboardController::class, 'index'])->name('dashboard');
     });
 });
