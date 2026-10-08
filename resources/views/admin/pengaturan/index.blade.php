@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pengaturan Deadline - Admin - TERANG NONA</title>
+    <title>Pengaturan - Admin - TERANG NONA</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-stone-50 min-h-screen">
@@ -19,8 +19,7 @@
 
     <main class="max-w-md mx-auto px-4 py-8">
         <p class="mb-3"><a href="{{ route('admin.dashboard') }}" class="text-sm text-slate-500 hover:text-slate-900">← Dashboard</a></p>
-        <h1 class="text-xl font-bold text-slate-900 mb-2">Pengaturan Deadline Pengajuan</h1>
-        <p class="text-sm text-slate-500 mb-5">Setelah lewat tanggal ini, Peserta tidak bisa lagi membuat pengajuan baru. Pengajuan yang sudah ada (draft/perlu perbaikan) tetap bisa diedit.</p>
+        <h1 class="text-xl font-bold text-slate-900 mb-5">Pengaturan</h1>
 
         @if ($errors->any())
             <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm p-3">
@@ -38,24 +37,36 @@
             </div>
         @endif
 
-        <div class="bg-white border border-stone-200 rounded-xl p-6">
-            <form method="POST" action="{{ route('admin.pengaturan.update') }}" class="space-y-4">
-                @csrf
+        <form method="POST" action="{{ route('admin.pengaturan.update') }}" class="space-y-4">
+            @csrf
 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Deadline Pengajuan</label>
-                    <input type="datetime-local" name="deadline_pengajuan"
-                        value="{{ old('deadline_pengajuan', optional($pengaturan->deadline_pengajuan)->format('Y-m-d\TH:i')) }}"
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-                    <p class="text-xs text-slate-400 mt-1">Kosongkan lalu simpan untuk menghapus deadline (pengajuan dibuka lagi tanpa batas).</p>
-                </div>
+            <div class="bg-white border border-stone-200 rounded-xl p-6">
+                <h2 class="font-semibold text-slate-900 mb-1">Deadline Pengajuan</h2>
+                <p class="text-sm text-slate-500 mb-4">Setelah lewat tanggal ini, Peserta tidak bisa lagi membuat pengajuan baru. Pengajuan yang sudah ada (draft/perlu perbaikan) tetap bisa diedit.</p>
 
-                <button type="submit"
-                    class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg py-2.5 transition-colors">
-                    Simpan
-                </button>
-            </form>
-        </div>
+                <input type="datetime-local" name="deadline_pengajuan"
+                    value="{{ old('deadline_pengajuan', optional($pengaturan->deadline_pengajuan)->format('Y-m-d\TH:i')) }}"
+                    class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                <p class="text-xs text-slate-400 mt-1">Kosongkan lalu simpan untuk menghapus deadline (pengajuan dibuka lagi tanpa batas).</p>
+            </div>
+
+            <div class="bg-white border border-stone-200 rounded-xl p-6">
+                <h2 class="font-semibold text-slate-900 mb-1">Penilaian Juri</h2>
+                <p class="text-sm text-slate-500 mb-4">Nilai sebuah pengajuan baru dihitung dan masuk ranking setelah sedikitnya sejumlah ini Juri melakukan submit final.</p>
+
+                <label class="block text-sm font-medium text-slate-700 mb-1">Minimal Juri yang Harus Submit</label>
+                <input type="number" name="minimal_juri_submit" min="1" max="{{ max(1, $jumlahJuri) }}" required
+                    value="{{ old('minimal_juri_submit', $pengaturan->minimal_juri_submit ?? 2) }}"
+                    class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                <p class="text-xs text-slate-400 mt-1">Saat ini ada {{ $jumlahJuri }} akun Juri. Angka tidak boleh melebihi jumlah itu.</p>
+                <p class="text-xs text-amber-700 mt-2">Atur sebelum penilaian dimulai. Mengubahnya di tengah penilaian dapat mengubah hasil ranking.</p>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg py-2.5 transition-colors">
+                Simpan
+            </button>
+        </form>
     </main>
 
     <script src="{{ asset('js/prevent-double-submit.js') }}"></script>

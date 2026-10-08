@@ -5,13 +5,23 @@ namespace App\Services;
 use App\Models\KomponenPenilaian;
 use App\Models\NilaiAspekPresentasi;
 use App\Models\NilaiKomponenProposal;
+use App\Models\Pengaturan;
 use App\Models\Pengajuan;
 use App\Models\SubmissionPresentasi;
 use App\Models\SubmissionProposal;
 
 class RankingService
 {
-    const MINIMAL_JURI_SUBMIT = 2;
+    private ?int $minimalJuriCache = null;
+
+    private function minimalJuri(): int
+    {
+        if ($this->minimalJuriCache === null) {
+            $this->minimalJuriCache = Pengaturan::minimalJuriSubmit();
+        }
+
+        return $this->minimalJuriCache;
+    }
 
     public function jumlahJuriSubmit(Pengajuan $pengajuan): int
     {
@@ -26,7 +36,7 @@ class RankingService
             ->where('status', 'submitted')
             ->pluck('id');
 
-        if ($submissionSubmitted->count() < self::MINIMAL_JURI_SUBMIT) {
+        if ($submissionSubmitted->count() < $this->minimalJuri()) {
             return null;
         }
 
@@ -64,7 +74,7 @@ class RankingService
             ->where('status', 'submitted')
             ->pluck('id');
 
-        if ($submissionSubmitted->count() < self::MINIMAL_JURI_SUBMIT) {
+        if ($submissionSubmitted->count() < $this->minimalJuri()) {
             return null;
         }
 

@@ -50,7 +50,7 @@
 
         <section class="mb-10">
             <h2 class="text-lg font-bold text-slate-900">Tahap 1 — Ranking Proposal (5 Besar)</h2>
-            <p class="text-sm text-slate-500 mb-4">Minimal 2 dari 3 Juri sudah submit penilaian proposal.</p>
+            <p class="text-sm text-slate-500 mb-4">Minimal {{ \App\Models\Pengaturan::minimalJuriSubmit() }} Juri sudah submit penilaian proposal.</p>
 
             <div class="space-y-6">
                 <div class="bg-white border border-stone-200 rounded-xl p-5">
@@ -95,7 +95,7 @@
 
         <section>
             <h2 class="text-lg font-bold text-slate-900">Tahap 2 — Ranking Akhir (Proposal 75% + Presentasi 25%) — 3 Besar</h2>
-            <p class="text-sm text-slate-500 mb-4">Minimal 2 dari 3 Juri sudah submit penilaian presentasi (untuk pengajuan yang lolos 5 besar).</p>
+            <p class="text-sm text-slate-500 mb-4">Minimal {{ \App\Models\Pengaturan::minimalJuriSubmit() }} Juri sudah submit penilaian presentasi (untuk pengajuan yang lolos 5 besar).</p>
 
             <div class="space-y-6">
                 <div class="bg-white border border-stone-200 rounded-xl p-5">
