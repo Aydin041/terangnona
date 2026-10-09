@@ -11,6 +11,7 @@ use App\Models\RiwayatStatus;
 use App\Models\UnitKerja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class PengajuanController extends Controller
 {
@@ -263,10 +264,12 @@ class PengajuanController extends Controller
 
         $rules = [
             'surat_identitas' => 'nullable|file|mimes:pdf|max:10240',
-            'video_link' => 'required|url',
+            'video_link' => 'required|url:http,https|max:2048',
             'uraian' => 'array',
             'link_judul' => 'array',
             'link_url' => 'array',
+            'link_judul.*.*' => 'nullable|string|max:255',
+            'link_url.*.*' => 'nullable|string|max:2048',
         ];
 
         $rules['lampiran_rab'] = 'nullable|file|mimes:pdf|max:10240';
@@ -278,7 +281,16 @@ class PengajuanController extends Controller
             $rules['lampiran_rencana_aksi'] = 'nullable|file|mimes:pdf|max:10240';
         }
 
-        $validated = $request->validate($rules);
+        $pesanValidasi = [
+            'video_link.url' => 'Tautan video harus berupa alamat lengkap yang diawali http:// atau https://.',
+        ];
+        $namaAtribut = [
+            'video_link' => 'tautan video',
+            'link_url.*.*' => 'alamat tautan bukti dukung',
+            'link_judul.*.*' => 'judul tautan',
+        ];
+
+        $validated = $request->validate($rules, $pesanValidasi, $namaAtribut);
 
         // Cek batas jumlah kata SEBELUM menyimpan apa pun, supaya tidak ada tulisan tersimpan
         // sebagian kalau ternyata melebihi batas (video_link/dokumen/isian jadi konsisten sama-sama gagal atau sama-sama tersimpan).
@@ -302,6 +314,27 @@ class PengajuanController extends Controller
 
         if (!empty($pesanKata)) {
             return back()->withErrors(['kata' => $pesanKata])->withInput();
+        }
+
+        // Periksa setiap tautan bukti dukung (alamat kosong atau bukan http/https): tolak sebelum menyimpan apa pun.
+        $pesanTautan = [];
+        foreach ($request->input('link_judul', []) as $komponenId => $judulArr) {
+            $urlArr = $request->input("link_url.$komponenId", []);
+            foreach ((array) $judulArr as $i => $judul) {
+                $alamat = trim((string) ($urlArr[$i] ?? ''));
+                $nama = $komponenNama[$komponenId] ?? "Komponen #{$komponenId}";
+                $label = trim((string) $judul) !== '' ? "tautan \"{$judul}\"" : 'tautan';
+
+                if (trim((string) $judul) !== '' && $alamat === '') {
+                    $pesanTautan[] = "{$nama}: {$label} belum diisi alamatnya.";
+                } elseif ($alamat !== '' && Validator::make(['alamat' => $alamat], ['alamat' => 'url:http,https'])->fails()) {
+                    $pesanTautan[] = "{$nama}: {$label} harus berupa alamat lengkap yang diawali http:// atau https://.";
+                }
+            }
+        }
+
+        if (!empty($pesanTautan)) {
+            return back()->withErrors(['tautan' => $pesanTautan])->withInput();
         }
 
         $pengajuan->dokumen()->updateOrCreate(

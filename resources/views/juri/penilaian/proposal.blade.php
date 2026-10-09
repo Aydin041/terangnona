@@ -47,7 +47,11 @@
                         <li>
                             <strong class="text-slate-900">{{ $dok->jenis_dokumen }}:</strong>
                             @if ($dok->jenis_dokumen === 'video_link')
-                                <a href="{{ $dok->file_path }}" target="_blank" class="text-sky-700 underline break-all">{{ $dok->file_path }}</a>
+                                @if (preg_match('#^https?://#i', (string) $dok->file_path) === 1)
+                                    <a href="{{ $dok->file_path }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dok->file_path }}</a>
+                                @else
+                                    <span class="break-all">{{ $dok->file_path }}</span>
+                                @endif
                             @else
                                 {{ $dok->nama_asli }}
                                 <a href="{{ asset('storage/' . $dok->file_path) }}" target="_blank" class="text-sky-700 underline">Lihat/Download</a>
@@ -111,7 +115,11 @@
                                     @foreach ($isianRow->links as $linkItem)
                                         <li>
                                             {{ $linkItem->judul }}:
-                                            <a href="{{ $linkItem->link }}" target="_blank" class="text-sky-700 underline break-all">{{ $linkItem->link }}</a>
+                                            @if (preg_match('#^https?://#i', (string) $linkItem->link) === 1)
+                                                <a href="{{ $linkItem->link }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $linkItem->link }}</a>
+                                            @else
+                                                <span class="break-all">{{ $linkItem->link }}</span>
+                                            @endif
                                         </li>
                                     @endforeach
                                 </ul>
