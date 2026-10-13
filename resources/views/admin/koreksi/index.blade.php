@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Permintaan Koreksi Nilai - Admin - TERANG NONA</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <script src="{{ asset('js/chart.umd.js') }}"></script>
 </head>
 <body class="bg-stone-50 min-h-screen">
 
@@ -24,11 +24,10 @@
 
     <main class="max-w-2xl mx-auto px-4 py-8">
         <h1 class="text-2xl font-bold text-slate-900 mb-1">Dashboard Admin</h1>
-        <p class="mb-5 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+        <p class="mb-5 flex gap-3 text-sm">
             <a href="{{ route('admin.akun.panitia.index') }}" class="text-sky-700 hover:underline">Kelola Akun Panitia</a>
             <a href="{{ route('admin.akun.juri.index') }}" class="text-sky-700 hover:underline">Kelola Akun Juri</a>
             <a href="{{ route('admin.akun.peserta.index') }}" class="text-sky-700 hover:underline">Kelola Akun Peserta</a>
-            <a href="{{ route('admin.akun.pimpinan.index') }}" class="text-sky-700 hover:underline">Kelola Akun Pimpinan</a>
             <a href="{{ route('admin.pengaturan.form') }}" class="text-sky-700 hover:underline">Pengaturan Deadline</a>
             <a href="{{ route('admin.laporan.index') }}" class="text-sky-700 hover:underline">Laporan Nilai</a>
         </p>
