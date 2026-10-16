@@ -74,12 +74,7 @@
                         @foreach ($dokumenTersimpan as $jenis => $dok)
                             <li>
                                 {{ $jenis }}:
-                                @if ($jenis === 'video_link')
-                                    <a href="{{ $dok->file_path }}" target="_blank" class="text-sky-700 underline break-all">{{ $dok->file_path }}</a>
-                                @else
-                                    {{ $dok->nama_asli }}
-                                    <a href="{{ asset('storage/' . $dok->file_path) }}" target="_blank" class="text-sky-700 underline">Lihat</a>
-                                @endif
+                                <a href="{{ $dok->tautan }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dok->label }}</a>
                             </li>
                         @endforeach
                     </ul>

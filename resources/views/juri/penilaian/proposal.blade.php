@@ -40,22 +40,13 @@
         <div class="bg-white border border-stone-200 rounded-xl p-6 mb-6">
             <h3 class="font-semibold text-slate-900 mb-3">Dokumen Pengajuan</h3>
             @if ($dokumenPengajuan->isEmpty())
-                <p class="text-sm text-red-600">Belum ada dokumen yang diupload peserta.</p>
+                <p class="text-sm text-red-600">Belum ada dokumen yang diisi peserta.</p>
             @else
                 <ul class="text-sm text-slate-700 space-y-1">
                     @foreach ($dokumenPengajuan as $dok)
                         <li>
                             <strong class="text-slate-900">{{ $dok->jenis_dokumen }}:</strong>
-                            @if ($dok->jenis_dokumen === 'video_link')
-                                @if (preg_match('#^https?://#i', (string) $dok->file_path) === 1)
-                                    <a href="{{ $dok->file_path }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dok->file_path }}</a>
-                                @else
-                                    <span class="break-all">{{ $dok->file_path }}</span>
-                                @endif
-                            @else
-                                {{ $dok->nama_asli }}
-                                <a href="{{ asset('storage/' . $dok->file_path) }}" target="_blank" class="text-sky-700 underline">Lihat/Download</a>
-                            @endif
+                            <a href="{{ $dok->tautan }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dok->label }}</a>
                         </li>
                     @endforeach
                 </ul>
@@ -94,10 +85,9 @@
                         <div class="bg-stone-50 border border-stone-200 rounded-lg p-3 mb-3 text-sm">
                             <strong class="text-slate-800">Lampiran dari Peserta:</strong>
                             @if ($dokLampiran)
-                                {{ $dokLampiran->nama_asli }}
-                                <a href="{{ asset('storage/' . $dokLampiran->file_path) }}" target="_blank" class="text-sky-700 underline">Lihat/Download</a>
+                                <a href="{{ $dokLampiran->tautan }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dokLampiran->label }}</a>
                             @else
-                                <span class="text-red-600">Belum diupload peserta.</span>
+                                <span class="text-red-600">Belum diisi peserta.</span>
                             @endif
                         </div>
                     @else
@@ -134,10 +124,9 @@
                             @if ($jenisTambahan)
                                 <strong class="text-slate-800 block mt-2">Dokumen RAB:</strong>
                                 @if ($dokTambahan)
-                                    {{ $dokTambahan->nama_asli }}
-                                    <a href="{{ asset('storage/' . $dokTambahan->file_path) }}" target="_blank" class="text-sky-700 underline">Lihat/Download</a>
+                                    <a href="{{ $dokTambahan->tautan }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dokTambahan->label }}</a>
                                 @else
-                                    <span class="text-red-600">Belum diupload peserta.</span>
+                                    <span class="text-red-600">Belum diisi peserta.</span>
                                 @endif
                             @endif
                         </div>

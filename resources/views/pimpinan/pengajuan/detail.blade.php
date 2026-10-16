@@ -47,16 +47,7 @@
                         @continue(in_array($dok->jenis_dokumen, array_merge(array_values($lampiranUtama), array_values($lampiranTambahan)), true))
                         <li>
                             <strong class="text-slate-900">{{ $dok->jenis_dokumen }}:</strong>
-                            @if ($dok->jenis_dokumen === 'video_link')
-                                @if ($aman($dok->file_path))
-                                    <a href="{{ $dok->file_path }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dok->file_path }}</a>
-                                @else
-                                    <span class="break-all">{{ $dok->file_path }}</span>
-                                @endif
-                            @else
-                                {{ $dok->nama_asli }}
-                                <a href="{{ asset('storage/' . $dok->file_path) }}" target="_blank" class="text-sky-700 underline">Lihat</a>
-                            @endif
+                            <a href="{{ $dok->tautan }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dok->label }}</a>
                         </li>
                     @empty
                         <li class="text-slate-400 italic">Belum ada dokumen.</li>
@@ -81,11 +72,11 @@
                             @if ($jenisUtama)
                                 @php $dok = $dokumenPerJenis[$jenisUtama] ?? null; @endphp
                                 @if ($dok)
-                                    <p class="text-sm text-slate-700">Lampiran: {{ $dok->nama_asli }}
-                                        <a href="{{ asset('storage/' . $dok->file_path) }}" target="_blank" class="text-sky-700 underline">Lihat</a>
+                                    <p class="text-sm text-slate-700 break-all">Lampiran:
+                                        <a href="{{ $dok->tautan }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline">{{ $dok->label }}</a>
                                     </p>
                                 @else
-                                    <p class="text-sm text-slate-400 italic">Lampiran belum diunggah.</p>
+                                    <p class="text-sm text-slate-400 italic">Lampiran belum diisi.</p>
                                 @endif
                             @else
                                 @if ($isian && filled($isian->uraian))
@@ -115,11 +106,11 @@
                                 @php $dokTambahan = $dokumenPerJenis[$jenisTambahan] ?? null; @endphp
                                 <div class="mt-3 pt-3 border-t border-stone-200">
                                     @if ($dokTambahan)
-                                        <p class="text-sm text-slate-700">Dokumen RAB: {{ $dokTambahan->nama_asli }}
-                                            <a href="{{ asset('storage/' . $dokTambahan->file_path) }}" target="_blank" class="text-sky-700 underline">Lihat</a>
+                                        <p class="text-sm text-slate-700 break-all">Dokumen RAB:
+                                            <a href="{{ $dokTambahan->tautan }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline">{{ $dokTambahan->label }}</a>
                                         </p>
                                     @else
-                                        <p class="text-sm text-slate-400 italic">Dokumen RAB belum diunggah.</p>
+                                        <p class="text-sm text-slate-400 italic">Dokumen RAB belum diisi.</p>
                                     @endif
                                 </div>
                             @endif

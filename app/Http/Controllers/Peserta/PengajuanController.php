@@ -263,7 +263,7 @@ class PengajuanController extends Controller
             ->firstOrFail();
 
         $rules = [
-            'surat_identitas' => 'nullable|file|mimes:pdf|max:10240',
+            'surat_identitas' => 'nullable|url:http,https|max:2048',
             'video_link' => 'required|url:http,https|max:2048',
             'uraian' => 'array',
             'link_judul' => 'array',
@@ -272,13 +272,13 @@ class PengajuanController extends Controller
             'link_url.*.*' => 'nullable|string|max:2048',
         ];
 
-        $rules['lampiran_rab'] = 'nullable|file|mimes:pdf|max:10240';
+        $rules['lampiran_rab'] = 'nullable|url:http,https|max:2048';
 
         if ($pengajuan->bentuk_inovasi === 'eksisting') {
-            $rules['surat_implementasi'] = 'nullable|file|mimes:pdf|max:10240';
+            $rules['surat_implementasi'] = 'nullable|url:http,https|max:2048';
         } else {
-            $rules['surat_komitmen'] = 'nullable|file|mimes:pdf|max:10240';
-            $rules['lampiran_rencana_aksi'] = 'nullable|file|mimes:pdf|max:10240';
+            $rules['surat_komitmen'] = 'nullable|url:http,https|max:2048';
+            $rules['lampiran_rencana_aksi'] = 'nullable|url:http,https|max:2048';
         }
 
         $pesanValidasi = [
@@ -289,6 +289,19 @@ class PengajuanController extends Controller
             'link_url.*.*' => 'alamat tautan bukti dukung',
             'link_judul.*.*' => 'judul tautan',
         ];
+
+        $labelTautan = [
+            'surat_identitas' => 'Tautan surat pernyataan identitas inovator',
+            'surat_implementasi' => 'Tautan surat pernyataan implementasi inovasi',
+            'surat_komitmen' => 'Tautan surat pernyataan komitmen implementasi inovasi',
+            'lampiran_rab' => 'Tautan dokumen RAB',
+            'lampiran_rencana_aksi' => 'Tautan lampiran rencana aksi',
+        ];
+        foreach ($labelTautan as $kunci => $label) {
+            $pesanValidasi["{$kunci}.url"] = "{$label} harus berupa alamat lengkap yang diawali http:// atau https://.";
+            $pesanValidasi["{$kunci}.max"] = "{$label} terlalu panjang (maksimal 2048 karakter).";
+            $namaAtribut[$kunci] = strtolower($label);
+        }
 
         $validated = $request->validate($rules, $pesanValidasi, $namaAtribut);
 
@@ -342,25 +355,27 @@ class PengajuanController extends Controller
             ['file_path' => $validated['video_link'], 'uploaded_at' => now()]
         );
 
-        $jenisFileList = ['surat_identitas', 'lampiran_rab'];
+        // Semua dokumen sekarang berupa tautan (bukan unggah berkas) agar ruang penyimpanan server hemat.
+        $jenisTautanList = ['surat_identitas', 'lampiran_rab'];
         if ($pengajuan->bentuk_inovasi === 'eksisting') {
-            $jenisFileList[] = 'surat_implementasi';
+            $jenisTautanList[] = 'surat_implementasi';
         } else {
-            $jenisFileList[] = 'surat_komitmen';
-            $jenisFileList[] = 'lampiran_rencana_aksi';
+            $jenisTautanList[] = 'surat_komitmen';
+            $jenisTautanList[] = 'lampiran_rencana_aksi';
         }
 
-        foreach ($jenisFileList as $jenis) {
-            if ($request->hasFile($jenis)) {
-                $file = $request->file($jenis);
-                $namaAsli = $file->getClientOriginalName();
-                $path = $file->store('dokumen_pengajuan', 'public');
+        foreach ($jenisTautanList as $jenis) {
+            $alamat = trim((string) ($validated[$jenis] ?? ''));
 
-                $pengajuan->dokumen()->updateOrCreate(
-                    ['jenis_dokumen' => $jenis],
-                    ['nama_asli' => $namaAsli, 'file_path' => $path, 'uploaded_at' => now()]
-                );
+            // Kolom dikosongkan: biarkan isi lama (kalau ada), jangan dihapus.
+            if ($alamat === '') {
+                continue;
             }
+
+            $pengajuan->dokumen()->updateOrCreate(
+                ['jenis_dokumen' => $jenis],
+                ['nama_asli' => null, 'file_path' => $alamat, 'uploaded_at' => now()]
+            );
         }
 
         foreach ($uraianInput as $komponenId => $uraian) {

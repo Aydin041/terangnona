@@ -39,52 +39,38 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('peserta.pengajuan.step4.submit', $pengajuan->id) }}" enctype="multipart/form-data" class="space-y-6">
+        <form method="POST" action="{{ route('peserta.pengajuan.step4.submit', $pengajuan->id) }}" class="space-y-6">
             @csrf
 
             <div class="bg-white border border-stone-200 rounded-xl p-6">
-                <h2 class="font-semibold text-slate-900 mb-4">Bagian A — Dokumen Administratif</h2>
+                <h2 class="font-semibold text-slate-900 mb-1">Bagian A — Dokumen Administratif</h2>
+                <p class="text-sm text-slate-500 mb-4">Semua dokumen dikirim berupa tautan, tanpa mengunggah berkas. Pastikan akses tautan diatur "Siapa saja yang memiliki link" agar Panitia dan Juri dapat membukanya.</p>
 
                 <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Surat Pernyataan Identitas Inovator (PDF)</label>
-                        @if (isset($dokumenTersimpan['surat_identitas']))
-                            <p class="text-xs text-green-700 mb-1">Sudah diupload: {{ $dokumenTersimpan['surat_identitas']->nama_asli }}
-                                <a href="{{ asset('storage/' . $dokumenTersimpan['surat_identitas']->file_path) }}" target="_blank" class="underline">Lihat</a>
-                            </p>
-                        @endif
-                        <input type="file" name="surat_identitas" accept="application/pdf"
-                            class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-stone-100 file:text-slate-700 hover:file:bg-stone-200">
-                    </div>
+                    @include('peserta.pengajuan._input-tautan', [
+                        'nama' => 'surat_identitas',
+                        'label' => 'Link Surat Pernyataan Identitas Inovator',
+                        'dok' => $dokumenTersimpan['surat_identitas'] ?? null,
+                    ])
 
                     @if ($pengajuan->bentuk_inovasi === 'eksisting')
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Surat Pernyataan Implementasi Inovasi (PDF)</label>
-                            @if (isset($dokumenTersimpan['surat_implementasi']))
-                                <p class="text-xs text-green-700 mb-1">Sudah diupload: {{ $dokumenTersimpan['surat_implementasi']->nama_asli }}
-                                    <a href="{{ asset('storage/' . $dokumenTersimpan['surat_implementasi']->file_path) }}" target="_blank" class="underline">Lihat</a>
-                                </p>
-                            @endif
-                            <input type="file" name="surat_implementasi" accept="application/pdf"
-                                class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-stone-100 file:text-slate-700 hover:file:bg-stone-200">
-                        </div>
+                        @include('peserta.pengajuan._input-tautan', [
+                            'nama' => 'surat_implementasi',
+                            'label' => 'Link Surat Pernyataan Implementasi Inovasi',
+                            'dok' => $dokumenTersimpan['surat_implementasi'] ?? null,
+                        ])
                     @else
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Surat Pernyataan Komitmen Implementasi Inovasi (PDF)</label>
-                            @if (isset($dokumenTersimpan['surat_komitmen']))
-                                <p class="text-xs text-green-700 mb-1">Sudah diupload: {{ $dokumenTersimpan['surat_komitmen']->nama_asli }}
-                                    <a href="{{ asset('storage/' . $dokumenTersimpan['surat_komitmen']->file_path) }}" target="_blank" class="underline">Lihat</a>
-                                </p>
-                            @endif
-                            <input type="file" name="surat_komitmen" accept="application/pdf"
-                                class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-stone-100 file:text-slate-700 hover:file:bg-stone-200">
-                        </div>
+                        @include('peserta.pengajuan._input-tautan', [
+                            'nama' => 'surat_komitmen',
+                            'label' => 'Link Surat Pernyataan Komitmen Implementasi Inovasi',
+                            'dok' => $dokumenTersimpan['surat_komitmen'] ?? null,
+                        ])
                     @endif
 
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1">Link Video Dampak Inovasi (YouTube/Drive/dll)</label>
                         <input type="text" name="video_link"
-                            value="{{ isset($dokumenTersimpan['video_link']) ? $dokumenTersimpan['video_link']->file_path : old('video_link') }}"
+                            value="{{ old('video_link', isset($dokumenTersimpan['video_link']) ? $dokumenTersimpan['video_link']->file_path : '') }}"
                             placeholder="https://..." required
                             class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                     </div>
@@ -144,15 +130,12 @@
                             @endphp
                             @if ($jenisTambahan)
                                 <div class="mt-4 pt-4 border-t border-stone-200">
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Upload Dokumen RAB (PDF)</label>
-                                    @if ($dokTambahan)
-                                        <p class="text-xs text-green-700 mb-1">Sudah diupload: {{ $dokTambahan->nama_asli }}
-                                            <a href="{{ asset('storage/' . $dokTambahan->file_path) }}" target="_blank" class="underline">Lihat</a>
-                                        </p>
-                                    @endif
-                                    <input type="file" name="{{ $jenisTambahan }}" accept="application/pdf"
-                                        class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-stone-100 file:text-slate-700 hover:file:bg-stone-200">
-                                    <p class="text-xs text-slate-400 mt-1">Semakin rinci RAB-nya, semakin besar peluang nilai bagus.</p>
+                                    @include('peserta.pengajuan._input-tautan', [
+                                        'nama' => $jenisTambahan,
+                                        'label' => 'Link Dokumen RAB',
+                                        'dok' => $dokTambahan,
+                                        'bantuan' => 'Semakin rinci RAB-nya, semakin besar peluang nilai bagus.',
+                                    ])
                                 </div>
                             @endif
                         </div>
@@ -163,7 +146,7 @@
             @if (count($komponenLampiran) > 0)
                 <div class="bg-white border border-stone-200 rounded-xl p-6">
                     <h2 class="font-semibold text-slate-900 mb-1">Bagian C — Lampiran Rencana Aksi & Rencana Anggaran</h2>
-                    <p class="text-sm text-slate-500 mb-4">Untuk 2 komponen ini, isian berupa lampiran PDF (bukan uraian teks), sesuai form resmi.</p>
+                    <p class="text-sm text-slate-500 mb-4">Isian untuk komponen ini berupa tautan lampiran (bukan uraian teks), sesuai form resmi.</p>
 
                     <div class="space-y-4">
                         @foreach ($komponenLampiran as $komponen)
@@ -173,14 +156,11 @@
                             @endphp
                             <div class="border border-stone-200 rounded-lg p-4">
                                 <p class="font-medium text-slate-900 mb-2">{{ $komponen->nama }} <span class="text-slate-400 font-normal">(Bobot {{ $komponen->bobot }}%)</span></p>
-                                @if ($dokTersimpan)
-                                    <p class="text-xs text-green-700 mb-1">Sudah diupload: {{ $dokTersimpan->nama_asli }}
-                                        <a href="{{ asset('storage/' . $dokTersimpan->file_path) }}" target="_blank" class="underline">Lihat</a>
-                                    </p>
-                                @endif
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Upload Lampiran (PDF)</label>
-                                <input type="file" name="{{ $jenisDok }}" accept="application/pdf"
-                                    class="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-stone-100 file:text-slate-700 hover:file:bg-stone-200">
+                                @include('peserta.pengajuan._input-tautan', [
+                                    'nama' => $jenisDok,
+                                    'label' => 'Link Lampiran',
+                                    'dok' => $dokTersimpan,
+                                ])
                             </div>
                         @endforeach
                     </div>
