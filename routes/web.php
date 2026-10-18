@@ -19,6 +19,7 @@ use App\Http\Controllers\Pimpinan\AuthController as PimpinanAuthController;
 use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
 use App\Http\Controllers\Pimpinan\PengajuanController as PimpinanPengajuanController;
 use App\Http\Controllers\Pimpinan\RankingController as PimpinanRankingController;
+use App\Http\Middleware\BatasiPercobaanLogin;
 use App\Http\Middleware\PimpinanReadOnly;
 
 Route::get('/', function () {
@@ -30,7 +31,7 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
     Route::get('/register', [PesertaAuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [PesertaAuthController::class, 'register'])->name('register.submit');
     Route::get('/login', [PesertaAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [PesertaAuthController::class, 'login'])->name('login.submit');
+    Route::post('/login', [PesertaAuthController::class, 'login'])->middleware(BatasiPercobaanLogin::class . ':peserta')->name('login.submit');
     Route::post('/logout', [PesertaAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:peserta')->group(function () {
@@ -56,7 +57,7 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
 // Panitia
 Route::prefix('panitia')->name('panitia.')->group(function () {
     Route::get('/login', [PanitiaAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [PanitiaAuthController::class, 'login'])->name('login.submit');
+    Route::post('/login', [PanitiaAuthController::class, 'login'])->middleware(BatasiPercobaanLogin::class . ':panitia')->name('login.submit');
     Route::post('/logout', [PanitiaAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:panitia')->group(function () {
@@ -76,7 +77,7 @@ Route::prefix('panitia')->name('panitia.')->group(function () {
 // Juri
 Route::prefix('juri')->name('juri.')->group(function () {
     Route::get('/login', [JuriAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [JuriAuthController::class, 'login'])->name('login.submit');
+    Route::post('/login', [JuriAuthController::class, 'login'])->middleware(BatasiPercobaanLogin::class . ':juri')->name('login.submit');
     Route::post('/logout', [JuriAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:juri')->group(function () {
@@ -106,7 +107,7 @@ Route::prefix('juri')->name('juri.')->group(function () {
 // Admin
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
+    Route::post('/login', [AdminAuthController::class, 'login'])->middleware(BatasiPercobaanLogin::class . ':admin')->name('login.submit');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 
     Route::middleware('auth:admin')->group(function () {
@@ -151,7 +152,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // Pimpinan (hanya lihat — semua rute di dalam grup auth hanya boleh GET)
 Route::prefix('pimpinan')->name('pimpinan.')->group(function () {
     Route::get('/login', [PimpinanAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [PimpinanAuthController::class, 'login'])->name('login.submit');
+    Route::post('/login', [PimpinanAuthController::class, 'login'])->middleware(BatasiPercobaanLogin::class . ':pimpinan')->name('login.submit');
     Route::post('/logout', [PimpinanAuthController::class, 'logout'])->name('logout');
 
     Route::middleware(['auth:pimpinan', PimpinanReadOnly::class])->group(function () {
