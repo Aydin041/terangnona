@@ -1,37 +1,21 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pengajuan - Langkah 1 - TERANG NONA</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-</head>
-<body class="bg-stone-50 min-h-screen">
+@extends('layouts.peserta')
 
-    <nav class="bg-white border-b border-stone-200">
-        <div class="max-w-2xl mx-auto px-4 py-3">
-            <a href="{{ route('peserta.dashboard') }}">
-                <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
-            </a>
-            <span class="text-sm text-slate-500">Login sebagai: <strong class="text-slate-700">{{ Auth::guard('peserta')->user()->nama }}</strong></span>
-        </div>
-    </nav>
+@section('title', 'Pengajuan - Langkah 1')
 
-    <main class="max-w-2xl mx-auto px-4 py-8">
-        <p class="mb-3"><a href="{{ route('peserta.dashboard') }}" class="text-sm text-slate-500 hover:text-slate-900">← Kembali ke Dashboard</a></p>
-        <div class="flex items-center gap-2 mb-2">
-            @for ($i = 1; $i <= 5; $i++)
-                <div class="h-1.5 flex-1 rounded-full {{ $i <= 1 ? 'bg-amber-500' : 'bg-stone-200' }}"></div>
-            @endfor
-        </div>
-        <p class="text-xs text-slate-500 mb-5">Langkah 1 dari 5</p>
+@section('content')
+    @php
+        $kelas = 'w-full rounded-xl border border-line px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-amber focus:border-brand-amber';
+    @endphp
 
-        <h1 class="text-xl font-bold text-slate-900 mb-5">
-            {{ $pengajuan ? 'Perbaiki Pengajuan' : 'Pengajuan Baru' }}: Profil Inovasi
-        </h1>
+    <div class="max-w-3xl mx-auto">
+        <p class="mb-4"><a href="{{ route('peserta.dashboard') }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke Dashboard</a></p>
+
+        @include('peserta.pengajuan._stepper', ['langkah' => 1])
+
+        <h1 class="text-2xl font-bold mb-5">{{ $pengajuan ? 'Perbaiki Pengajuan' : 'Pengajuan Baru' }}: Profil Inovasi</h1>
 
         @if ($errors->any())
-            <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm p-3">
+            <div class="mb-5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm p-3">
                 <ul class="list-disc list-inside space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -40,31 +24,28 @@
             </div>
         @endif
 
-        <div class="bg-white border border-stone-200 rounded-xl p-6">
-            <form method="POST" action="{{ $pengajuan ? route('peserta.pengajuan.step1.update', $pengajuan->id) : route('peserta.pengajuan.step1.submit') }}" class="space-y-4">
+        <div class="bg-white border border-line rounded-2xl p-6 sm:p-8">
+            <form method="POST" action="{{ $pengajuan ? route('peserta.pengajuan.step1.update', $pengajuan->id) : route('peserta.pengajuan.step1.submit') }}" class="space-y-5">
                 @csrf
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Nama Inovasi</label>
-                    <input type="text" name="nama_inovasi" value="{{ old('nama_inovasi', $pengajuan->nama_inovasi ?? '') }}" required
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                    <label for="nama_inovasi" class="block text-sm font-semibold mb-1.5">Nama Inovasi</label>
+                    <input type="text" id="nama_inovasi" name="nama_inovasi" value="{{ old('nama_inovasi', $pengajuan->nama_inovasi ?? '') }}" required class="{{ $kelas }}">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Akronim</label>
-                    <input type="text" name="akronim" value="{{ old('akronim', $pengajuan->akronim ?? '') }}" placeholder="contoh: PANDU GUNUNG" required
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                    <label for="akronim" class="block text-sm font-semibold mb-1.5">Akronim</label>
+                    <input type="text" id="akronim" name="akronim" value="{{ old('akronim', $pengajuan->akronim ?? '') }}" placeholder="contoh: PANDU GUNUNG" required class="{{ $kelas }}">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi Singkat (Abstrak)</label>
-                    <textarea name="deskripsi" rows="4" required
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">{{ old('deskripsi', $pengajuan->deskripsi ?? '') }}</textarea>
+                    <label for="deskripsi" class="block text-sm font-semibold mb-1.5">Deskripsi Singkat (Abstrak)</label>
+                    <textarea id="deskripsi" name="deskripsi" rows="4" required class="{{ $kelas }}">{{ old('deskripsi', $pengajuan->deskripsi ?? '') }}</textarea>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Inovasi</label>
-                    <div class="flex gap-4">
+                    <span class="block text-sm font-semibold mb-1.5">Jenis Inovasi</span>
+                    <div class="flex gap-6">
                         <label class="flex items-center gap-2">
                             <input type="radio" name="jenis_inovasi" value="digital" class="accent-amber-500" required
                                 {{ old('jenis_inovasi', $pengajuan->jenis_inovasi ?? '') === 'digital' ? 'checked' : '' }}>
@@ -78,48 +59,43 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Kategori</label>
-                    <select name="kategori_id" required
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-                        <option value="">-- Pilih Kategori --</option>
-                        @foreach ($kategoriList as $kategori)
-                            <option value="{{ $kategori->id }}"
-                                {{ old('kategori_id', $pengajuan->kategori_id ?? '') == $kategori->id ? 'selected' : '' }}>
-                                {{ $kategori->nama }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="kategori_id" class="block text-sm font-semibold mb-1.5">Kategori</label>
+                        <select id="kategori_id" name="kategori_id" required class="{{ $kelas }}">
+                            <option value="">-- Pilih Kategori --</option>
+                            @foreach ($kategoriList as $kategori)
+                                <option value="{{ $kategori->id }}" {{ old('kategori_id', $pengajuan->kategori_id ?? '') == $kategori->id ? 'selected' : '' }}>
+                                    {{ $kategori->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="unit_kerja_id" class="block text-sm font-semibold mb-1.5">Unit Kerja Pengampu Inovasi</label>
+                        <select id="unit_kerja_id" name="unit_kerja_id" required class="{{ $kelas }}">
+                            <option value="">-- Pilih Unit Kerja --</option>
+                            @foreach ($unitKerjaList as $unit)
+                                <option value="{{ $unit->id }}" {{ old('unit_kerja_id', $pengajuan->unit_kerja_id ?? '') == $unit->id ? 'selected' : '' }}>
+                                    {{ $unit->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Unit Kerja Pengampu Inovasi</label>
-                    <select name="unit_kerja_id" required
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-                        <option value="">-- Pilih Unit Kerja --</option>
-                        @foreach ($unitKerjaList as $unit)
-                            <option value="{{ $unit->id }}"
-                                {{ old('unit_kerja_id', $pengajuan->unit_kerja_id ?? '') == $unit->id ? 'selected' : '' }}>
-                                {{ $unit->nama }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <label for="tahun_implementasi" class="block text-sm font-semibold mb-1.5">Tahun Implementasi/Rencana</label>
+                    <input type="number" id="tahun_implementasi" name="tahun_implementasi" value="{{ old('tahun_implementasi', $pengajuan->tahun_implementasi ?? 2026) }}" required class="{{ $kelas }}">
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Tahun Implementasi/Rencana</label>
-                    <input type="number" name="tahun_implementasi" value="{{ old('tahun_implementasi', $pengajuan->tahun_implementasi ?? 2026) }}" required
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                <div class="flex justify-end pt-2">
+                    <button type="submit" class="bg-brand-amber hover:bg-brand-amber-dark text-brand-navy font-semibold rounded-xl px-8 py-3 transition-colors">
+                        Lanjut ke Langkah 2
+                    </button>
                 </div>
-
-                <button type="submit"
-                    class="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg py-2.5 transition-colors">
-                    Lanjut ke Langkah 2
-                </button>
             </form>
         </div>
-    </main>
-
-    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
-</body>
-</html>
+    </div>
+@endsection

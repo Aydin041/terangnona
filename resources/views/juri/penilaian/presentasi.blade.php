@@ -1,28 +1,21 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Nilai Presentasi - Juri - TERANG NONA</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-</head>
-<body class="bg-stone-50 min-h-screen">
+@extends('layouts.juri')
 
-    <nav class="bg-white border-b border-stone-200">
-        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
-            <a href="{{ route('juri.dashboard') }}">
-                <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
-            </a>
-            <span class="text-sm text-slate-600">{{ $juri->nama }} <span class="text-slate-400">({{ $juri->email }})</span></span>
-        </div>
-    </nav>
+@section('title', 'Nilai Presentasi')
 
-    <main class="max-w-2xl mx-auto px-4 py-8">
-        <p class="mb-3"><a href="{{ route('juri.penilaian.daftar.presentasi') }}" class="text-sm text-slate-500 hover:text-slate-900">← Kembali ke daftar</a></p>
-        <h1 class="text-xl font-bold text-slate-900 mb-5">Nilai Presentasi & Wawancara — {{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</h1>
+@section('content')
+    @php
+        $aspekBobot = ['teknik_penyajian' => 20, 'substansi_materi' => 70, 'komitmen_pimpinan' => 10];
+        $kelasNilai = 'w-32 rounded-xl border border-line px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-amber focus:border-brand-amber disabled:bg-surface disabled:text-slate-400';
+        $kelasCatatan = 'w-full rounded-xl border border-line px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-amber focus:border-brand-amber disabled:bg-surface disabled:text-slate-400';
+    @endphp
+
+    <div class="max-w-3xl mx-auto">
+        <p class="mb-3"><a href="{{ route('juri.penilaian.daftar.presentasi') }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke daftar</a></p>
+        <h1 class="text-2xl font-bold mb-1">Nilai Presentasi & Wawancara</h1>
+        <p class="text-slate-500 mb-6">{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</p>
 
         @if ($errors->any())
-            <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm p-3">
+            <div class="mb-5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm p-3">
                 <ul class="list-disc list-inside space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -32,68 +25,69 @@
         @endif
 
         @if (session('sukses'))
-            <div class="mb-4 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm p-3">
+            <div class="mb-5 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm p-3">
                 {{ session('sukses') }}
             </div>
         @endif
 
-        <p class="text-sm text-slate-600 mb-2"><strong class="text-slate-900">Status penilaian:</strong> {{ $submission->status }}</p>
+        <p class="text-sm mb-4">
+            <strong class="font-semibold">Status penilaian:</strong>
+            <span class="ml-1 text-xs font-semibold px-3 py-1 rounded-full {{ $submission->status === 'submitted' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' }}">
+                {{ $submission->status === 'submitted' ? 'Sudah submit' : 'Draft' }}
+            </span>
+        </p>
 
         @if ($submission->status === 'submitted' && !$adaBarisTerbuka)
-            <div class="mb-4 rounded-lg bg-sky-50 border border-sky-200 text-sky-800 text-sm p-3">
+            <div class="mb-5 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 text-sm p-4">
                 Penilaian sudah disubmit dan terkunci.
-                <a href="{{ route('juri.koreksi.presentasi.form', $pengajuan->id) }}" class="underline font-medium">Ajukan Koreksi Nilai</a>
+                <a href="{{ route('juri.koreksi.presentasi.form', $pengajuan->id) }}" class="underline font-semibold">Ajukan Koreksi Nilai</a>
             </div>
         @endif
 
         @if ($submission->status === 'submitted' && $adaBarisTerbuka)
-            <div class="mb-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm p-3">
-                <strong>⚠ Ada aspek yang sedang dibuka untuk diperbaiki (disetujui Admin).</strong> Isi ulang aspek yang kosong di bawah, lalu klik "Konfirmasi Perbaikan".
+            <div class="mb-5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm p-4">
+                <strong class="font-semibold">⚠ Ada aspek yang sedang dibuka untuk diperbaiki (disetujui Admin).</strong> Isi ulang aspek yang kosong di bawah, lalu klik "Konfirmasi Perbaikan".
             </div>
         @endif
 
         <form method="POST" class="space-y-4">
             @csrf
 
-            @php $aspekBobot = ['teknik_penyajian' => 20, 'substansi_materi' => 70, 'komitmen_pimpinan' => 10]; @endphp
             @foreach ($aspekList as $kode => $label)
                 @php $nilaiRow = $nilaiTersimpan[$kode] ?? null; @endphp
-                <div class="bg-white border border-stone-200 rounded-xl p-5">
-                    <p class="font-medium text-slate-900 mb-3">{{ $label }} <span class="text-slate-400 font-normal">(Bobot {{ $aspekBobot[$kode] ?? '-' }}%)</span></p>
+                <div class="bg-white border border-line rounded-2xl p-6">
+                    <p class="font-semibold mb-3">{{ $label }} <span class="text-slate-400 font-normal text-sm">(Bobot {{ $aspekBobot[$kode] ?? '-' }}%)</span></p>
 
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Nilai (0-100)</label>
+                    <label class="block text-sm font-semibold mb-1.5">Nilai (0-100)</label>
                     <input type="number" name="nilai[{{ $kode }}]" min="0" max="100"
                         value="{{ $nilaiRow->nilai ?? '' }}"
                         {{ ($nilaiRow && $nilaiRow->terkunci) ? 'disabled' : '' }}
-                        class="w-32 rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 disabled:bg-stone-100 disabled:text-slate-400">
+                        class="{{ $kelasNilai }}">
 
-                    <label class="block text-sm font-medium text-slate-700 mb-1 mt-3">Catatan</label>
+                    <label class="block text-sm font-semibold mb-1.5 mt-4">Catatan</label>
                     <textarea name="catatan[{{ $kode }}]" rows="2"
                         {{ ($nilaiRow && $nilaiRow->terkunci) ? 'disabled' : '' }}
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 disabled:bg-stone-100 disabled:text-slate-400">{{ $nilaiRow->catatan ?? '' }}</textarea>
+                        class="{{ $kelasCatatan }}">{{ $nilaiRow->catatan ?? '' }}</textarea>
                 </div>
             @endforeach
 
             @if ($submission->status !== 'submitted')
                 <div class="flex flex-wrap gap-3">
                     <button type="submit" formaction="{{ route('juri.penilaian.presentasi.draft', $pengajuan->id) }}"
-                        class="border border-stone-300 text-slate-700 hover:bg-stone-100 rounded-lg px-5 py-2.5 font-medium transition-colors">
+                        class="border border-line bg-white hover:border-brand-amber font-semibold rounded-xl px-6 py-3 transition-colors">
                         Simpan Draft
                     </button>
                     <button type="submit" formaction="{{ route('juri.penilaian.presentasi.submit', $pengajuan->id) }}"
-                        class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-5 py-2.5 transition-colors">
+                        class="bg-brand-amber hover:bg-brand-amber-dark text-brand-navy font-semibold rounded-xl px-8 py-3 transition-colors">
                         Submit Penilaian
                     </button>
                 </div>
             @elseif ($adaBarisTerbuka)
                 <button type="submit" formaction="{{ route('juri.penilaian.presentasi.perbaikan', $pengajuan->id) }}"
-                    class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-5 py-2.5 transition-colors">
+                    class="bg-brand-amber hover:bg-brand-amber-dark text-brand-navy font-semibold rounded-xl px-8 py-3 transition-colors">
                     Konfirmasi Perbaikan
                 </button>
             @endif
         </form>
-    </main>
-
-    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
-</body>
-</html>
+    </div>
+@endsection

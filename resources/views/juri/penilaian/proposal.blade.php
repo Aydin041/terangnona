@@ -1,28 +1,20 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Nilai Proposal - Juri - TERANG NONA</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-</head>
-<body class="bg-stone-50 min-h-screen">
+@extends('layouts.juri')
 
-    <nav class="bg-white border-b border-stone-200">
-        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
-            <a href="{{ route('juri.dashboard') }}">
-                <img src="{{ asset('images/logo-terang-nona-transparan.png') }}" alt="TERANG NONA" class="h-10">
-            </a>
-            <span class="text-sm text-slate-600">{{ $juri->nama }} <span class="text-slate-400">({{ $juri->email }})</span></span>
-        </div>
-    </nav>
+@section('title', 'Nilai Proposal')
 
-    <main class="max-w-2xl mx-auto px-4 py-8">
-        <p class="mb-3"><a href="{{ route('juri.penilaian.daftar.proposal') }}" class="text-sm text-slate-500 hover:text-slate-900">← Kembali ke daftar</a></p>
-        <h1 class="text-xl font-bold text-slate-900 mb-5">Nilai Proposal — {{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</h1>
+@section('content')
+    @php
+        $kelasNilai = 'w-32 rounded-xl border border-line px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-amber focus:border-brand-amber disabled:bg-surface disabled:text-slate-400';
+        $kelasCatatan = 'w-full rounded-xl border border-line px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-amber focus:border-brand-amber disabled:bg-surface disabled:text-slate-400';
+    @endphp
+
+    <div class="max-w-3xl mx-auto">
+        <p class="mb-3"><a href="{{ route('juri.penilaian.daftar.proposal') }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke daftar</a></p>
+        <h1 class="text-2xl font-bold mb-1">Nilai Proposal</h1>
+        <p class="text-slate-500 mb-6">{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</p>
 
         @if ($errors->any())
-            <div class="mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm p-3">
+            <div class="mb-5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm p-3">
                 <ul class="list-disc list-inside space-y-1">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -32,39 +24,44 @@
         @endif
 
         @if (session('sukses'))
-            <div class="mb-4 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm p-3">
+            <div class="mb-5 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm p-3">
                 {{ session('sukses') }}
             </div>
         @endif
 
-        <div class="bg-white border border-stone-200 rounded-xl p-6 mb-6">
-            <h3 class="font-semibold text-slate-900 mb-3">Dokumen Pengajuan</h3>
+        <div class="bg-white border border-line rounded-2xl p-6 mb-5">
+            <h2 class="font-semibold mb-3">Dokumen Pengajuan</h2>
             @if ($dokumenPengajuan->isEmpty())
                 <p class="text-sm text-red-600">Belum ada dokumen yang diisi peserta.</p>
             @else
-                <ul class="text-sm text-slate-700 space-y-1">
+                <ul class="text-sm space-y-1.5">
                     @foreach ($dokumenPengajuan as $dok)
                         <li>
-                            <strong class="text-slate-900">{{ $dok->jenis_dokumen }}:</strong>
-                            <a href="{{ $dok->tautan }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dok->label }}</a>
+                            <strong class="font-semibold">{{ $dok->jenis_dokumen }}:</strong>
+                            <a href="{{ $dok->tautan }}" target="_blank" rel="noopener noreferrer" class="text-brand-blue underline break-all">{{ $dok->label }}</a>
                         </li>
                     @endforeach
                 </ul>
             @endif
         </div>
 
-        <p class="text-sm text-slate-600 mb-4"><strong class="text-slate-900">Status penilaian:</strong> {{ $submission->status }}</p>
+        <p class="text-sm mb-4">
+            <strong class="font-semibold">Status penilaian:</strong>
+            <span class="ml-1 text-xs font-semibold px-3 py-1 rounded-full {{ $submission->status === 'submitted' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800' }}">
+                {{ $submission->status === 'submitted' ? 'Sudah submit' : 'Draft' }}
+            </span>
+        </p>
 
         @if ($submission->status === 'submitted' && !$adaBarisTerbuka)
-            <div class="mb-4 rounded-lg bg-sky-50 border border-sky-200 text-sky-800 text-sm p-3">
+            <div class="mb-5 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 text-sm p-4">
                 Penilaian sudah disubmit dan terkunci.
-                <a href="{{ route('juri.koreksi.proposal.form', $pengajuan->id) }}" class="underline font-medium">Ajukan Koreksi Nilai</a>
+                <a href="{{ route('juri.koreksi.proposal.form', $pengajuan->id) }}" class="underline font-semibold">Ajukan Koreksi Nilai</a>
             </div>
         @endif
 
         @if ($submission->status === 'submitted' && $adaBarisTerbuka)
-            <div class="mb-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm p-3">
-                <strong>⚠ Ada komponen yang sedang dibuka untuk diperbaiki (disetujui Admin).</strong> Isi ulang komponen yang kosong di bawah, lalu klik "Konfirmasi Perbaikan".
+            <div class="mb-5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm p-4">
+                <strong class="font-semibold">⚠ Ada komponen yang sedang dibuka untuk diperbaiki (disetujui Admin).</strong> Isi ulang komponen yang kosong di bawah, lalu klik "Konfirmasi Perbaikan".
             </div>
         @endif
 
@@ -72,43 +69,45 @@
             @csrf
 
             @foreach ($komponenList as $komponen)
-                @php $nilaiRow = $nilaiTersimpan[$komponen->id] ?? null; @endphp
-                @php $isianRow = $isianList[$komponen->id] ?? null; @endphp
-                <div class="bg-white border border-stone-200 rounded-xl p-5">
-                    <p class="font-medium text-slate-900 mb-3">{{ $komponen->nama }} <span class="text-slate-400 font-normal">— Bobot {{ $komponen->bobot }}%</span></p>
+                @php
+                    $nilaiRow = $nilaiTersimpan[$komponen->id] ?? null;
+                    $isianRow = $isianList[$komponen->id] ?? null;
+                @endphp
+                <div class="bg-white border border-line rounded-2xl p-6">
+                    <p class="font-semibold mb-3">{{ $komponen->nama }} <span class="text-slate-400 font-normal text-sm">— Bobot {{ $komponen->bobot }}%</span></p>
 
                     @if (array_key_exists($komponen->id, \App\Http\Controllers\Peserta\PengajuanController::KOMPONEN_LAMPIRAN))
                         @php
                             $jenisDok = \App\Http\Controllers\Peserta\PengajuanController::KOMPONEN_LAMPIRAN[$komponen->id];
                             $dokLampiran = $dokumenKeyed[$jenisDok] ?? null;
                         @endphp
-                        <div class="bg-stone-50 border border-stone-200 rounded-lg p-3 mb-3 text-sm">
-                            <strong class="text-slate-800">Lampiran dari Peserta:</strong>
+                        <div class="bg-surface border border-line rounded-xl p-4 mb-4 text-sm">
+                            <strong class="font-semibold">Lampiran dari Peserta:</strong>
                             @if ($dokLampiran)
-                                <a href="{{ $dokLampiran->tautan }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dokLampiran->label }}</a>
+                                <a href="{{ $dokLampiran->tautan }}" target="_blank" rel="noopener noreferrer" class="text-brand-blue underline break-all">{{ $dokLampiran->label }}</a>
                             @else
                                 <span class="text-red-600">Belum diisi peserta.</span>
                             @endif
                         </div>
                     @else
-                        <div class="bg-stone-50 border border-stone-200 rounded-lg p-3 mb-3 text-sm">
-                            <strong class="text-slate-800">Uraian dari Peserta:</strong>
+                        <div class="bg-surface border border-line rounded-xl p-4 mb-4 text-sm">
+                            <strong class="font-semibold">Uraian dari Peserta:</strong>
                             @if ($isianRow && trim((string) $isianRow->uraian) !== '')
-                                <p class="whitespace-pre-wrap mt-1">{{ $isianRow->uraian }}</p>
+                                <p class="whitespace-pre-wrap mt-1 break-words">{{ $isianRow->uraian }}</p>
                             @else
                                 <p class="text-red-600 mt-1">Belum diisi peserta.</p>
                             @endif
 
-                            <strong class="text-slate-800 block mt-2">Link/Tautan Bukti Dukung:</strong>
+                            <strong class="font-semibold block mt-3">Link/Tautan Bukti Dukung:</strong>
                             @if ($isianRow && $isianRow->links->isNotEmpty())
-                                <ul class="list-disc list-inside">
+                                <ul class="list-disc list-inside mt-1">
                                     @foreach ($isianRow->links as $linkItem)
-                                        <li>
+                                        <li class="break-all">
                                             {{ $linkItem->judul }}:
                                             @if (preg_match('#^https?://#i', (string) $linkItem->link) === 1)
-                                                <a href="{{ $linkItem->link }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $linkItem->link }}</a>
+                                                <a href="{{ $linkItem->link }}" target="_blank" rel="noopener noreferrer" class="text-brand-blue underline">{{ $linkItem->link }}</a>
                                             @else
-                                                <span class="break-all">{{ $linkItem->link }}</span>
+                                                <span>{{ $linkItem->link }}</span>
                                             @endif
                                         </li>
                                     @endforeach
@@ -122,9 +121,9 @@
                                 $dokTambahan = $jenisTambahan ? ($dokumenKeyed[$jenisTambahan] ?? null) : null;
                             @endphp
                             @if ($jenisTambahan)
-                                <strong class="text-slate-800 block mt-2">Dokumen RAB:</strong>
+                                <strong class="font-semibold block mt-3">Dokumen RAB:</strong>
                                 @if ($dokTambahan)
-                                    <a href="{{ $dokTambahan->tautan }}" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline break-all">{{ $dokTambahan->label }}</a>
+                                    <a href="{{ $dokTambahan->tautan }}" target="_blank" rel="noopener noreferrer" class="text-brand-blue underline break-all">{{ $dokTambahan->label }}</a>
                                 @else
                                     <span class="text-red-600">Belum diisi peserta.</span>
                                 @endif
@@ -132,39 +131,36 @@
                         </div>
                     @endif
 
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Nilai (0-100)</label>
+                    <label class="block text-sm font-semibold mb-1.5">Nilai (0-100)</label>
                     <input type="number" name="nilai[{{ $komponen->id }}]" min="0" max="100"
                         value="{{ $nilaiRow->nilai ?? '' }}"
                         {{ ($nilaiRow && $nilaiRow->terkunci) ? 'disabled' : '' }}
-                        class="w-32 rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 disabled:bg-stone-100 disabled:text-slate-400">
+                        class="{{ $kelasNilai }}">
 
-                    <label class="block text-sm font-medium text-slate-700 mb-1 mt-3">Saran/Masukan/Catatan</label>
+                    <label class="block text-sm font-semibold mb-1.5 mt-4">Saran/Masukan/Catatan</label>
                     <textarea name="komentar[{{ $komponen->id }}]" rows="2"
                         {{ ($nilaiRow && $nilaiRow->terkunci) ? 'disabled' : '' }}
-                        class="w-full rounded-lg border border-stone-300 px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 disabled:bg-stone-100 disabled:text-slate-400">{{ $nilaiRow->komentar ?? '' }}</textarea>
+                        class="{{ $kelasCatatan }}">{{ $nilaiRow->komentar ?? '' }}</textarea>
                 </div>
             @endforeach
 
             @if ($submission->status !== 'submitted')
                 <div class="flex flex-wrap gap-3">
                     <button type="submit" formaction="{{ route('juri.penilaian.proposal.draft', $pengajuan->id) }}"
-                        class="border border-stone-300 text-slate-700 hover:bg-stone-100 rounded-lg px-5 py-2.5 font-medium transition-colors">
+                        class="border border-line bg-white hover:border-brand-amber font-semibold rounded-xl px-6 py-3 transition-colors">
                         Simpan Draft
                     </button>
                     <button type="submit" formaction="{{ route('juri.penilaian.proposal.submit', $pengajuan->id) }}"
-                        class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-5 py-2.5 transition-colors">
+                        class="bg-brand-amber hover:bg-brand-amber-dark text-brand-navy font-semibold rounded-xl px-8 py-3 transition-colors">
                         Submit Penilaian
                     </button>
                 </div>
             @elseif ($adaBarisTerbuka)
                 <button type="submit" formaction="{{ route('juri.penilaian.proposal.perbaikan', $pengajuan->id) }}"
-                    class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-5 py-2.5 transition-colors">
+                    class="bg-brand-amber hover:bg-brand-amber-dark text-brand-navy font-semibold rounded-xl px-8 py-3 transition-colors">
                     Konfirmasi Perbaikan
                 </button>
             @endif
         </form>
-    </main>
-
-    <script src="{{ asset('js/prevent-double-submit.js') }}"></script>
-</body>
-</html>
+    </div>
+@endsection
