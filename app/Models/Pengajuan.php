@@ -3,10 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Pengajuan extends Model
 {
     protected $table = 'pengajuan';
+
+    protected static function booted(): void
+    {
+        static::creating(function (Pengajuan $pengajuan) {
+            if (empty($pengajuan->uuid)) {
+                $pengajuan->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
 
     protected $fillable = [
         'peserta_id',
