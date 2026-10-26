@@ -23,6 +23,11 @@ class Panitia extends Authenticatable
         return $this->password_hash;
     }
 
+    public function getAuthPasswordName()
+    {
+        return 'password_hash';
+    }
+
     public function riwayatStatus()
     {
         return $this->hasMany(RiwayatStatus::class);

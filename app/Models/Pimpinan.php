@@ -22,4 +22,9 @@ class Pimpinan extends Authenticatable
     {
         return $this->password_hash;
     }
+
+    public function getAuthPasswordName()
+    {
+        return 'password_hash';
+    }
 }

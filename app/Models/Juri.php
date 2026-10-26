@@ -23,6 +23,11 @@ class Juri extends Authenticatable
         return $this->password_hash;
     }
 
+    public function getAuthPasswordName()
+    {
+        return 'password_hash';
+    }
+
     public function submissionProposal()
     {
         return $this->hasMany(SubmissionProposal::class);

@@ -23,6 +23,11 @@ class Admin extends Authenticatable
         return $this->password_hash;
     }
 
+    public function getAuthPasswordName()
+    {
+        return 'password_hash';
+    }
+
     public function permintaanBukaKunciDiproses()
     {
         return $this->hasMany(PermintaanBukaKunci::class, 'admin_id');

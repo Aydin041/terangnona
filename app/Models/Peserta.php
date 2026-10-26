@@ -24,6 +24,11 @@ class Peserta extends Authenticatable
         return $this->password_hash;
     }
 
+    public function getAuthPasswordName()
+    {
+        return 'password_hash';
+    }
+
     public function pengajuan()
     {
         return $this->hasMany(Pengajuan::class);
