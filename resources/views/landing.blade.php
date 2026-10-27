@@ -283,9 +283,7 @@
         </div>
     </section>
 
-    <footer class="bg-brand-navy text-slate-300 text-sm text-center py-5 px-4">
-        &copy; {{ date('Y') }} Dinas Tenaga Kerja dan Transmigrasi Provinsi Jawa Tengah
-    </footer>
+    @include('layouts._footer', ['padding' => 'py-5'])
 
     <script>
         (function () {
