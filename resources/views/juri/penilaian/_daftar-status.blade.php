@@ -38,7 +38,7 @@
                 @else
                     <div class="space-y-3">
                         @foreach ($itemDiKelompok as $item)
-                            <a href="{{ route($rutaDetail, $item->id) }}"
+                            <a href="{{ route($rutaDetail, $item->uuid) }}"
                                 class="block bg-white border border-line rounded-2xl p-5 hover:border-brand-amber transition-colors">
                                 <p class="font-semibold">{{ $item->nama_inovasi }} ({{ $item->akronim }})</p>
                                 <p class="text-sm text-slate-500 mt-0.5">Kategori: {{ $item->kategori->nama }} | Bentuk: {{ $item->bentuk_inovasi }}</p>

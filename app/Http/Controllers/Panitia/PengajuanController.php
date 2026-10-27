@@ -59,7 +59,7 @@ class PengajuanController extends Controller
         $pengajuan = Pengajuan::findOrFail($id);
 
         if ($pengajuan->status !== 'menunggu_pemeriksaan') {
-            return redirect()->route('panitia.pengajuan.detail', $pengajuan->id)
+            return redirect()->route('panitia.pengajuan.detail', $pengajuan->uuid)
                 ->withErrors(['umum' => 'Pengajuan ini sudah diproses sebelumnya (status saat ini: ' . $pengajuan->status . '), tidak bisa disetujui lagi.']);
         }
 
@@ -86,7 +86,7 @@ class PengajuanController extends Controller
         $pengajuan = Pengajuan::findOrFail($id);
 
         if ($pengajuan->status !== 'menunggu_pemeriksaan') {
-            return redirect()->route('panitia.pengajuan.detail', $pengajuan->id)
+            return redirect()->route('panitia.pengajuan.detail', $pengajuan->uuid)
                 ->withErrors(['umum' => 'Pengajuan ini sudah diproses sebelumnya (status saat ini: ' . $pengajuan->status . '), tidak bisa dikembalikan lagi.']);
         }
 
@@ -113,7 +113,7 @@ class PengajuanController extends Controller
         $pengajuan = Pengajuan::findOrFail($id);
 
         if ($pengajuan->status !== 'menunggu_pemeriksaan') {
-            return redirect()->route('panitia.pengajuan.detail', $pengajuan->id)
+            return redirect()->route('panitia.pengajuan.detail', $pengajuan->uuid)
                 ->withErrors(['umum' => 'Pengajuan ini sudah diproses sebelumnya (status saat ini: ' . $pengajuan->status . '), tidak bisa ditolak lagi.']);
         }
 

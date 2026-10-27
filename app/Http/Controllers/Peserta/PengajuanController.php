@@ -116,7 +116,7 @@ class PengajuanController extends Controller
             ]);
         }
 
-        return redirect()->route('peserta.pengajuan.step2', $pengajuan->id);
+        return redirect()->route('peserta.pengajuan.step2', $pengajuan->uuid);
     }
 
     public function hapus($pengajuanId)
@@ -165,7 +165,7 @@ class PengajuanController extends Controller
             'bentuk_inovasi' => $validated['bentuk_inovasi'],
         ]);
 
-        return redirect()->route('peserta.pengajuan.step3', $pengajuan->id);
+        return redirect()->route('peserta.pengajuan.step3', $pengajuan->uuid);
     }
 
     public function step3Form($pengajuanId)
@@ -215,7 +215,7 @@ class PengajuanController extends Controller
             }
         }
 
-        return redirect()->route('peserta.pengajuan.step4', $pengajuan->id);
+        return redirect()->route('peserta.pengajuan.step4', $pengajuan->uuid);
     }
 
     private function komponenBerlaku($pengajuan)
@@ -401,7 +401,7 @@ class PengajuanController extends Controller
             }
         }
 
-        return redirect()->route('peserta.pengajuan.step5', $pengajuan->id);
+        return redirect()->route('peserta.pengajuan.step5', $pengajuan->uuid);
     }
 
     private function daftarDokumenWajib($pengajuan)

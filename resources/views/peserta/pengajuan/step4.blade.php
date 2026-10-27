@@ -9,7 +9,7 @@
     @endphp
 
     <div class="max-w-3xl mx-auto">
-        <p class="mb-4"><a href="{{ route('peserta.pengajuan.step3', $pengajuan->id) }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke Langkah 3</a></p>
+        <p class="mb-4"><a href="{{ route('peserta.pengajuan.step3', $pengajuan->uuid) }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke Langkah 3</a></p>
 
         @include('peserta.pengajuan._stepper', ['langkah' => 4])
 
@@ -26,7 +26,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('peserta.pengajuan.step4.submit', $pengajuan->id) }}" class="space-y-6">
+        <form method="POST" action="{{ route('peserta.pengajuan.step4.submit', $pengajuan->uuid) }}" class="space-y-6">
             @csrf
 
             <div class="bg-white border border-line rounded-2xl p-6">

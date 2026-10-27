@@ -66,14 +66,14 @@
             <div class="bg-white border border-line rounded-2xl p-6">
                 <h2 class="font-semibold mb-4">Aksi</h2>
 
-                <form method="POST" action="{{ route('panitia.pengajuan.setujui', $pengajuan->id) }}" class="mb-6">
+                <form method="POST" action="{{ route('panitia.pengajuan.setujui', $pengajuan->uuid) }}" class="mb-6">
                     @csrf
                     <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl px-6 py-2.5 transition-colors">
                         Setujui
                     </button>
                 </form>
 
-                <form method="POST" action="{{ route('panitia.pengajuan.kembalikan', $pengajuan->id) }}">
+                <form method="POST" action="{{ route('panitia.pengajuan.kembalikan', $pengajuan->uuid) }}">
                     @csrf
                     <label class="block text-sm font-semibold mb-1.5">Alasan pengembalian <span class="font-normal text-slate-400">(wajib diisi kalau mau kembalikan)</span></label>
                     <textarea name="catatan_panitia" rows="3"
@@ -83,7 +83,7 @@
                     </button>
                 </form>
 
-                <form method="POST" action="{{ route('panitia.pengajuan.tolak', $pengajuan->id) }}" class="mt-6 pt-6 border-t border-line"
+                <form method="POST" action="{{ route('panitia.pengajuan.tolak', $pengajuan->uuid) }}" class="mt-6 pt-6 border-t border-line"
                     onsubmit="return confirm('Yakin mau tolak pengajuan ini? Peserta tidak bisa lanjut/edit lagi setelah ditolak.');">
                     @csrf
                     <label class="block text-sm font-semibold mb-1.5">Alasan penolakan <span class="font-normal text-slate-400">(wajib diisi kalau mau tolak)</span></label>

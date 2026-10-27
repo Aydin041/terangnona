@@ -55,7 +55,7 @@
         @if ($submission->status === 'submitted' && !$adaBarisTerbuka)
             <div class="mb-5 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 text-sm p-4">
                 Penilaian sudah disubmit dan terkunci.
-                <a href="{{ route('juri.koreksi.proposal.form', $pengajuan->id) }}" class="underline font-semibold">Ajukan Koreksi Nilai</a>
+                <a href="{{ route('juri.koreksi.proposal.form', $pengajuan->uuid) }}" class="underline font-semibold">Ajukan Koreksi Nilai</a>
             </div>
         @endif
 
@@ -146,17 +146,17 @@
 
             @if ($submission->status !== 'submitted')
                 <div class="flex flex-wrap gap-3">
-                    <button type="submit" formaction="{{ route('juri.penilaian.proposal.draft', $pengajuan->id) }}"
+                    <button type="submit" formaction="{{ route('juri.penilaian.proposal.draft', $pengajuan->uuid) }}"
                         class="border border-line bg-white hover:border-brand-amber font-semibold rounded-xl px-6 py-3 transition-colors">
                         Simpan Draft
                     </button>
-                    <button type="submit" formaction="{{ route('juri.penilaian.proposal.submit', $pengajuan->id) }}"
+                    <button type="submit" formaction="{{ route('juri.penilaian.proposal.submit', $pengajuan->uuid) }}"
                         class="bg-brand-amber hover:bg-brand-amber-dark text-brand-navy font-semibold rounded-xl px-8 py-3 transition-colors">
                         Submit Penilaian
                     </button>
                 </div>
             @elseif ($adaBarisTerbuka)
-                <button type="submit" formaction="{{ route('juri.penilaian.proposal.perbaikan', $pengajuan->id) }}"
+                <button type="submit" formaction="{{ route('juri.penilaian.proposal.perbaikan', $pengajuan->uuid) }}"
                     class="bg-brand-amber hover:bg-brand-amber-dark text-brand-navy font-semibold rounded-xl px-8 py-3 transition-colors">
                     Konfirmasi Perbaikan
                 </button>

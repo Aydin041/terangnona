@@ -79,7 +79,7 @@ class KoreksiController extends Controller
         ]);
 
         return redirect()
-            ->route('juri.penilaian.proposal', $pengajuan->id)
+            ->route('juri.penilaian.proposal', $pengajuan->uuid)
             ->with('sukses', 'Permintaan koreksi berhasil diajukan, menunggu persetujuan Admin.');
     }
 
@@ -142,7 +142,7 @@ class KoreksiController extends Controller
         ]);
 
         return redirect()
-            ->route('juri.penilaian.presentasi', $pengajuan->id)
+            ->route('juri.penilaian.presentasi', $pengajuan->uuid)
             ->with('sukses', 'Permintaan koreksi berhasil diajukan, menunggu persetujuan Admin.');
     }
 }

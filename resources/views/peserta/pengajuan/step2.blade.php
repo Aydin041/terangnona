@@ -12,7 +12,7 @@
     @endphp
 
     <div class="max-w-3xl mx-auto">
-        <p class="mb-4"><a href="{{ route('peserta.pengajuan.step1.edit', $pengajuan->id) }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke Langkah 1</a></p>
+        <p class="mb-4"><a href="{{ route('peserta.pengajuan.step1.edit', $pengajuan->uuid) }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke Langkah 1</a></p>
 
         @include('peserta.pengajuan._stepper', ['langkah' => 2])
 
@@ -29,7 +29,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('peserta.pengajuan.step2.submit', $pengajuan->id) }}" class="space-y-3">
+        <form method="POST" action="{{ route('peserta.pengajuan.step2.submit', $pengajuan->uuid) }}" class="space-y-3">
             @csrf
 
             @foreach ($pilihan as $nilai => [$judul, $keterangan])

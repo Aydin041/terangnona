@@ -53,11 +53,11 @@
 
                     @if ($item->status === 'draft')
                         <div class="mt-4 flex gap-2 flex-wrap">
-                            <a href="{{ route('peserta.pengajuan.step1.edit', $item->id) }}"
+                            <a href="{{ route('peserta.pengajuan.step1.edit', $item->uuid) }}"
                                 class="bg-brand-navy hover:bg-brand-navy-soft text-white text-sm font-semibold rounded-xl px-5 py-2 transition-colors">
                                 Lanjutkan Pengajuan
                             </a>
-                            <form method="POST" action="{{ route('peserta.pengajuan.hapus', $item->id) }}"
+                            <form method="POST" action="{{ route('peserta.pengajuan.hapus', $item->uuid) }}"
                                 onsubmit="return confirm('Yakin mau hapus pengajuan draft ini? Tidak bisa dikembalikan.');">
                                 @csrf
                                 <button type="submit" class="border border-red-300 text-red-700 hover:bg-red-50 text-sm font-semibold rounded-xl px-5 py-2 transition-colors">
@@ -71,7 +71,7 @@
                         <div class="mt-4 bg-red-50 border border-red-200 rounded-xl p-4 text-sm">
                             <strong class="font-semibold text-red-800">Alasan dari Panitia:</strong>
                             <p class="text-red-700 mt-1">{{ $catatanPengembalian[$item->id] ?? '(tidak ada catatan)' }}</p>
-                            <a href="{{ route('peserta.pengajuan.step1.edit', $item->id) }}"
+                            <a href="{{ route('peserta.pengajuan.step1.edit', $item->uuid) }}"
                                 class="inline-block mt-3 bg-brand-amber hover:bg-brand-amber-dark text-brand-navy text-sm font-semibold rounded-xl px-5 py-2 transition-colors">
                                 Perbaiki Pengajuan Ini
                             </a>

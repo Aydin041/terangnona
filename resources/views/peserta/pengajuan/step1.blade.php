@@ -25,7 +25,7 @@
         @endif
 
         <div class="bg-white border border-line rounded-2xl p-6 sm:p-8">
-            <form method="POST" action="{{ $pengajuan ? route('peserta.pengajuan.step1.update', $pengajuan->id) : route('peserta.pengajuan.step1.submit') }}" class="space-y-5">
+            <form method="POST" action="{{ $pengajuan ? route('peserta.pengajuan.step1.update', $pengajuan->uuid) : route('peserta.pengajuan.step1.submit') }}" class="space-y-5">
                 @csrf
 
                 <div>

@@ -8,7 +8,7 @@
     @endphp
 
     <div class="max-w-2xl">
-        <p class="mb-3"><a href="{{ route('juri.penilaian.proposal', $pengajuan->id) }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke penilaian</a></p>
+        <p class="mb-3"><a href="{{ route('juri.penilaian.proposal', $pengajuan->uuid) }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke penilaian</a></p>
         <h1 class="text-2xl font-bold">Ajukan Koreksi Nilai Proposal</h1>
         <p class="text-slate-500 mt-1 mb-6">{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</p>
 
@@ -44,7 +44,7 @@
 
         <div class="bg-white border border-line rounded-2xl p-6">
             <h2 class="font-semibold mb-4">Ajukan Koreksi</h2>
-            <form method="POST" action="{{ route('juri.koreksi.proposal.submit', $pengajuan->id) }}" class="space-y-4">
+            <form method="POST" action="{{ route('juri.koreksi.proposal.submit', $pengajuan->uuid) }}" class="space-y-4">
                 @csrf
 
                 <div>

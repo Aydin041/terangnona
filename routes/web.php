@@ -19,8 +19,15 @@ use App\Http\Controllers\Pimpinan\AuthController as PimpinanAuthController;
 use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
 use App\Http\Controllers\Pimpinan\PengajuanController as PimpinanPengajuanController;
 use App\Http\Controllers\Pimpinan\RankingController as PimpinanRankingController;
+use App\Models\Pengajuan;
 use App\Http\Middleware\BatasiPercobaanLogin;
 use App\Http\Middleware\PimpinanReadOnly;
+
+// Kode acak (UUID) di URL pengajuan diubah kembali menjadi id internal sebelum masuk ke controller.
+// Alamat dengan angka biasa (misalnya /step4/66) tidak lagi dikenali dan menghasilkan halaman 404.
+Route::bind('pengajuan', function (string $uuid) {
+    return Pengajuan::where('uuid', $uuid)->value('id') ?? abort(404);
+});
 
 Route::get('/', function () {
     return view('landing');
@@ -39,18 +46,18 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
 
         Route::get('/pengajuan/step1', [PesertaPengajuanController::class, 'step1Form'])->name('pengajuan.step1');
         Route::post('/pengajuan/step1', [PesertaPengajuanController::class, 'step1Store'])->name('pengajuan.step1.submit');
-        Route::get('/pengajuan/step1/edit/{id}', [PesertaPengajuanController::class, 'step1Form'])->name('pengajuan.step1.edit');
-        Route::post('/pengajuan/step1/edit/{id}', [PesertaPengajuanController::class, 'step1Store'])->name('pengajuan.step1.update');
-        Route::post('/pengajuan/{id}/hapus', [PesertaPengajuanController::class, 'hapus'])->name('pengajuan.hapus');
+        Route::get('/pengajuan/step1/edit/{pengajuan}', [PesertaPengajuanController::class, 'step1Form'])->name('pengajuan.step1.edit');
+        Route::post('/pengajuan/step1/edit/{pengajuan}', [PesertaPengajuanController::class, 'step1Store'])->name('pengajuan.step1.update');
+        Route::post('/pengajuan/{pengajuan}/hapus', [PesertaPengajuanController::class, 'hapus'])->name('pengajuan.hapus');
 
-        Route::get('/pengajuan/step2/{id}', [PesertaPengajuanController::class, 'step2Form'])->name('pengajuan.step2');
-        Route::post('/pengajuan/step2/{id}', [PesertaPengajuanController::class, 'step2Store'])->name('pengajuan.step2.submit');
-        Route::get('/pengajuan/step3/{id}', [PesertaPengajuanController::class, 'step3Form'])->name('pengajuan.step3');
-        Route::post('/pengajuan/step3/{id}', [PesertaPengajuanController::class, 'step3Store'])->name('pengajuan.step3.submit');
-        Route::get('/pengajuan/step4/{id}', [PesertaPengajuanController::class, 'step4Form'])->name('pengajuan.step4');
-        Route::post('/pengajuan/step4/{id}', [PesertaPengajuanController::class, 'step4Store'])->name('pengajuan.step4.submit');
-        Route::get('/pengajuan/step5/{id}', [PesertaPengajuanController::class, 'step5Form'])->name('pengajuan.step5');
-        Route::post('/pengajuan/step5/{id}', [PesertaPengajuanController::class, 'step5Store'])->name('pengajuan.step5.submit');
+        Route::get('/pengajuan/step2/{pengajuan}', [PesertaPengajuanController::class, 'step2Form'])->name('pengajuan.step2');
+        Route::post('/pengajuan/step2/{pengajuan}', [PesertaPengajuanController::class, 'step2Store'])->name('pengajuan.step2.submit');
+        Route::get('/pengajuan/step3/{pengajuan}', [PesertaPengajuanController::class, 'step3Form'])->name('pengajuan.step3');
+        Route::post('/pengajuan/step3/{pengajuan}', [PesertaPengajuanController::class, 'step3Store'])->name('pengajuan.step3.submit');
+        Route::get('/pengajuan/step4/{pengajuan}', [PesertaPengajuanController::class, 'step4Form'])->name('pengajuan.step4');
+        Route::post('/pengajuan/step4/{pengajuan}', [PesertaPengajuanController::class, 'step4Store'])->name('pengajuan.step4.submit');
+        Route::get('/pengajuan/step5/{pengajuan}', [PesertaPengajuanController::class, 'step5Form'])->name('pengajuan.step5');
+        Route::post('/pengajuan/step5/{pengajuan}', [PesertaPengajuanController::class, 'step5Store'])->name('pengajuan.step5.submit');
     });
 });
 
@@ -63,10 +70,10 @@ Route::prefix('panitia')->name('panitia.')->group(function () {
     Route::middleware('auth:panitia')->group(function () {
         Route::get('/dashboard', [PanitiaPengajuanController::class, 'index'])->name('dashboard');
         Route::get('/pengajuan', [PanitiaPengajuanController::class, 'index'])->name('pengajuan.index');
-        Route::get('/pengajuan/{id}', [PanitiaPengajuanController::class, 'detail'])->name('pengajuan.detail');
-        Route::post('/pengajuan/{id}/setujui', [PanitiaPengajuanController::class, 'setujui'])->name('pengajuan.setujui');
-        Route::post('/pengajuan/{id}/kembalikan', [PanitiaPengajuanController::class, 'kembalikan'])->name('pengajuan.kembalikan');
-        Route::post('/pengajuan/{id}/tolak', [PanitiaPengajuanController::class, 'tolak'])->name('pengajuan.tolak');
+        Route::get('/pengajuan/{pengajuan}', [PanitiaPengajuanController::class, 'detail'])->name('pengajuan.detail');
+        Route::post('/pengajuan/{pengajuan}/setujui', [PanitiaPengajuanController::class, 'setujui'])->name('pengajuan.setujui');
+        Route::post('/pengajuan/{pengajuan}/kembalikan', [PanitiaPengajuanController::class, 'kembalikan'])->name('pengajuan.kembalikan');
+        Route::post('/pengajuan/{pengajuan}/tolak', [PanitiaPengajuanController::class, 'tolak'])->name('pengajuan.tolak');
         Route::get('/export/nilai-proposal', [PanitiaPengajuanController::class, 'exportNilaiProposal'])->name('export.nilai.proposal');
         Route::get('/export/nilai-presentasi', [PanitiaPengajuanController::class, 'exportNilaiPresentasi'])->name('export.nilai.presentasi');
         Route::get('/laporan-nilai', [PanitiaLaporanController::class, 'index'])->name('laporan.index');
@@ -86,21 +93,21 @@ Route::prefix('juri')->name('juri.')->group(function () {
         Route::get('/penilaian/daftar-proposal', [JuriPenilaianController::class, 'indexProposal'])->name('penilaian.daftar.proposal');
         Route::get('/penilaian/daftar-presentasi', [JuriPenilaianController::class, 'indexPresentasi'])->name('penilaian.daftar.presentasi');
 
-        Route::get('/penilaian/proposal/{id}', [JuriPenilaianController::class, 'proposalForm'])->name('penilaian.proposal');
-        Route::post('/penilaian/proposal/{id}/draft', [JuriPenilaianController::class, 'proposalDraft'])->name('penilaian.proposal.draft');
-        Route::post('/penilaian/proposal/{id}/submit', [JuriPenilaianController::class, 'proposalSubmit'])->name('penilaian.proposal.submit');
-        Route::post('/penilaian/proposal/{id}/perbaikan', [JuriPenilaianController::class, 'proposalPerbaikanSubmit'])->name('penilaian.proposal.perbaikan');
+        Route::get('/penilaian/proposal/{pengajuan}', [JuriPenilaianController::class, 'proposalForm'])->name('penilaian.proposal');
+        Route::post('/penilaian/proposal/{pengajuan}/draft', [JuriPenilaianController::class, 'proposalDraft'])->name('penilaian.proposal.draft');
+        Route::post('/penilaian/proposal/{pengajuan}/submit', [JuriPenilaianController::class, 'proposalSubmit'])->name('penilaian.proposal.submit');
+        Route::post('/penilaian/proposal/{pengajuan}/perbaikan', [JuriPenilaianController::class, 'proposalPerbaikanSubmit'])->name('penilaian.proposal.perbaikan');
 
-        Route::get('/penilaian/presentasi/{id}', [JuriPenilaianController::class, 'presentasiForm'])->name('penilaian.presentasi');
-        Route::post('/penilaian/presentasi/{id}/draft', [JuriPenilaianController::class, 'presentasiDraft'])->name('penilaian.presentasi.draft');
-        Route::post('/penilaian/presentasi/{id}/submit', [JuriPenilaianController::class, 'presentasiSubmit'])->name('penilaian.presentasi.submit');
-        Route::post('/penilaian/presentasi/{id}/perbaikan', [JuriPenilaianController::class, 'presentasiPerbaikanSubmit'])->name('penilaian.presentasi.perbaikan');
+        Route::get('/penilaian/presentasi/{pengajuan}', [JuriPenilaianController::class, 'presentasiForm'])->name('penilaian.presentasi');
+        Route::post('/penilaian/presentasi/{pengajuan}/draft', [JuriPenilaianController::class, 'presentasiDraft'])->name('penilaian.presentasi.draft');
+        Route::post('/penilaian/presentasi/{pengajuan}/submit', [JuriPenilaianController::class, 'presentasiSubmit'])->name('penilaian.presentasi.submit');
+        Route::post('/penilaian/presentasi/{pengajuan}/perbaikan', [JuriPenilaianController::class, 'presentasiPerbaikanSubmit'])->name('penilaian.presentasi.perbaikan');
 
-        Route::get('/koreksi/proposal/{id}', [JuriKoreksiController::class, 'ajukanProposalForm'])->name('koreksi.proposal.form');
-        Route::post('/koreksi/proposal/{id}', [JuriKoreksiController::class, 'ajukanProposalSubmit'])->name('koreksi.proposal.submit');
+        Route::get('/koreksi/proposal/{pengajuan}', [JuriKoreksiController::class, 'ajukanProposalForm'])->name('koreksi.proposal.form');
+        Route::post('/koreksi/proposal/{pengajuan}', [JuriKoreksiController::class, 'ajukanProposalSubmit'])->name('koreksi.proposal.submit');
 
-        Route::get('/koreksi/presentasi/{id}', [JuriKoreksiController::class, 'ajukanPresentasiForm'])->name('koreksi.presentasi.form');
-        Route::post('/koreksi/presentasi/{id}', [JuriKoreksiController::class, 'ajukanPresentasiSubmit'])->name('koreksi.presentasi.submit');
+        Route::get('/koreksi/presentasi/{pengajuan}', [JuriKoreksiController::class, 'ajukanPresentasiForm'])->name('koreksi.presentasi.form');
+        Route::post('/koreksi/presentasi/{pengajuan}', [JuriKoreksiController::class, 'ajukanPresentasiSubmit'])->name('koreksi.presentasi.submit');
     });
 });
 
@@ -158,7 +165,7 @@ Route::prefix('pimpinan')->name('pimpinan.')->group(function () {
     Route::middleware(['auth:pimpinan', PimpinanReadOnly::class])->group(function () {
         Route::get('/dashboard', [PimpinanDashboardController::class, 'index'])->name('dashboard');
         Route::get('/pengajuan', [PimpinanPengajuanController::class, 'index'])->name('pengajuan.index');
-        Route::get('/pengajuan/{id}', [PimpinanPengajuanController::class, 'detail'])->name('pengajuan.detail');
+        Route::get('/pengajuan/{pengajuan}', [PimpinanPengajuanController::class, 'detail'])->name('pengajuan.detail');
         Route::get('/ranking', [PimpinanRankingController::class, 'index'])->name('ranking.index');
     });
 });

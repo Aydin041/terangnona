@@ -40,7 +40,7 @@
     @else
         <div class="space-y-3">
             @foreach ($daftarPengajuan as $item)
-                <a href="{{ route('panitia.pengajuan.detail', $item->id) }}"
+                <a href="{{ route('panitia.pengajuan.detail', $item->uuid) }}"
                     class="block bg-white border border-line rounded-2xl p-5 hover:border-brand-amber transition-colors">
                     <div class="flex items-start justify-between gap-3 flex-wrap">
                         <div class="min-w-0">

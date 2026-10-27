@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="max-w-3xl mx-auto">
-        <p class="mb-4"><a href="{{ route('peserta.pengajuan.step4', $pengajuan->id) }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke Langkah 4</a></p>
+        <p class="mb-4"><a href="{{ route('peserta.pengajuan.step4', $pengajuan->uuid) }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke Langkah 4</a></p>
 
         @include('peserta.pengajuan._stepper', ['langkah' => 5])
 
@@ -82,12 +82,12 @@
 
         <div class="mt-6 flex justify-end">
             @if (count($dokumenBelumLengkap) > 0 || count($isianBelumLengkap) > 0)
-                <a href="{{ route('peserta.pengajuan.step4', $pengajuan->id) }}"
+                <a href="{{ route('peserta.pengajuan.step4', $pengajuan->uuid) }}"
                     class="bg-brand-navy hover:bg-brand-navy-soft text-white font-semibold rounded-xl px-8 py-3 transition-colors">
                     ← Kembali ke Langkah 4 untuk Melengkapi
                 </a>
             @else
-                <form method="POST" action="{{ route('peserta.pengajuan.step5.submit', $pengajuan->id) }}">
+                <form method="POST" action="{{ route('peserta.pengajuan.step5.submit', $pengajuan->uuid) }}">
                     @csrf
                     <button type="submit" class="bg-brand-amber hover:bg-brand-amber-dark text-brand-navy font-semibold rounded-xl px-8 py-3 transition-colors">
                         Submit Pengajuan
