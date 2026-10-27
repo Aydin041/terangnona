@@ -8,6 +8,7 @@ use App\Models\KomponenPenilaian;
 use App\Models\NilaiAspekPresentasi;
 use App\Models\NilaiKomponenProposal;
 use App\Models\Pengajuan;
+use App\Models\PermintaanBukaKunci;
 use App\Models\SubmissionPresentasi;
 use App\Models\SubmissionProposal;
 use App\Services\RankingService;
@@ -24,7 +25,114 @@ class PenilaianController extends Controller
 
     public function index()
     {
-        return view('juri.penilaian.index');
+        $juri = Auth::guard('juri')->user();
+
+        $idProposal = Pengajuan::where('status', 'disetujui')->pluck('id')->all();
+        $idPresentasi = (new RankingService())->idPengajuanLolos5Besar();
+
+        $jumlahPerbaikanProposal = count($this->bagianPerluPerbaikanProposal($juri->id, $idProposal));
+        $jumlahPerbaikanPresentasi = count($this->bagianPerluPerbaikanPresentasi($juri->id, $idPresentasi));
+
+        return view('juri.penilaian.index', compact('jumlahPerbaikanProposal', 'jumlahPerbaikanPresentasi'));
+    }
+
+    /**
+     * Pengajuan yang koreksinya sudah disetujui Admin dan menunggu diisi ulang oleh Juri.
+     * Hasil: [id pengajuan => [nama komponen yang harus diperbaiki, ...]]
+     */
+    private function bagianPerluPerbaikanProposal($juriId, array $idPengajuan): array
+    {
+        if (empty($idPengajuan)) {
+            return [];
+        }
+
+        $submission = SubmissionProposal::where('juri_id', $juriId)
+            ->whereIn('pengajuan_id', $idPengajuan)
+            ->where('status', 'submitted')
+            ->pluck('id', 'pengajuan_id');
+
+        if ($submission->isEmpty()) {
+            return [];
+        }
+
+        $idKePengajuan = $submission->flip();
+        $namaKomponen = KomponenPenilaian::pluck('nama', 'id');
+
+        $hasil = [];
+        $barisTerbuka = NilaiKomponenProposal::whereIn('submission_id', $submission->values())
+            ->where('terkunci', false)
+            ->orderBy('komponen_id')
+            ->get();
+
+        foreach ($barisTerbuka as $baris) {
+            $idPengajuanBaris = $idKePengajuan[$baris->submission_id];
+            $hasil[$idPengajuanBaris][] = $namaKomponen[$baris->komponen_id] ?? ('Komponen #' . $baris->komponen_id);
+        }
+
+        return $hasil;
+    }
+
+    /**
+     * Sama seperti di atas, untuk penilaian presentasi.
+     * Hasil: [id pengajuan => [nama aspek yang harus diperbaiki, ...]]
+     */
+    private function bagianPerluPerbaikanPresentasi($juriId, array $idPengajuan): array
+    {
+        if (empty($idPengajuan)) {
+            return [];
+        }
+
+        $submission = SubmissionPresentasi::where('juri_id', $juriId)
+            ->whereIn('pengajuan_id', $idPengajuan)
+            ->where('status', 'submitted')
+            ->pluck('id', 'pengajuan_id');
+
+        if ($submission->isEmpty()) {
+            return [];
+        }
+
+        $idKePengajuan = $submission->flip();
+
+        $hasil = [];
+        $barisTerbuka = NilaiAspekPresentasi::whereIn('submission_id', $submission->values())
+            ->where('terkunci', false)
+            ->get();
+
+        foreach ($barisTerbuka as $baris) {
+            $idPengajuanBaris = $idKePengajuan[$baris->submission_id];
+            $hasil[$idPengajuanBaris][] = self::ASPEK_PRESENTASI[$baris->aspek] ?? $baris->aspek;
+        }
+
+        return $hasil;
+    }
+
+    /**
+     * Permintaan koreksi milik Juri yang masih menunggu keputusan Admin.
+     * Hasil: [id pengajuan => [nama komponen/aspek, ...]]
+     */
+    private function bagianMenungguAdmin($juriId, string $tahap, array $idPengajuan): array
+    {
+        if (empty($idPengajuan)) {
+            return [];
+        }
+
+        $permintaan = PermintaanBukaKunci::with('komponen')
+            ->where('juri_id', $juriId)
+            ->where('tahap', $tahap)
+            ->where('status_persetujuan', 'menunggu')
+            ->whereIn('pengajuan_id', $idPengajuan)
+            ->get();
+
+        $hasil = [];
+        foreach ($permintaan as $baris) {
+            $nama = $tahap === 'proposal'
+                ? ($baris->komponen->nama ?? 'Komponen')
+                : (self::ASPEK_PRESENTASI[$baris->aspek] ?? $baris->aspek);
+
+            $hasil[$baris->pengajuan_id][] = $nama;
+        }
+
+        return $hasil;
     }
 
     public function indexProposal()
@@ -45,7 +153,15 @@ class PenilaianController extends Controller
             $statusPenilaian[$item->id] = $submission ? $submission->status : 'belum_dinilai';
         }
 
-        return view('juri.penilaian.index_proposal', compact('daftarPengajuan', 'statusPenilaian'));
+        $idPengajuan = $daftarPengajuan->pluck('id')->all();
+        $perluPerbaikan = $this->bagianPerluPerbaikanProposal($juri->id, $idPengajuan);
+        $menungguAdmin = $this->bagianMenungguAdmin($juri->id, 'proposal', $idPengajuan);
+
+        foreach ($perluPerbaikan as $idPerbaikan => $bagian) {
+            $statusPenilaian[$idPerbaikan] = 'perlu_perbaikan';
+        }
+
+        return view('juri.penilaian.index_proposal', compact('daftarPengajuan', 'statusPenilaian', 'perluPerbaikan', 'menungguAdmin'));
     }
 
     public function indexPresentasi()
@@ -69,7 +185,15 @@ class PenilaianController extends Controller
             $statusPenilaian[$item->id] = $submission ? $submission->status : 'belum_dinilai';
         }
 
-        return view('juri.penilaian.index_presentasi', compact('daftarPengajuan', 'statusPenilaian'));
+        $idPengajuan = $daftarPengajuan->pluck('id')->all();
+        $perluPerbaikan = $this->bagianPerluPerbaikanPresentasi($juri->id, $idPengajuan);
+        $menungguAdmin = $this->bagianMenungguAdmin($juri->id, 'presentasi', $idPengajuan);
+
+        foreach ($perluPerbaikan as $idPerbaikan => $bagian) {
+            $statusPenilaian[$idPerbaikan] = 'perlu_perbaikan';
+        }
+
+        return view('juri.penilaian.index_presentasi', compact('daftarPengajuan', 'statusPenilaian', 'perluPerbaikan', 'menungguAdmin'));
     }
 
     private function komponenBerlaku($pengajuan)

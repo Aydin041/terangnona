@@ -1,4 +1,4 @@
-{{-- Parameter: $judul, $kosongTeks, $rutaDetail, $daftarPengajuan, $statusPenilaian --}}
+{{-- Parameter: $judul, $kosongTeks, $rutaDetail, $daftarPengajuan, $statusPenilaian, $perluPerbaikan, $menungguAdmin --}}
 <p class="mb-3"><a href="{{ route('juri.penilaian.index') }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke menu penilaian</a></p>
 <h1 class="text-2xl font-bold mb-6">{{ $judul }}</h1>
 
@@ -15,6 +15,7 @@
 @else
     @php
         $kelompokStatus = [
+            'perlu_perbaikan' => ['label' => 'Perlu Perbaikan (sudah disetujui Admin)', 'dot' => 'bg-red-600'],
             'belum_dinilai' => ['label' => 'Belum Dinilai', 'dot' => 'bg-red-500'],
             'draft' => ['label' => 'Draft (belum disubmit)', 'dot' => 'bg-amber-500'],
             'submitted' => ['label' => 'Sudah Submit', 'dot' => 'bg-green-500'],
@@ -42,6 +43,20 @@
                                 class="block bg-white border border-line rounded-2xl p-5 hover:border-brand-amber transition-colors">
                                 <p class="font-semibold">{{ $item->nama_inovasi }} ({{ $item->akronim }})</p>
                                 <p class="text-sm text-slate-500 mt-0.5">Kategori: {{ $item->kategori->nama }} | Bentuk: {{ $item->bentuk_inovasi }}</p>
+
+                                @if (!empty($perluPerbaikan[$item->id] ?? []))
+                                    <p class="mt-2 text-sm rounded-lg bg-amber-100 text-amber-800 px-3 py-2">
+                                        <strong class="font-semibold">Perlu diperbaiki:</strong>
+                                        {{ implode(', ', $perluPerbaikan[$item->id]) }}
+                                    </p>
+                                @endif
+
+                                @if (!empty($menungguAdmin[$item->id] ?? []))
+                                    <p class="mt-2 text-sm rounded-lg bg-amber-50 text-amber-700 px-3 py-2">
+                                        <strong class="font-semibold">Menunggu persetujuan Admin:</strong>
+                                        {{ implode(', ', $menungguAdmin[$item->id]) }}
+                                    </p>
+                                @endif
                             </a>
                         @endforeach
                     </div>
