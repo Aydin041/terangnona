@@ -1,4 +1,4 @@
-{{-- Parameter: $judul, $kosongTeks, $rutaDetail, $daftarPengajuan, $statusPenilaian, $perluPerbaikan, $menungguAdmin --}}
+{{-- Parameter: $judul, $kosongTeks, $rutaDetail, $daftarPengajuan, $statusPenilaian, $perluPerbaikan, $menungguAdmin, $ditolakAdmin --}}
 <p class="mb-3"><a href="{{ route('juri.penilaian.index') }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke menu penilaian</a></p>
 <h1 class="text-2xl font-bold mb-6">{{ $judul }}</h1>
 
@@ -55,6 +55,13 @@
                                     <p class="mt-2 text-sm rounded-lg bg-amber-50 text-amber-700 px-3 py-2">
                                         <strong class="font-semibold">Menunggu persetujuan Admin:</strong>
                                         {{ implode(', ', $menungguAdmin[$item->id]) }}
+                                    </p>
+                                @endif
+
+                                @if (!empty($ditolakAdmin[$item->id] ?? []))
+                                    <p class="mt-2 text-sm rounded-lg bg-red-50 text-red-700 px-3 py-2">
+                                        <strong class="font-semibold">Koreksi ditolak Admin:</strong>
+                                        {{ implode(', ', $ditolakAdmin[$item->id]) }}
                                     </p>
                                 @endif
                             </a>

@@ -37,6 +37,14 @@
             </span>
         </p>
 
+        @if (!empty($koreksiDitolak))
+            <div class="mb-5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm p-4">
+                <strong class="font-semibold">Permintaan koreksi ditolak Admin:</strong>
+                {{ implode(', ', $koreksiDitolak) }}.
+                Nilai pada bagian tersebut tetap terkunci seperti sebelumnya.
+            </div>
+        @endif
+
         @if ($submission->status === 'submitted' && !$adaBarisTerbuka)
             <div class="mb-5 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 text-sm p-4">
                 Penilaian sudah disubmit dan terkunci.

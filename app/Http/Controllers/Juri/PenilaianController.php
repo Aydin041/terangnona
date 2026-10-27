@@ -33,7 +33,12 @@ class PenilaianController extends Controller
         $jumlahPerbaikanProposal = count($this->bagianPerluPerbaikanProposal($juri->id, $idProposal));
         $jumlahPerbaikanPresentasi = count($this->bagianPerluPerbaikanPresentasi($juri->id, $idPresentasi));
 
-        return view('juri.penilaian.index', compact('jumlahPerbaikanProposal', 'jumlahPerbaikanPresentasi'));
+        $jumlahDitolakProposal = count($this->koreksiDitolakBelumDilihat($juri->id, 'proposal', $idProposal));
+        $jumlahDitolakPresentasi = count($this->koreksiDitolakBelumDilihat($juri->id, 'presentasi', $idPresentasi));
+
+        return view('juri.penilaian.index', compact(
+            'jumlahPerbaikanProposal', 'jumlahPerbaikanPresentasi', 'jumlahDitolakProposal', 'jumlahDitolakPresentasi'
+        ));
     }
 
     /**
@@ -106,6 +111,15 @@ class PenilaianController extends Controller
         return $hasil;
     }
 
+    private function namaBagianPermintaan(PermintaanBukaKunci $baris): string
+    {
+        if ($baris->tahap === 'proposal') {
+            return $baris->komponen->nama ?? 'Komponen';
+        }
+
+        return self::ASPEK_PRESENTASI[$baris->aspek] ?? (string) $baris->aspek;
+    }
+
     /**
      * Permintaan koreksi milik Juri yang masih menunggu keputusan Admin.
      * Hasil: [id pengajuan => [nama komponen/aspek, ...]]
@@ -125,14 +139,56 @@ class PenilaianController extends Controller
 
         $hasil = [];
         foreach ($permintaan as $baris) {
-            $nama = $tahap === 'proposal'
-                ? ($baris->komponen->nama ?? 'Komponen')
-                : (self::ASPEK_PRESENTASI[$baris->aspek] ?? $baris->aspek);
-
-            $hasil[$baris->pengajuan_id][] = $nama;
+            $hasil[$baris->pengajuan_id][] = $this->namaBagianPermintaan($baris);
         }
 
         return $hasil;
+    }
+
+    /**
+     * Permintaan koreksi yang ditolak Admin dan belum pernah dilihat Juri.
+     * Hasil: [id pengajuan => [nama komponen/aspek, ...]]
+     */
+    private function koreksiDitolakBelumDilihat($juriId, string $tahap, array $idPengajuan): array
+    {
+        if (empty($idPengajuan)) {
+            return [];
+        }
+
+        $permintaan = PermintaanBukaKunci::with('komponen')
+            ->where('juri_id', $juriId)
+            ->where('tahap', $tahap)
+            ->where('status_persetujuan', 'ditolak')
+            ->whereNull('dilihat_juri_at')
+            ->whereIn('pengajuan_id', $idPengajuan)
+            ->get();
+
+        $hasil = [];
+        foreach ($permintaan as $baris) {
+            $hasil[$baris->pengajuan_id][] = $this->namaBagianPermintaan($baris);
+        }
+
+        return $hasil;
+    }
+
+    /**
+     * Dipanggil saat Juri membuka halaman satu pengajuan: mengembalikan daftar
+     * penolakan yang belum dilihat, lalu menandainya sudah dilihat.
+     */
+    private function tandaiKoreksiDitolakDilihat($juriId, string $tahap, $pengajuanId): array
+    {
+        $daftar = $this->koreksiDitolakBelumDilihat($juriId, $tahap, [$pengajuanId]);
+
+        if (!empty($daftar)) {
+            PermintaanBukaKunci::where('juri_id', $juriId)
+                ->where('tahap', $tahap)
+                ->where('pengajuan_id', $pengajuanId)
+                ->where('status_persetujuan', 'ditolak')
+                ->whereNull('dilihat_juri_at')
+                ->update(['dilihat_juri_at' => now()]);
+        }
+
+        return $daftar[$pengajuanId] ?? [];
     }
 
     public function indexProposal()
@@ -156,12 +212,13 @@ class PenilaianController extends Controller
         $idPengajuan = $daftarPengajuan->pluck('id')->all();
         $perluPerbaikan = $this->bagianPerluPerbaikanProposal($juri->id, $idPengajuan);
         $menungguAdmin = $this->bagianMenungguAdmin($juri->id, 'proposal', $idPengajuan);
+        $ditolakAdmin = $this->koreksiDitolakBelumDilihat($juri->id, 'proposal', $idPengajuan);
 
         foreach ($perluPerbaikan as $idPerbaikan => $bagian) {
             $statusPenilaian[$idPerbaikan] = 'perlu_perbaikan';
         }
 
-        return view('juri.penilaian.index_proposal', compact('daftarPengajuan', 'statusPenilaian', 'perluPerbaikan', 'menungguAdmin'));
+        return view('juri.penilaian.index_proposal', compact('daftarPengajuan', 'statusPenilaian', 'perluPerbaikan', 'menungguAdmin', 'ditolakAdmin'));
     }
 
     public function indexPresentasi()
@@ -188,12 +245,13 @@ class PenilaianController extends Controller
         $idPengajuan = $daftarPengajuan->pluck('id')->all();
         $perluPerbaikan = $this->bagianPerluPerbaikanPresentasi($juri->id, $idPengajuan);
         $menungguAdmin = $this->bagianMenungguAdmin($juri->id, 'presentasi', $idPengajuan);
+        $ditolakAdmin = $this->koreksiDitolakBelumDilihat($juri->id, 'presentasi', $idPengajuan);
 
         foreach ($perluPerbaikan as $idPerbaikan => $bagian) {
             $statusPenilaian[$idPerbaikan] = 'perlu_perbaikan';
         }
 
-        return view('juri.penilaian.index_presentasi', compact('daftarPengajuan', 'statusPenilaian', 'perluPerbaikan', 'menungguAdmin'));
+        return view('juri.penilaian.index_presentasi', compact('daftarPengajuan', 'statusPenilaian', 'perluPerbaikan', 'menungguAdmin', 'ditolakAdmin'));
     }
 
     private function komponenBerlaku($pengajuan)
@@ -243,8 +301,10 @@ class PenilaianController extends Controller
             ->get()
             ->keyBy('komponen_id');
 
+        $koreksiDitolak = $this->tandaiKoreksiDitolakDilihat($juri->id, 'proposal', $pengajuan->id);
+
         return view('juri.penilaian.proposal', compact(
-            'pengajuan', 'submission', 'komponenList', 'nilaiTersimpan', 'adaBarisTerbuka', 'dokumenPengajuan', 'dokumenKeyed', 'juri', 'isianList'
+            'pengajuan', 'submission', 'komponenList', 'nilaiTersimpan', 'adaBarisTerbuka', 'dokumenPengajuan', 'dokumenKeyed', 'juri', 'isianList', 'koreksiDitolak'
         ));
     }
 
@@ -402,8 +462,10 @@ class PenilaianController extends Controller
 
         $aspekList = self::ASPEK_PRESENTASI;
 
+        $koreksiDitolak = $this->tandaiKoreksiDitolakDilihat($juri->id, 'presentasi', $pengajuan->id);
+
         return view('juri.penilaian.presentasi', compact(
-            'pengajuan', 'submission', 'aspekList', 'nilaiTersimpan', 'adaBarisTerbuka', 'juri'
+            'pengajuan', 'submission', 'aspekList', 'nilaiTersimpan', 'adaBarisTerbuka', 'juri', 'koreksiDitolak'
         ));
     }
 
