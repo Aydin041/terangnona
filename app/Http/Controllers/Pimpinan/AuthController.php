@@ -18,7 +18,13 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+            'captcha' => 'required|captcha',
+        ], [
+            'captcha.required' => 'Jawaban captcha wajib diisi.',
+            'captcha.captcha' => 'Jawaban captcha salah. Silakan coba lagi.',
         ]);
+
+        unset($credentials['captcha']);
 
         if (Auth::guard('pimpinan')->attempt($credentials)) {
             $request->session()->regenerate();

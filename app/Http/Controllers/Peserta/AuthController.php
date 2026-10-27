@@ -22,6 +22,10 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:peserta,email',
             'kontak' => 'required|string|max:20',
             'password' => 'required|string|min:8|confirmed',
+            'captcha' => 'required|captcha',
+        ], [
+            'captcha.required' => 'Jawaban captcha wajib diisi.',
+            'captcha.captcha' => 'Jawaban captcha salah. Silakan coba lagi.',
         ]);
 
         $peserta = Peserta::create([
@@ -46,7 +50,13 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
+            'captcha' => 'required|captcha',
+        ], [
+            'captcha.required' => 'Jawaban captcha wajib diisi.',
+            'captcha.captcha' => 'Jawaban captcha salah. Silakan coba lagi.',
         ]);
+
+        unset($credentials['captcha']);
 
         if (Auth::guard('peserta')->attempt($credentials)) {
             $request->session()->regenerate();

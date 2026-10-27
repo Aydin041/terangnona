@@ -56,6 +56,17 @@
             </div>
         </div>
 
+        <div>
+            <label for="captcha" class="block text-sm font-semibold text-ink mb-1.5">Verifikasi: hitung hasil penjumlahan</label>
+            <div class="mb-2">
+                <img src="{{ captcha_src('login') }}" alt="Soal captcha" data-captcha-gambar
+                    style="max-width:100%;height:auto" class="rounded-lg border border-line">
+                <button type="button" data-captcha-muat-ulang class="block mt-2 text-sm text-brand-blue hover:underline">Muat ulang soal</button>
+            </div>
+            <input type="text" id="captcha" name="captcha" inputmode="numeric" autocomplete="off" required placeholder="Jawaban"
+                class="{{ $kelas }}">
+        </div>
+
         <button type="submit"
             class="w-full bg-brand-amber hover:bg-brand-amber-dark text-brand-navy font-semibold rounded-xl py-3 transition-colors">
             Daftar
@@ -74,6 +85,14 @@
                 const tampil = input.type === 'password';
                 input.type = tampil ? 'text' : 'password';
                 tombol.textContent = tampil ? 'Sembunyikan' : 'Tampilkan';
+            });
+        });
+
+        document.querySelectorAll('[data-captcha-muat-ulang]').forEach(function (tombol) {
+            tombol.addEventListener('click', function () {
+                const gambar = document.querySelector('[data-captcha-gambar]');
+                gambar.src = gambar.src.split('?')[0] + '?' + Math.random().toString(36).slice(2);
+                document.getElementById('captcha').value = '';
             });
         });
     </script>
