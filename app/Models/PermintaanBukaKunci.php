@@ -3,9 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class PermintaanBukaKunci extends Model
 {
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if (empty($model->uuid)) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
     protected $table = 'permintaan_buka_kunci';
 
     protected $fillable = [

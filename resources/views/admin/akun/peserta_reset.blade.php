@@ -7,6 +7,6 @@
         'kunci' => 'peserta',
         'nama' => $peserta->nama,
         'email' => $peserta->email,
-        'action' => route('admin.akun.peserta.reset', $peserta->id),
+        'action' => route('admin.akun.peserta.reset', $peserta->uuid),
     ])
 @endsection

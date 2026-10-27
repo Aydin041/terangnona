@@ -7,6 +7,6 @@
         'kunci' => 'pimpinan',
         'nama' => $pimpinan->nama,
         'email' => $pimpinan->email,
-        'action' => route('admin.akun.pimpinan.reset', $pimpinan->id),
+        'action' => route('admin.akun.pimpinan.reset', $pimpinan->uuid),
     ])
 @endsection

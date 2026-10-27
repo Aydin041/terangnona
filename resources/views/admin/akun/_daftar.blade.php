@@ -45,11 +45,11 @@
                     <p class="text-sm text-slate-500 break-all">{{ $item->email }}@if (! empty($tampilKontak) && $item->kontak) | {{ $item->kontak }}@endif</p>
                 </div>
                 <div class="flex gap-2">
-                    <a href="{{ route('admin.akun.' . $kunci . '.reset.form', $item->id) }}"
+                    <a href="{{ route('admin.akun.' . $kunci . '.reset.form', $item->uuid) }}"
                         class="text-sm font-medium border border-line hover:border-brand-amber rounded-xl px-4 py-2 transition-colors">
                         Reset Password
                     </a>
-                    <form method="POST" action="{{ route('admin.akun.' . $kunci . '.hapus', $item->id) }}"
+                    <form method="POST" action="{{ route('admin.akun.' . $kunci . '.hapus', $item->uuid) }}"
                         data-pesan="Yakin mau hapus akun {{ $peran }} {{ $item->nama }}? Tidak bisa dikembalikan."
                         onsubmit="return confirm(this.dataset.pesan);">
                         @csrf

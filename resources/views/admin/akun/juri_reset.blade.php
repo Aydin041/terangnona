@@ -7,6 +7,6 @@
         'kunci' => 'juri',
         'nama' => $juri->nama,
         'email' => $juri->email,
-        'action' => route('admin.akun.juri.reset', $juri->id),
+        'action' => route('admin.akun.juri.reset', $juri->uuid),
     ])
 @endsection

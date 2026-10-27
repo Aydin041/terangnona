@@ -94,11 +94,11 @@
 
                     @if ($item->status_persetujuan === 'menunggu')
                         <div class="flex gap-2 mt-4">
-                            <form method="POST" action="{{ route('admin.koreksi.setujui', $item->id) }}">
+                            <form method="POST" action="{{ route('admin.koreksi.setujui', $item->uuid) }}">
                                 @csrf
                                 <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl px-5 py-2 transition-colors">Setujui</button>
                             </form>
-                            <form method="POST" action="{{ route('admin.koreksi.tolak', $item->id) }}">
+                            <form method="POST" action="{{ route('admin.koreksi.tolak', $item->uuid) }}">
                                 @csrf
                                 <button type="submit" class="border border-red-300 text-red-700 hover:bg-red-50 text-sm font-semibold rounded-xl px-5 py-2 transition-colors">Tolak</button>
                             </form>

@@ -20,6 +20,11 @@ use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardContro
 use App\Http\Controllers\Pimpinan\PengajuanController as PimpinanPengajuanController;
 use App\Http\Controllers\Pimpinan\RankingController as PimpinanRankingController;
 use App\Models\Pengajuan;
+use App\Models\Panitia;
+use App\Models\Juri;
+use App\Models\Peserta;
+use App\Models\Pimpinan;
+use App\Models\PermintaanBukaKunci;
 use App\Http\Middleware\BatasiPercobaanLogin;
 use App\Http\Middleware\PimpinanReadOnly;
 
@@ -28,6 +33,12 @@ use App\Http\Middleware\PimpinanReadOnly;
 Route::bind('pengajuan', function (string $uuid) {
     return Pengajuan::where('uuid', $uuid)->value('id') ?? abort(404);
 });
+
+Route::bind('permintaan', fn (string $uuid) => PermintaanBukaKunci::where('uuid', $uuid)->value('id') ?? abort(404));
+Route::bind('panitia', fn (string $uuid) => Panitia::where('uuid', $uuid)->value('id') ?? abort(404));
+Route::bind('juri', fn (string $uuid) => Juri::where('uuid', $uuid)->value('id') ?? abort(404));
+Route::bind('peserta', fn (string $uuid) => Peserta::where('uuid', $uuid)->value('id') ?? abort(404));
+Route::bind('pimpinan', fn (string $uuid) => Pimpinan::where('uuid', $uuid)->value('id') ?? abort(404));
 
 Route::get('/', function () {
     return view('landing');
@@ -120,34 +131,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::get('/dashboard', [AdminKoreksiController::class, 'index'])->name('dashboard');
         Route::get('/koreksi', [AdminKoreksiController::class, 'index'])->name('koreksi.index');
-        Route::post('/koreksi/{id}/setujui', [AdminKoreksiController::class, 'setujui'])->name('koreksi.setujui');
-        Route::post('/koreksi/{id}/tolak', [AdminKoreksiController::class, 'tolak'])->name('koreksi.tolak');
+        Route::post('/koreksi/{permintaan}/setujui', [AdminKoreksiController::class, 'setujui'])->name('koreksi.setujui');
+        Route::post('/koreksi/{permintaan}/tolak', [AdminKoreksiController::class, 'tolak'])->name('koreksi.tolak');
 
         Route::get('/akun/panitia', [AdminAkunController::class, 'panitiaIndex'])->name('akun.panitia.index');
         Route::get('/akun/panitia/create', [AdminAkunController::class, 'panitiaCreateForm'])->name('akun.panitia.create');
         Route::post('/akun/panitia', [AdminAkunController::class, 'panitiaStore'])->name('akun.panitia.store');
-        Route::get('/akun/panitia/{id}/reset', [AdminAkunController::class, 'panitiaResetForm'])->name('akun.panitia.reset.form');
-        Route::post('/akun/panitia/{id}/reset', [AdminAkunController::class, 'panitiaReset'])->name('akun.panitia.reset');
-        Route::post('/akun/panitia/{id}/hapus', [AdminAkunController::class, 'panitiaHapus'])->name('akun.panitia.hapus');
+        Route::get('/akun/panitia/{panitia}/reset', [AdminAkunController::class, 'panitiaResetForm'])->name('akun.panitia.reset.form');
+        Route::post('/akun/panitia/{panitia}/reset', [AdminAkunController::class, 'panitiaReset'])->name('akun.panitia.reset');
+        Route::post('/akun/panitia/{panitia}/hapus', [AdminAkunController::class, 'panitiaHapus'])->name('akun.panitia.hapus');
 
         Route::get('/akun/juri', [AdminAkunController::class, 'juriIndex'])->name('akun.juri.index');
         Route::get('/akun/juri/create', [AdminAkunController::class, 'juriCreateForm'])->name('akun.juri.create');
         Route::post('/akun/juri', [AdminAkunController::class, 'juriStore'])->name('akun.juri.store');
-        Route::get('/akun/juri/{id}/reset', [AdminAkunController::class, 'juriResetForm'])->name('akun.juri.reset.form');
-        Route::post('/akun/juri/{id}/reset', [AdminAkunController::class, 'juriReset'])->name('akun.juri.reset');
-        Route::post('/akun/juri/{id}/hapus', [AdminAkunController::class, 'juriHapus'])->name('akun.juri.hapus');
+        Route::get('/akun/juri/{juri}/reset', [AdminAkunController::class, 'juriResetForm'])->name('akun.juri.reset.form');
+        Route::post('/akun/juri/{juri}/reset', [AdminAkunController::class, 'juriReset'])->name('akun.juri.reset');
+        Route::post('/akun/juri/{juri}/hapus', [AdminAkunController::class, 'juriHapus'])->name('akun.juri.hapus');
 
         Route::get('/akun/peserta', [AdminAkunController::class, 'pesertaIndex'])->name('akun.peserta.index');
-        Route::get('/akun/peserta/{id}/reset', [AdminAkunController::class, 'pesertaResetForm'])->name('akun.peserta.reset.form');
-        Route::post('/akun/peserta/{id}/reset', [AdminAkunController::class, 'pesertaReset'])->name('akun.peserta.reset');
-        Route::post('/akun/peserta/{id}/hapus', [AdminAkunController::class, 'pesertaHapus'])->name('akun.peserta.hapus');
+        Route::get('/akun/peserta/{peserta}/reset', [AdminAkunController::class, 'pesertaResetForm'])->name('akun.peserta.reset.form');
+        Route::post('/akun/peserta/{peserta}/reset', [AdminAkunController::class, 'pesertaReset'])->name('akun.peserta.reset');
+        Route::post('/akun/peserta/{peserta}/hapus', [AdminAkunController::class, 'pesertaHapus'])->name('akun.peserta.hapus');
 
         Route::get('/akun/pimpinan', [AdminAkunController::class, 'pimpinanIndex'])->name('akun.pimpinan.index');
         Route::get('/akun/pimpinan/create', [AdminAkunController::class, 'pimpinanCreateForm'])->name('akun.pimpinan.create');
         Route::post('/akun/pimpinan', [AdminAkunController::class, 'pimpinanStore'])->name('akun.pimpinan.store');
-        Route::get('/akun/pimpinan/{id}/reset', [AdminAkunController::class, 'pimpinanResetForm'])->name('akun.pimpinan.reset.form');
-        Route::post('/akun/pimpinan/{id}/reset', [AdminAkunController::class, 'pimpinanReset'])->name('akun.pimpinan.reset');
-        Route::post('/akun/pimpinan/{id}/hapus', [AdminAkunController::class, 'pimpinanHapus'])->name('akun.pimpinan.hapus');
+        Route::get('/akun/pimpinan/{pimpinan}/reset', [AdminAkunController::class, 'pimpinanResetForm'])->name('akun.pimpinan.reset.form');
+        Route::post('/akun/pimpinan/{pimpinan}/reset', [AdminAkunController::class, 'pimpinanReset'])->name('akun.pimpinan.reset');
+        Route::post('/akun/pimpinan/{pimpinan}/hapus', [AdminAkunController::class, 'pimpinanHapus'])->name('akun.pimpinan.hapus');
 
         Route::get('/pengaturan', [AdminPengaturanController::class, 'form'])->name('pengaturan.form');
         Route::post('/pengaturan', [AdminPengaturanController::class, 'update'])->name('pengaturan.update');
