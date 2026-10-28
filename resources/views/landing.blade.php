@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>TERANG NONA 2026 - Kompetisi Inovasi Disnakertrans Provinsi Jawa Tengah</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <style>
+        /* Foto tokoh di belakang judul pada bagian atas (hero).
+           Berkas: public/images/hero-latar.webp (boleh juga .png, .jpg, atau .jpeg), sebaiknya PNG/WebP
+           bertransparan (tokoh tanpa latar). Kalau berkasnya belum ada, hero tampil polos.
+           Yang bisa diatur: opacity (kecerahan foto), left (geser kiri/kanan), top (naik/turun), height (ukuran). */
+        .hero { position: relative; overflow: hidden; }
+        .hero-isi { position: relative; }
+        .hero-foto {
+            position: absolute; left: 32%; top: -0.5rem; height: 33rem; width: auto; max-width: none;
+            opacity: .42; z-index: 0; pointer-events: none; user-select: none;
+        }
+        .hero-teks, .hero-logo { position: relative; z-index: 1; }
+        .hero-teks { max-width: 36rem; }
+
+        /* Kartu tanggal penting di tepi bawah hero: 2 kolom di HP, 3 di tablet, 6 di layar lebar. */
+        .kartu-jadwal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+        .kartu-tanggal { font-size: 1.0625rem; line-height: 1.3; }
+        .kartu-jadwal-grid > div { padding: .9rem 1rem; }
+        @media (min-width: 640px) { .kartu-jadwal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; } }
+        @media (min-width: 1024px) { .kartu-jadwal-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+        @media (max-width: 1023px) { .hero-foto { display: none; } }
+    </style>
 </head>
 <body class="bg-surface font-sans text-ink antialiased">
 
@@ -32,10 +54,15 @@
         $t['selesai_c'] = $selesai;
         $t['status'] = $sekarang->lt($mulai) ? 'belum' : ($sekarang->gt($selesai) ? 'lewat' : 'berlangsung');
 
-        $f = fn ($c, $pola) => $c->copy()->locale('id')->translatedFormat($pola);
+        // Singkatan bulan Agustus dari pustaka tanggal adalah "Agt"; di sini dibuat "Agu" sesuai desain.
+        $f = fn ($c, $pola) => str_replace('Agt', 'Agu', $c->copy()->locale('id')->translatedFormat($pola));
         $sama = $mulai->isSameDay($selesai);
         $t['teks'] = $t['label'] ?? ($sama ? $f($mulai, 'j F Y') : $f($mulai, 'j F Y') . ' s/d ' . $f($selesai, 'j F Y'));
-        $t['teks_ringkas'] = $t['ringkas'] ?? ($sama ? $f($mulai, 'j M') : $f($mulai, 'j M') . ' – ' . $f($selesai, 'j M'));
+        $t['teks_ringkas'] = $t['ringkas'] ?? ($sama
+            ? $f($mulai, 'j M')
+            : ($mulai->isSameMonth($selesai)
+                ? $f($mulai, 'j') . ' – ' . $f($selesai, 'j M')
+                : $f($mulai, 'j M') . ' – ' . $f($selesai, 'j M')));
 
         return $t;
     });
@@ -43,6 +70,11 @@
     $daftar = $tahapList->firstWhere('kunci', 'pendaftaran');
     $statusDaftar = $daftar['status'];
     $sorotan = $tahapList->filter(fn ($t) => ! empty($t['sorot']))->values();
+
+    // Foto latar hero: letakkan di public/images dengan nama hero-latar (webp, jpg, jpeg, atau png).
+    $fotoHero = collect(['webp', 'jpg', 'jpeg', 'png'])
+        ->map(fn ($ekstensi) => 'images/hero-latar.' . $ekstensi)
+        ->first(fn ($jalur) => file_exists(public_path($jalur)));
 
     $labelStatus = [
         'belum' => 'Belum dimulai',
@@ -86,10 +118,14 @@
     </header>
 
     {{-- ===================== HERO ===================== --}}
-    <section class="bg-brand-navy bg-[radial-gradient(circle_at_75%_40%,#12295a_0%,#0a1431_65%)]">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-24 flex flex-col lg:flex-row items-center lg:justify-between gap-10 text-center lg:text-left">
+    <section class="hero bg-brand-navy bg-[radial-gradient(circle_at_75%_40%,#12295a_0%,#0a1431_65%)]">
+        <div class="hero-isi max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-24 flex flex-col lg:flex-row items-center lg:justify-between gap-10 text-center lg:text-left">
 
-            <div class="order-2 lg:order-1 lg:flex-1">
+            @if ($fotoHero)
+                <img src="{{ asset($fotoHero) }}" alt="" aria-hidden="true" class="hero-foto" fetchpriority="high">
+            @endif
+
+            <div class="hero-teks order-2 lg:order-1 lg:flex-1">
                 <p class="text-xs tracking-widest text-slate-300 uppercase">Dinas Tenaga Kerja dan Transmigrasi Provinsi Jawa Tengah</p>
                 <h1 class="mt-3 text-4xl sm:text-5xl font-extrabold text-white leading-tight">
                     Kompetisi Inovasi <span class="text-brand-amber">TERANG NONA</span> 2026
@@ -128,7 +164,7 @@
                 </p>
             </div>
 
-            <div class="order-1 lg:order-2 lg:flex-none">
+            <div class="hero-logo order-1 lg:order-2 lg:flex-none">
                 <img src="{{ asset('images/logo-terang-nona-emas.png') }}" alt="TERANG NONA 2026" class="h-52 lg:h-80 w-auto mx-auto">
             </div>
         </div>
@@ -136,10 +172,10 @@
 
     {{-- ===================== TANGGAL PENTING (kartu di tepi hero) ===================== --}}
     <section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-12 relative z-10">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="kartu-jadwal-grid">
             @foreach ($sorotan as $s)
                 <div class="bg-white border border-line rounded-2xl p-4 sm:p-5 shadow-sm">
-                    <p class="text-lg sm:text-xl font-bold text-brand-blue">{{ $s['teks_ringkas'] }}</p>
+                    <p class="kartu-tanggal font-bold text-brand-blue">{{ $s['teks_ringkas'] }}</p>
                     <p class="text-sm text-slate-500 mt-0.5">{{ $s['sorot'] }}</p>
                 </div>
             @endforeach

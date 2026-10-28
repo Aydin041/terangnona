@@ -13,6 +13,9 @@
 | Batas akhir 'pendaftaran' otomatis mengikuti Deadline Pengajuan di halaman
 | Pengaturan Admin bila deadline itu diisi.
 |
+| 'sorot' = tahap yang ditampilkan sebagai kartu di bagian atas halaman depan (isinya
+| adalah teks di bawah tanggal). Hapus baris 'sorot' kalau tahap tidak perlu ditampilkan di kartu.
+|
 | Catatan: kalau server memakai "php artisan config:cache", jalankan
 | "php artisan config:clear" setelah mengubah berkas ini.
 */
@@ -32,33 +35,35 @@ return [
             'nama' => 'Pendaftaran dan Pelengkapan Bukti Dukung Rancangan/Pengembangan/Inovasi',
             'mulai' => '2026-08-31',
             'selesai' => '2026-10-31',
-            'sorot' => 'Pendaftaran',
+            'sorot' => 'Pendaftaran & Bukti Dukung',
         ],
         [
             'kunci' => 'pencermatan',
             'nama' => 'Pencermatan dan Revisi Proposal Rancangan/Pengembangan/Inovasi',
             'mulai' => '2026-11-01',
             'selesai' => '2026-11-07',
+            'sorot' => 'Pencermatan & Revisi Proposal',
         ],
         [
             'kunci' => 'penilaian',
             'nama' => 'Penilaian Proposal Rancangan/Pengembangan/Inovasi',
             'mulai' => '2026-11-09',
             'selesai' => '2026-11-13',
+            'sorot' => 'Penilaian Proposal',
         ],
         [
             'kunci' => 'presentasi',
             'nama' => 'Presentasi Proposal Rancangan/Pengembangan/Inovasi',
             'mulai' => '2026-11-17',
             'selesai' => '2026-11-17',
-            'sorot' => 'Presentasi proposal',
+            'sorot' => 'Presentasi Proposal',
         ],
         [
             'kunci' => 'pengumuman',
             'nama' => 'Pengumuman Hasil Kompetisi TERANG NONA 2026',
             'mulai' => '2026-11-23',
             'selesai' => '2026-11-23',
-            'sorot' => 'Pengumuman hasil',
+            'sorot' => 'Pengumuman Hasil',
         ],
         [
             'kunci' => 'penghargaan',
@@ -67,7 +72,7 @@ return [
             'selesai' => '2026-11-30',
             'label' => '29/30 November 2026',
             'ringkas' => '29/30 Nov',
-            'sorot' => 'Penyerahan penghargaan',
+            'sorot' => 'Penyerahan Penghargaan',
         ],
     ],
 ];
