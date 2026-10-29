@@ -8,11 +8,12 @@ use Illuminate\Http\Request;
 class TrustProxies extends Middleware
 {
     /**
-     * The trusted proxies for this application.
+     * HTTPS di server hosting dipasang oleh proxy, bukan oleh aplikasi.
+     * Proxy dipercaya agar Laravel tahu bahwa akses sebenarnya memakai HTTPS.
      *
      * @var array<int, string>|string|null
      */
-    protected $proxies;
+    protected $proxies = '*';
 
     /**
      * The headers that should be used to detect proxies.
