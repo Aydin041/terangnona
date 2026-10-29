@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\KoreksiController as AdminKoreksiController;
 use App\Http\Controllers\Admin\AkunController as AdminAkunController;
 use App\Http\Controllers\Admin\PengaturanController as AdminPengaturanController;
 use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
+use App\Http\Controllers\Admin\RankingController as AdminRankingController;
 use App\Http\Controllers\Pimpinan\AuthController as PimpinanAuthController;
 use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
 use App\Http\Controllers\Pimpinan\PengajuanController as PimpinanPengajuanController;
@@ -59,6 +60,7 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
         Route::post('/pengajuan/step1', [PesertaPengajuanController::class, 'step1Store'])->name('pengajuan.step1.submit');
         Route::get('/pengajuan/step1/edit/{pengajuan}', [PesertaPengajuanController::class, 'step1Form'])->name('pengajuan.step1.edit');
         Route::post('/pengajuan/step1/edit/{pengajuan}', [PesertaPengajuanController::class, 'step1Store'])->name('pengajuan.step1.update');
+        Route::get('/pengajuan/{pengajuan}/lihat', [PesertaPengajuanController::class, 'lihat'])->name('pengajuan.lihat');
         Route::post('/pengajuan/{pengajuan}/hapus', [PesertaPengajuanController::class, 'hapus'])->name('pengajuan.hapus');
 
         Route::get('/pengajuan/step2/{pengajuan}', [PesertaPengajuanController::class, 'step2Form'])->name('pengajuan.step2');
@@ -164,6 +166,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/pengaturan', [AdminPengaturanController::class, 'update'])->name('pengaturan.update');
 
         Route::get('/laporan-nilai', [AdminLaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/ranking', [AdminRankingController::class, 'index'])->name('ranking.index');
+        Route::get('/export/nilai-proposal', [PanitiaPengajuanController::class, 'exportNilaiProposal'])->name('export.nilai.proposal');
+        Route::get('/export/nilai-presentasi', [PanitiaPengajuanController::class, 'exportNilaiPresentasi'])->name('export.nilai.presentasi');
     });
 });
 

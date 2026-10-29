@@ -60,8 +60,13 @@ class PengajuanController extends Controller
         $lampiranUtama = PesertaPengajuanController::KOMPONEN_LAMPIRAN;
         $lampiranTambahan = PesertaPengajuanController::KOMPONEN_LAMPIRAN_TAMBAHAN;
 
+        // Alasan penolakan/pengembalian dan riwayat pemeriksaan Panitia.
+        $riwayat = $pengajuan->riwayatStatus()->with('panitia')->orderBy('id')->get();
+        $catatanTerakhir = $riwayat->where('status', $pengajuan->status)->last()?->catatan_panitia;
+
         return view('pimpinan.pengajuan.detail', compact(
-            'pengajuan', 'dokumenPerJenis', 'isianPerKomponen', 'komponenList', 'lampiranUtama', 'lampiranTambahan'
+            'pengajuan', 'dokumenPerJenis', 'isianPerKomponen', 'komponenList', 'lampiranUtama', 'lampiranTambahan',
+            'riwayat', 'catatanTerakhir'
         ));
     }
 }

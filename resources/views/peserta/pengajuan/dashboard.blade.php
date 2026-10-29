@@ -92,6 +92,13 @@
                     @if ($item->status === 'disetujui')
                         <p class="mt-3 text-sm text-slate-500">Pengajuan disetujui dan masuk tahap penilaian Juri.</p>
                     @endif
+
+                    @if ($item->status !== 'draft')
+                        <a href="{{ route('peserta.pengajuan.lihat', $item->uuid) }}"
+                            class="inline-block mt-3 text-sm font-semibold text-brand-blue hover:underline">
+                            Lihat Pengajuan &rarr;
+                        </a>
+                    @endif
                 </div>
             @endforeach
         </div>

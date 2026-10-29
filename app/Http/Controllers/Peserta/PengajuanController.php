@@ -59,6 +59,49 @@ class PengajuanController extends Controller
         return view('peserta.pengajuan.dashboard', compact('daftarPengajuan', 'catatanPengembalian', 'sudahLewatDeadline'));
     }
 
+    /**
+     * Halaman hanya-lihat untuk pengajuan milik peserta sendiri
+     * (menunggu pemeriksaan, disetujui, perlu perbaikan, atau ditolak).
+     */
+    public function lihat($id)
+    {
+        $peserta = Auth::guard('peserta')->user();
+
+        $pengajuan = Pengajuan::with('peserta', 'kategori', 'anggotaKelompok', 'dokumen')
+            ->where('id', $id)
+            ->where('peserta_id', $peserta->id)
+            ->firstOrFail();
+
+        // Draft masih bisa diisi, jadi diarahkan ke formulir.
+        if ($pengajuan->status === 'draft') {
+            return redirect()->route('peserta.pengajuan.step1.edit', $pengajuan->uuid);
+        }
+
+        $dokumenPerJenis = $pengajuan->dokumen->keyBy('jenis_dokumen');
+
+        $isianPerKomponen = IsianProposal::with('links')
+            ->where('pengajuan_id', $pengajuan->id)
+            ->get()
+            ->keyBy('komponen_id');
+
+        // Komponen yang tidak berlaku untuk bentuk Eksisting disembunyikan
+        // (aturan yang sama dengan penghitungan nilai).
+        $komponenList = KomponenPenilaian::orderBy('id')->get()
+            ->filter(fn ($k) => $k->kolom_target === 'keduanya' || $pengajuan->bentuk_inovasi !== 'eksisting')
+            ->values();
+
+        $lampiranUtama = self::KOMPONEN_LAMPIRAN;
+        $lampiranTambahan = self::KOMPONEN_LAMPIRAN_TAMBAHAN;
+
+        $riwayat = $pengajuan->riwayatStatus()->orderBy('id')->get();
+        $catatanTerakhir = $riwayat->where('status', $pengajuan->status)->last()?->catatan_panitia;
+
+        return view('peserta.pengajuan.lihat', compact(
+            'pengajuan', 'dokumenPerJenis', 'isianPerKomponen', 'komponenList', 'lampiranUtama', 'lampiranTambahan',
+            'riwayat', 'catatanTerakhir'
+        ));
+    }
+
     public function step1Form($pengajuanId = null)
     {
         $kategoriList = Kategori::all();
