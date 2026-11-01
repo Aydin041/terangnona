@@ -6,8 +6,8 @@
         if (blank($waktu)) {
             return '';
         }
-        return \Illuminate\Support\Carbon::parse($waktu, 'UTC')
-            ->setTimezone('Asia/Jakarta')
+        // Zona waktu aplikasi sudah Asia/Jakarta (config/app.php), jadi waktu tidak perlu dikonversi lagi.
+        return \Illuminate\Support\Carbon::parse($waktu)
             ->locale('id')
             ->translatedFormat('j F Y, H.i') . ' WIB';
     };

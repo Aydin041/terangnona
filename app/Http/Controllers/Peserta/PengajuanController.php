@@ -127,7 +127,14 @@ class PengajuanController extends Controller
             'jenis_inovasi' => 'required|in:digital,non_digital',
             'kategori_id' => 'required|exists:kategori,id',
             'unit_kerja_id' => 'required|exists:unit_kerja,id',
-            'tahun_implementasi' => 'required|integer|min:2020|max:2030',
+            // Rentang mengikuti tahun berjalan: inovasi yang sudah berjalan sampai 20 tahun ke belakang,
+            // dan rencana sampai 5 tahun ke depan.
+            'tahun_implementasi' => 'required|integer|min:' . (now()->year - 20) . '|max:' . (now()->year + 5),
+        ], [
+            'tahun_implementasi.required' => 'Tahun implementasi wajib diisi.',
+            'tahun_implementasi.integer' => 'Tahun implementasi harus berupa angka.',
+            'tahun_implementasi.min' => 'Tahun implementasi tidak boleh lebih awal dari :min.',
+            'tahun_implementasi.max' => 'Tahun implementasi tidak boleh lebih akhir dari :max.',
         ]);
 
         if (!$pengajuanId && \App\Models\Pengaturan::sudahLewatDeadline()) {

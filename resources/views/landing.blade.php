@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TERANG NONA 2026 - Kompetisi Inovasi Disnakertrans Provinsi Jawa Tengah</title>
+    <title>TERANG NONA {{ config('jadwal.tahun') }} - Kompetisi Inovasi Disnakertrans Provinsi Jawa Tengah</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
         /* Foto tokoh di belakang judul pada bagian atas (hero).
@@ -128,7 +128,7 @@
             <div class="hero-teks order-2 lg:order-1 lg:flex-1">
                 <p class="text-xs tracking-widest text-slate-300 uppercase">Dinas Tenaga Kerja dan Transmigrasi Provinsi Jawa Tengah</p>
                 <h1 class="mt-3 text-4xl sm:text-5xl font-extrabold text-white leading-tight">
-                    Kompetisi Inovasi <span class="text-brand-amber">TERANG NONA</span> 2026
+                    Kompetisi Inovasi <span class="text-brand-amber">TERANG NONA</span> {{ config('jadwal.tahun') }}
                 </h1>
 
                 <div class="mt-6">
@@ -165,7 +165,7 @@
             </div>
 
             <div class="hero-logo order-1 lg:order-2 lg:flex-none">
-                <img src="{{ asset('images/logo-terang-nona-emas.png') }}" alt="TERANG NONA 2026" class="h-52 lg:h-80 w-auto mx-auto">
+                <img src="{{ asset('images/logo-terang-nona-emas.png') }}" alt="TERANG NONA {{ config('jadwal.tahun') }}" class="h-52 lg:h-80 w-auto mx-auto">
             </div>
         </div>
     </section>
@@ -187,16 +187,16 @@
         <div class="grid lg:grid-cols-2 gap-10">
             <div>
                 <p class="text-xs font-bold tracking-widest text-brand-amber-dark uppercase">Tentang</p>
-                <h2 class="text-3xl font-bold mt-1 mb-4">Tentang TERANG NONA 2026</h2>
+                <h2 class="text-3xl font-bold mt-1 mb-4">Tentang TERANG NONA {{ config('jadwal.tahun') }}</h2>
                 <div class="space-y-4 text-slate-600 leading-relaxed">
                     <p>
-                        TERANG NONA (Tenaga Kerja dan Transmigrasi Innovation Awards) 2026 adalah ajang yang
+                        TERANG NONA (Tenaga Kerja dan Transmigrasi Innovation Awards) {{ config('jadwal.tahun') }} adalah ajang yang
                         digagas Dinas Tenaga Kerja dan Transmigrasi Provinsi Jawa Tengah sebagai sarana apresiasi
                         sekaligus wadah penjaringan karya inovatif terbaik yang lahir dari gagasan ASN, praktisi
                         industri, akademisi, hingga masyarakat luas.
                     </p>
                     <p>
-                        Melalui TERANG NONA 2026 diharapkan terwujud ekosistem inovasi ketenagakerjaan dan
+                        Melalui TERANG NONA {{ config('jadwal.tahun') }} diharapkan terwujud ekosistem inovasi ketenagakerjaan dan
                         ketransmigrasian yang inklusif, kolaboratif, dan berkelanjutan di Jawa Tengah. Inovasi
                         terbaik yang terpilih akan diintegrasikan ke dalam program prioritas daerah.
                     </p>

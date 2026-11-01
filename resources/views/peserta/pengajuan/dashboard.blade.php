@@ -40,7 +40,7 @@
 
     @if ($daftarPengajuan->isEmpty())
         <div class="bg-white border border-line rounded-2xl p-8 text-center text-slate-500">
-            Belum ada pengajuan. Mulai pengajuan baru untuk mengikuti TERANG NONA 2026.
+            Belum ada pengajuan. Mulai pengajuan baru untuk mengikuti TERANG NONA {{ config('jadwal.tahun') }}.
         </div>
     @else
         <div class="space-y-4">
