@@ -87,7 +87,10 @@
 
                 <div>
                     <label for="tahun_implementasi" class="block text-sm font-semibold mb-1.5">Tahun Implementasi/Rencana</label>
-                    <input type="number" id="tahun_implementasi" name="tahun_implementasi" value="{{ old('tahun_implementasi', $pengajuan->tahun_implementasi ?? now()->year) }}" min="{{ now()->year - 20 }}" max="{{ now()->year + 5 }}" required class="{{ $kelas }}">
+                    <input type="number" id="tahun_implementasi" name="tahun_implementasi" value="{{ old('tahun_implementasi', $pengajuan->tahun_implementasi ?? now()->year) }}" min="{{ now()->year - 20 }}" max="{{ now()->year + 5 }}" required
+                        oninvalid="this.setCustomValidity('Isi dengan tahun {{ now()->year - 20 }} sampai {{ now()->year + 5 }}.')"
+                        oninput="this.setCustomValidity('')"
+                        class="{{ $kelas }}">
                     <p class="text-xs text-slate-400 mt-1.5">Isi dengan tahun {{ now()->year - 20 }} sampai {{ now()->year + 5 }}.</p>
                 </div>
 
