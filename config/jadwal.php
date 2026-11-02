@@ -8,7 +8,9 @@
 | Halaman depan membaca daftar ini dan menghitung sendiri status tiap tahap
 | (belum dimulai / sedang berlangsung / sudah lewat) dari tanggal hari ini.
 |
-| Mengubah jadwal: ubah 'mulai' dan 'selesai' (format tahun-bulan-tanggal).
+| Jadwal sekarang disimpan di database dan diubah lewat halaman Admin > Jadwal.
+| Berkas ini hanya nilai awal (saat pemasangan) dan cadangan bila tabel jadwal kosong.
+| Format 'mulai' dan 'selesai': tahun-bulan-tanggal.
 | Tahun kompetisi (di judul, teks halaman depan, dan nama tahap) otomatis mengikuti
 | tahun 'mulai' pada tahap pertama; tulis {tahun} pada nama atau label untuk memakainya.
 | 'label' dan 'ringkas' bersifat opsional; kalau dikosongkan, teks tanggal dibuat otomatis.
@@ -77,6 +79,8 @@ $tahap = [
 
 // Tahun penyelenggaraan diambil dari tanggal mulai tahap pertama, jadi cukup mengubah jadwal.
 // Penanda {tahun} pada nama dan label tahap diganti dengan tahun itu.
+$tahapAwal = $tahap; // salinan mentah (masih memuat {tahun}) sebagai nilai awal jadwal di database
+
 $tahun = (int) substr($tahap[0]['mulai'], 0, 4);
 
 foreach ($tahap as &$butir) {
@@ -95,4 +99,8 @@ return [
     'tahun' => $tahun,
 
     'tahap' => $tahap,
+
+    // Nilai awal untuk tabel tahap_jadwal (diisi saat "php artisan migrate").
+    // Setelah itu jadwal diubah lewat halaman Admin > Jadwal, bukan lewat berkas ini.
+    'tahap_awal' => $tahapAwal,
 ];

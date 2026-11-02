@@ -14,6 +14,7 @@
     <a href="{{ route('admin.dashboard') }}" class="py-1 border-b-2 transition-colors {{ $aktif('admin.dashboard', 'admin.koreksi.*') }}">Dashboard</a>
     <a href="{{ route('admin.akun.panitia.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('admin.akun.*') }}">Akun</a>
     <a href="{{ route('admin.pengaturan.form') }}" class="py-1 border-b-2 transition-colors {{ $aktif('admin.pengaturan.*') }}">Pengaturan</a>
+    <a href="{{ route('admin.jadwal.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('admin.jadwal.*') }}">Jadwal</a>
     <a href="{{ route('admin.ranking.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('admin.ranking.*') }}">Ranking</a>
     <a href="{{ route('admin.laporan.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('admin.laporan.*') }}">Laporan Nilai</a>
 @endsection
