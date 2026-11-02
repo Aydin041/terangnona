@@ -9,7 +9,7 @@
 <body class="min-h-screen flex flex-col bg-surface font-sans text-ink antialiased">
 
     <header class="bg-brand-navy">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+        <div class="@yield('lebar', 'max-w-5xl') mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
             <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
                 <a href="@yield('beranda-url')" class="flex items-center gap-3 shrink-0">
                     <img src="{{ asset('images/logo-terang-nona-emas.png') }}" alt="TERANG NONA" class="h-10 w-auto">
@@ -32,7 +32,7 @@
     </header>
 
     <main class="flex-1">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+        <div class="@yield('lebar', 'max-w-5xl') mx-auto px-4 sm:px-6 py-8">
             @yield('content')
         </div>
     </main>

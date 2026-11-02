@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('peran', 'Admin')
+@section('lebar', 'max-w-6xl')
 @section('beranda-url', route('admin.dashboard'))
 @section('logout-url', route('admin.logout'))
 @section('pengguna', Auth::guard('admin')->user()->nama)
