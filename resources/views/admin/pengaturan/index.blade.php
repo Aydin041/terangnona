@@ -51,5 +51,11 @@
                 Simpan
             </button>
         </form>
+
+        <div class="bg-white border border-line rounded-2xl p-6 mt-4">
+            <h2 class="font-semibold mb-1">Kata Sandi Admin</h2>
+            <p class="text-sm text-slate-500 mb-3">Ganti kata sandi akun Anda sendiri.</p>
+            <a href="{{ route('admin.kata-sandi.form') }}" class="text-sm font-semibold text-brand-blue hover:underline">Ganti Kata Sandi &rarr;</a>
+        </div>
     </div>
 @endsection

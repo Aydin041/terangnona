@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AkunController as AdminAkunController;
 use App\Http\Controllers\Admin\PengaturanController as AdminPengaturanController;
 use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
 use App\Http\Controllers\Admin\JadwalController as AdminJadwalController;
+use App\Http\Controllers\Admin\KataSandiController as AdminKataSandiController;
 use App\Http\Controllers\Admin\RankingController as AdminRankingController;
 use App\Http\Controllers\Pimpinan\AuthController as PimpinanAuthController;
 use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
@@ -167,6 +168,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/pengaturan', [AdminPengaturanController::class, 'update'])->name('pengaturan.update');
         Route::get('/jadwal', [AdminJadwalController::class, 'index'])->name('jadwal.index');
         Route::post('/jadwal', [AdminJadwalController::class, 'update'])->name('jadwal.update');
+        Route::get('/kata-sandi', [AdminKataSandiController::class, 'form'])->name('kata-sandi.form');
+        Route::post('/kata-sandi', [AdminKataSandiController::class, 'update'])->middleware('throttle:5,1')->name('kata-sandi.update');
 
         Route::get('/laporan-nilai', [AdminLaporanController::class, 'index'])->name('laporan.index');
         Route::get('/ranking', [AdminRankingController::class, 'index'])->name('ranking.index');
