@@ -43,4 +43,13 @@ class Peserta extends Authenticatable
     {
         return $this->hasMany(Pengajuan::class);
     }
+
+    /**
+     * Peserta boleh mengisi survei kalau sudah mengirim sedikitnya satu pengajuan
+     * (statusnya bukan draft).
+     */
+    public function layakSurvei(): bool
+    {
+        return $this->pengajuan()->where('status', '!=', 'draft')->exists();
+    }
 }

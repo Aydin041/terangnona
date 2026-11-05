@@ -6,6 +6,11 @@
 @section('pengguna', Auth::guard('peserta')->user()->nama)
 
 @section('menu')
-    <a href="{{ route('peserta.dashboard') }}"
-        class="py-1 border-b-2 transition-colors {{ request()->routeIs('peserta.*') ? 'text-brand-amber border-brand-amber font-semibold' : 'text-slate-300 border-transparent hover:text-white' }}">Dashboard Saya</a>
+    @php
+        $aktif = fn (...$pola) => request()->routeIs(...$pola)
+            ? 'text-brand-amber border-brand-amber font-semibold'
+            : 'text-slate-300 border-transparent hover:text-white';
+    @endphp
+    <a href="{{ route('peserta.dashboard') }}" class="py-1 border-b-2 transition-colors {{ $aktif('peserta.dashboard', 'peserta.pengajuan.*') }}">Dashboard Saya</a>
+    <a href="{{ route('peserta.survei.form') }}" class="py-1 border-b-2 transition-colors {{ $aktif('peserta.survei.*') }}">Survei</a>
 @endsection

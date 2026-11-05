@@ -47,6 +47,23 @@
                 <p class="text-xs text-amber-700 mt-2">Atur sebelum penilaian dimulai. Mengubahnya di tengah penilaian dapat mengubah hasil ranking.</p>
             </div>
 
+            <div class="bg-white border border-line rounded-2xl p-6">
+                <h2 class="font-semibold mb-1">Survei Kepuasan</h2>
+                <p class="text-sm text-slate-500 mb-4">Peserta hanya bisa mengisi survei di antara dua waktu ini. Di luar rentang itu, halaman survei menampilkan pesan belum dibuka atau sudah ditutup.</p>
+
+                <label for="survei_dibuka_pada" class="block text-sm font-semibold mb-1.5">Survei Dibuka Pada</label>
+                <input type="datetime-local" id="survei_dibuka_pada" name="survei_dibuka_pada"
+                    value="{{ old('survei_dibuka_pada', optional($pengaturan->survei_dibuka_pada)->format('Y-m-d\TH:i')) }}"
+                    class="w-full rounded-xl border border-line px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-amber focus:border-brand-amber">
+
+                <label for="survei_ditutup_pada" class="block text-sm font-semibold mb-1.5 mt-4">Survei Ditutup Pada</label>
+                <input type="datetime-local" id="survei_ditutup_pada" name="survei_ditutup_pada"
+                    value="{{ old('survei_ditutup_pada', optional($pengaturan->survei_ditutup_pada)->format('Y-m-d\TH:i')) }}"
+                    class="w-full rounded-xl border border-line px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-amber focus:border-brand-amber">
+
+                <p class="text-xs text-slate-400 mt-1.5">{{ $petunjukSurvei }}</p>
+            </div>
+
             <button type="submit" class="bg-brand-amber hover:bg-brand-amber-dark text-brand-navy font-semibold rounded-xl px-8 py-3 transition-colors">
                 Simpan
             </button>

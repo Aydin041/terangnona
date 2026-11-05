@@ -14,4 +14,5 @@
     <a href="{{ route('pimpinan.dashboard') }}" class="py-1 border-b-2 transition-colors {{ $aktif('pimpinan.dashboard') }}">Ringkasan</a>
     <a href="{{ route('pimpinan.pengajuan.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('pimpinan.pengajuan.*') }}">Daftar Pengajuan</a>
     <a href="{{ route('pimpinan.ranking.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('pimpinan.ranking.*') }}">Ranking</a>
+    <a href="{{ route('pimpinan.survei.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('pimpinan.survei.*') }}">Hasil Survei</a>
 @endsection

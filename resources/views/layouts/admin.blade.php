@@ -18,4 +18,5 @@
     <a href="{{ route('admin.jadwal.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('admin.jadwal.*') }}">Jadwal</a>
     <a href="{{ route('admin.ranking.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('admin.ranking.*') }}">Ranking</a>
     <a href="{{ route('admin.laporan.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('admin.laporan.*') }}">Laporan Nilai</a>
+    <a href="{{ route('admin.survei.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('admin.survei.*') }}">Hasil Survei</a>
 @endsection

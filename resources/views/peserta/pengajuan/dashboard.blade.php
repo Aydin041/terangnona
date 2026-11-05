@@ -16,6 +16,26 @@
         @endunless
     </div>
 
+    @php
+        $pesertaLogin = Auth::guard('peserta')->user();
+        $tampilSurvei = \App\Models\Pengaturan::statusSurvei() === 'dibuka'
+            && $pesertaLogin->layakSurvei()
+            && ! \App\Models\SurveiPartisipasi::where('peserta_id', $pesertaLogin->id)->exists();
+    @endphp
+
+    @if ($tampilSurvei)
+        <div class="mb-5 bg-white border border-line rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap" style="border-left:4px solid #f5a31a">
+            <div>
+                <h2 class="font-semibold">Survei Kepuasan sedang dibuka</h2>
+                <p class="text-sm text-slate-500 mt-0.5">
+                    Bantu kami meningkatkan TERANG NONA. Ditutup pada
+                    {{ \App\Models\Pengaturan::ambil()->survei_ditutup_pada->copy()->locale('id')->translatedFormat('j F Y, H.i') }} WIB.
+                </p>
+            </div>
+            <a href="{{ route('peserta.survei.form') }}" class="rounded-xl border border-line px-5 py-2.5 font-semibold">Isi Survei</a>
+        </div>
+    @endif
+
     @if ($errors->any())
         <div class="mb-5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm p-3">
             <ul class="list-disc list-inside space-y-1">

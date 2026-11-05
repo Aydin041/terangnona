@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Peserta\AuthController as PesertaAuthController;
 use App\Http\Controllers\Peserta\PengajuanController as PesertaPengajuanController;
+use App\Http\Controllers\Peserta\SurveiController as PesertaSurveiController;
 use App\Http\Controllers\Panitia\AuthController as PanitiaAuthController;
 use App\Http\Controllers\Panitia\PengajuanController as PanitiaPengajuanController;
 use App\Http\Controllers\Panitia\RankingController as PanitiaRankingController;
@@ -18,10 +19,12 @@ use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
 use App\Http\Controllers\Admin\JadwalController as AdminJadwalController;
 use App\Http\Controllers\Admin\KataSandiController as AdminKataSandiController;
 use App\Http\Controllers\Admin\RankingController as AdminRankingController;
+use App\Http\Controllers\Admin\SurveiController as AdminSurveiController;
 use App\Http\Controllers\Pimpinan\AuthController as PimpinanAuthController;
 use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
 use App\Http\Controllers\Pimpinan\PengajuanController as PimpinanPengajuanController;
 use App\Http\Controllers\Pimpinan\RankingController as PimpinanRankingController;
+use App\Http\Controllers\Pimpinan\SurveiController as PimpinanSurveiController;
 use App\Models\Pengajuan;
 use App\Models\Panitia;
 use App\Models\Juri;
@@ -57,6 +60,8 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
 
     Route::middleware('auth:peserta')->group(function () {
         Route::get('/dashboard', [PesertaPengajuanController::class, 'dashboard'])->name('dashboard');
+        Route::get('/survei', [PesertaSurveiController::class, 'form'])->name('survei.form');
+        Route::post('/survei', [PesertaSurveiController::class, 'kirim'])->middleware('throttle:10,1')->name('survei.kirim');
 
         Route::get('/pengajuan/step1', [PesertaPengajuanController::class, 'step1Form'])->name('pengajuan.step1');
         Route::post('/pengajuan/step1', [PesertaPengajuanController::class, 'step1Store'])->name('pengajuan.step1.submit');
@@ -170,6 +175,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/jadwal', [AdminJadwalController::class, 'update'])->name('jadwal.update');
         Route::get('/kata-sandi', [AdminKataSandiController::class, 'form'])->name('kata-sandi.form');
         Route::post('/kata-sandi', [AdminKataSandiController::class, 'update'])->middleware('throttle:5,1')->name('kata-sandi.update');
+        Route::get('/hasil-survei', [AdminSurveiController::class, 'index'])->name('survei.index');
+        Route::get('/hasil-survei/partisipasi', [AdminSurveiController::class, 'partisipasi'])->name('survei.partisipasi');
 
         Route::get('/laporan-nilai', [AdminLaporanController::class, 'index'])->name('laporan.index');
         Route::get('/ranking', [AdminRankingController::class, 'index'])->name('ranking.index');
@@ -189,5 +196,6 @@ Route::prefix('pimpinan')->name('pimpinan.')->group(function () {
         Route::get('/pengajuan', [PimpinanPengajuanController::class, 'index'])->name('pengajuan.index');
         Route::get('/pengajuan/{pengajuan}', [PimpinanPengajuanController::class, 'detail'])->name('pengajuan.detail');
         Route::get('/ranking', [PimpinanRankingController::class, 'index'])->name('ranking.index');
+        Route::get('/hasil-survei', [PimpinanSurveiController::class, 'index'])->name('survei.index');
     });
 });
