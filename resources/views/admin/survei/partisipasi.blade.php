@@ -16,20 +16,20 @@
 
         <h2 class="font-semibold mb-3">Sudah Mengisi</h2>
         <div class="bg-white border border-line rounded-2xl p-5 mb-6 text-sm">
-            @forelse ($sudah as $nama)
-                <span class="inline-block mr-3 mb-1">{{ $nama }}</span>
-            @empty
+            @if ($sudah->isEmpty())
                 <span class="text-slate-500">Belum ada.</span>
-            @endforelse
+            @else
+                {{ $sudah->implode(', ') }}
+            @endif
         </div>
 
         <h2 class="font-semibold mb-3">Belum Mengisi <span class="text-sm text-slate-400 font-normal">({{ $belum->count() }})</span></h2>
         <div class="bg-white border border-line rounded-2xl p-5 text-sm">
-            @forelse ($belum as $nama)
-                <span class="inline-block mr-3 mb-1">{{ $nama }}</span>
-            @empty
+            @if ($belum->isEmpty())
                 <span class="text-slate-500">Semua peserta sudah mengisi.</span>
-            @endforelse
+            @else
+                {{ $belum->implode(', ') }}
+            @endif
         </div>
     </div>
 @endsection
