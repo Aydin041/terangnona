@@ -20,8 +20,8 @@
         @if (! $layak)
             <h1 class="text-2xl font-bold mb-4">Survei Kepuasan</h1>
             <div class="bg-white border border-line rounded-2xl p-8 text-center">
-                <h2 class="font-semibold">Survei hanya untuk peserta yang sudah mengajukan</h2>
-                <p class="text-sm text-slate-500 mt-1">Kirim sedikitnya satu pengajuan terlebih dahulu untuk dapat mengisi survei.</p>
+                <h2 class="font-semibold">Survei hanya untuk peserta yang pengajuannya sudah diputuskan</h2>
+                <p class="text-sm text-slate-500 mt-1">Survei dapat diisi setelah pengajuan Anda disetujui atau ditolak oleh Panitia.</p>
             </div>
         @elseif ($sudahMengisi)
             <h1 class="text-2xl font-bold mb-4">Survei Kepuasan</h1>

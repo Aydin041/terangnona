@@ -11,7 +11,7 @@
         <div class="bg-white border border-line rounded-2xl p-6 mb-4">
             <p class="text-sm text-slate-500">Sudah mengisi</p>
             <p class="mt-1"><span class="text-3xl font-bold">{{ $sudah->count() }}</span> <span class="text-sm text-slate-500">dari {{ $jumlahLayak }} peserta</span></p>
-            <p class="text-xs text-slate-400 mt-2">Peserta yang dihitung adalah yang sudah mengirim sedikitnya satu pengajuan.</p>
+            <p class="text-xs text-slate-400 mt-2">Peserta yang dihitung adalah yang sedikitnya satu pengajuannya sudah disetujui atau ditolak.</p>
         </div>
 
         <h2 class="font-semibold mb-3">Sudah Mengisi</h2>

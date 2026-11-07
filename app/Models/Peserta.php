@@ -45,11 +45,11 @@ class Peserta extends Authenticatable
     }
 
     /**
-     * Peserta boleh mengisi survei kalau sudah mengirim sedikitnya satu pengajuan
-     * (statusnya bukan draft).
+     * Peserta boleh mengisi survei kalau sedikitnya satu pengajuannya sudah mendapat
+     * keputusan akhir (disetujui atau ditolak).
      */
     public function layakSurvei(): bool
     {
-        return $this->pengajuan()->where('status', '!=', 'draft')->exists();
+        return $this->pengajuan()->whereIn('status', \App\Services\SurveiService::STATUS_LAYAK)->exists();
     }
 }

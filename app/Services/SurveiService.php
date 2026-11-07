@@ -19,11 +19,16 @@ class SurveiService
     ];
 
     /**
-     * Peserta yang boleh mengisi survei: sudah mengirim sedikitnya satu pengajuan (bukan draft).
+     * Status pengajuan yang sudah mendapat keputusan akhir dari Panitia.
+     */
+    public const STATUS_LAYAK = ['disetujui', 'ditolak'];
+
+    /**
+     * Peserta yang boleh mengisi survei: sedikitnya satu pengajuannya sudah disetujui atau ditolak.
      */
     public static function pesertaLayak()
     {
-        return Peserta::query()->whereHas('pengajuan', fn ($q) => $q->where('status', '!=', 'draft'));
+        return Peserta::query()->whereHas('pengajuan', fn ($q) => $q->whereIn('status', self::STATUS_LAYAK));
     }
 
     /**
