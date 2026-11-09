@@ -9,9 +9,12 @@
 | kolom 'berkas'. Kalau berkas belum ada, tombolnya tampil "Belum tersedia".
 | Jenis (PDF atau Word) dibaca dari ekstensi berkas. {tahun} diganti tahun kompetisi.
 |
-| Nama berkas saat diunduh otomatis dibuat dari 'judul' (contoh: "Panduan Kompetisi
-| TERANG NONA 2026.pdf"). Kalau ingin nama lain, tambahkan 'nama_unduhan' => '...' pada
-| item yang bersangkutan, lengkap dengan ekstensinya.
+| Nama berkas saat diunduh dibuat dari 'nama_unduhan' (lengkap dengan ekstensi).
+| Nama itu ditulis eksplisit supaya tanda "/" pada judul tidak merusak nama berkas.
+|
+| BERKAS KE-4: nama dan jenisnya masih menunggu. Kalau sudah jadi, ganti
+| 'judul', 'deskripsi', 'berkas', dan 'nama_unduhan' pada item bertanda TODO,
+| lalu letakkan filenya di public/unduhan.
 |
 */
 
@@ -21,32 +24,32 @@ return [
     'kelompok' => [
         'Panduan' => [
             [
-                'judul' => 'Panduan Kompetisi TERANG NONA {tahun}',
-                'deskripsi' => 'Ketentuan, jadwal, dan kriteria penilaian',
-                'berkas' => 'panduan-kompetisi.pdf',
+                'judul' => 'SK TERANG NONA {tahun}',
+                'deskripsi' => 'Surat Keputusan kompetisi',
+                'berkas' => 'sk-terang-nona-2026.pdf',
+                'nama_unduhan' => 'SK Terang Nona 2026.pdf',
             ],
         ],
 
         'Template Dokumen Pendaftaran' => [
             [
-                'judul' => 'Surat Pernyataan Identitas Inovator',
+                'judul' => 'Format Surat Pernyataan Komitmen/Implementasi Inovasi - TERANG NONA {tahun}',
                 'deskripsi' => 'Template untuk diisi dan ditandatangani',
-                'berkas' => 'surat-pernyataan-identitas-inovator.docx',
+                'berkas' => 'format-surat-pernyataan-komitmen-implementasi-inovasi.docx',
+                'nama_unduhan' => 'Format Surat Pernyataan Komitmen Implementasi Inovasi - TERANG NONA 2026.docx',
             ],
             [
-                'judul' => 'Surat Pernyataan Implementasi Inovasi',
+                'judul' => 'Format Surat Pernyataan Identitas Inovator - TERANG NONA {tahun}',
                 'deskripsi' => 'Template untuk diisi dan ditandatangani',
-                'berkas' => 'surat-pernyataan-implementasi-inovasi.docx',
+                'berkas' => 'format-surat-pernyataan-identitas-inovator.docx',
+                'nama_unduhan' => 'Format Surat Pernyataan Identitas Inovator - TERANG NONA 2026.docx',
             ],
             [
-                'judul' => 'Surat Pernyataan Komitmen Implementasi Inovasi',
-                'deskripsi' => 'Template untuk diisi dan ditandatangani',
-                'berkas' => 'surat-pernyataan-komitmen-implementasi-inovasi.docx',
-            ],
-            [
-                'judul' => 'Template Rencana Aksi / Pengembangan',
-                'deskripsi' => 'Lampiran Bagian C pengajuan',
-                'berkas' => 'template-rencana-aksi-pengembangan.docx',
+                // TODO: ganti setelah nama dan jenis berkas ke-4 pasti.
+                'judul' => 'Dokumen Tambahan (menyusul)',
+                'deskripsi' => 'Sedang dalam proses',
+                'berkas' => 'berkas-ke-4.pdf',
+                'nama_unduhan' => 'Berkas ke-4.pdf',
             ],
         ],
     ],
