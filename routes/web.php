@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Peserta\AuthController as PesertaAuthController;
+use App\Http\Controllers\PublikController;
 use App\Http\Controllers\Peserta\PengajuanController as PesertaPengajuanController;
 use App\Http\Controllers\Peserta\SurveiController as PesertaSurveiController;
 use App\Http\Controllers\Panitia\AuthController as PanitiaAuthController;
@@ -46,9 +47,10 @@ Route::bind('juri', fn (string $uuid) => Juri::where('uuid', $uuid)->value('id')
 Route::bind('peserta', fn (string $uuid) => Peserta::where('uuid', $uuid)->value('id') ?? abort(404));
 Route::bind('pimpinan', fn (string $uuid) => Pimpinan::where('uuid', $uuid)->value('id') ?? abort(404));
 
-Route::get('/', function () {
-    return view('landing');
-})->name('landing');
+Route::get('/', [PublikController::class, 'beranda'])->name('landing');
+Route::get('/tentang', [PublikController::class, 'tentang'])->name('tentang');
+Route::get('/jadwal', [PublikController::class, 'jadwal'])->name('jadwal');
+Route::get('/download', [PublikController::class, 'unduhan'])->name('unduhan');
 
 // Peserta
 Route::prefix('peserta')->name('peserta.')->group(function () {

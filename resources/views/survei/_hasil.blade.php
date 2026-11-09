@@ -1,5 +1,10 @@
 {{-- Hasil survei (gabungan). Tidak pernah memuat identitas.
      Butuh: $ringkasan, $jumlahLayak. Opsional: $tautanPartisipasi (hanya untuk Admin) --}}
+<style>
+    .label-aspek { width: 100%; }
+    @media (min-width: 640px) { .label-aspek { width: 15rem; } }
+</style>
+
 @php
     $jumlah = $ringkasan['jumlah'];
     $persen = fn ($n) => $jumlah > 0 ? round($n / $jumlah * 100) : 0;
@@ -26,7 +31,7 @@
 <div class="bg-white border border-line rounded-2xl p-6 mb-4">
     <h2 class="font-semibold">1. Seberapa baik penyelenggaraan kompetisi TERANG NONA {{ $tahunSurvei }}?</h2>
 
-    <div class="flex items-baseline gap-3 flex-wrap mt-3 mb-4">
+    <div class="flex gap-3 flex-wrap mt-3 mb-4" style="align-items:baseline">
         <span class="text-3xl font-bold text-brand-blue">{{ $ringkasan['rata'] !== null ? number_format($ringkasan['rata'], 1, ',', '.') : '-' }}</span>
         <span class="text-sm text-slate-500">rata-rata dari 5 &middot; 1 = Kurang Baik, 5 = Baik Sekali</span>
     </div>
@@ -34,8 +39,8 @@
     <div class="space-y-2">
         @foreach ($ringkasan['distribusi'] as $nilai => $banyak)
             <div class="flex items-center gap-3 text-sm">
-                <span class="w-4 text-slate-500">{{ $nilai }}</span>
-                <div class="flex-1 rounded-full overflow-hidden" style="background:#e1e6f0;height:8px">
+                <span class="text-slate-500" style="width:1rem">{{ $nilai }}</span>
+                <div class="flex-1 rounded-full" style="background:#e1e6f0;height:8px;overflow:hidden">
                     <div style="width:{{ $persen($banyak) }}%;height:8px;background:#f5a31a;border-radius:9999px"></div>
                 </div>
                 <span class="w-8 text-right text-slate-500">{{ $banyak }}</span>
@@ -51,8 +56,8 @@
     <div class="space-y-3">
         @foreach ($ringkasan['aspek'] as $label => $banyak)
             <div class="flex items-center gap-3 text-sm flex-wrap">
-                <span class="sm:w-60 w-full">{{ $label }}</span>
-                <div class="flex-1 rounded-full overflow-hidden" style="background:#e1e6f0;height:8px;min-width:120px">
+                <span class="label-aspek">{{ $label }}</span>
+                <div class="flex-1 rounded-full" style="background:#e1e6f0;height:8px;min-width:120px;overflow:hidden">
                     <div style="width:{{ $persen($banyak) }}%;height:8px;background:#2b8bc6;border-radius:9999px"></div>
                 </div>
                 <span class="w-8 text-right text-slate-500">{{ $banyak }}</span>
