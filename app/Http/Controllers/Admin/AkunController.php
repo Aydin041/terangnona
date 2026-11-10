@@ -4,16 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Juri;
-use App\Models\NilaiAspekPresentasi;
-use App\Models\NilaiKomponenProposal;
 use App\Models\Panitia;
-use App\Models\Pengajuan;
 use App\Models\Peserta;
 use App\Models\Pimpinan;
-use App\Models\PermintaanBukaKunci;
-use App\Models\RiwayatStatus;
-use App\Models\SubmissionPresentasi;
-use App\Models\SubmissionProposal;
+use App\Services\PenghapusanData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -76,19 +70,18 @@ class AkunController extends Controller
             ->with('sukses', "Password untuk {$panitia->nama} ({$panitia->email}) berhasil direset. Password baru: {$passwordBaru} (catat sekarang, tidak akan ditampilkan lagi)");
     }
 
-    public function panitiaHapus($id)
+    public function panitiaHapusForm($id, PenghapusanData $penghapusan)
     {
         $panitia = Panitia::findOrFail($id);
 
-        if (RiwayatStatus::where('panitia_id', $id)->exists()) {
-            return back()->withErrors([
-                'umum' => "Akun {$panitia->nama} tidak bisa dihapus karena sudah pernah memproses pengajuan (riwayat status tercatat).",
-            ]);
-        }
+        return $this->tampilKonfirmasi('panitia', 'Panitia', $panitia, $penghapusan->ringkasanPanitia($panitia->id));
+    }
 
-        $panitia->delete();
+    public function panitiaHapus(Request $request, $id, PenghapusanData $penghapusan)
+    {
+        $panitia = Panitia::findOrFail($id);
 
-        return redirect()->route('admin.akun.panitia.index')->with('sukses', "Akun Panitia {$panitia->nama} berhasil dihapus.");
+        return $this->prosesHapus($request, 'panitia', 'Panitia', $panitia, fn () => $penghapusan->hapusPanitia($panitia->id));
     }
 
     public function juriIndex()
@@ -147,33 +140,18 @@ class AkunController extends Controller
             ->with('sukses', "Password untuk {$juri->nama} ({$juri->email}) berhasil direset. Password baru: {$passwordBaru} (catat sekarang, tidak akan ditampilkan lagi)");
     }
 
-    public function juriHapus($id)
+    public function juriHapusForm($id, PenghapusanData $penghapusan)
     {
         $juri = Juri::findOrFail($id);
 
-        $sudahMenilai = SubmissionProposal::where('juri_id', $id)->where('status', 'submitted')->exists()
-            || SubmissionPresentasi::where('juri_id', $id)->where('status', 'submitted')->exists();
+        return $this->tampilKonfirmasi('juri', 'Juri', $juri, $penghapusan->ringkasanJuri($juri->id));
+    }
 
-        if ($sudahMenilai) {
-            return back()->withErrors([
-                'umum' => "Akun {$juri->nama} tidak bisa dihapus karena sudah pernah submit penilaian (proposal atau presentasi).",
-            ]);
-        }
+    public function juriHapus(Request $request, $id, PenghapusanData $penghapusan)
+    {
+        $juri = Juri::findOrFail($id);
 
-        // Bersihkan baris draft yang belum pernah disubmit, supaya tidak kena constraint foreign key.
-        $submissionProposalIds = SubmissionProposal::where('juri_id', $id)->pluck('id');
-        NilaiKomponenProposal::whereIn('submission_id', $submissionProposalIds)->delete();
-        SubmissionProposal::where('juri_id', $id)->delete();
-
-        $submissionPresentasiIds = SubmissionPresentasi::where('juri_id', $id)->pluck('id');
-        NilaiAspekPresentasi::whereIn('submission_id', $submissionPresentasiIds)->delete();
-        SubmissionPresentasi::where('juri_id', $id)->delete();
-
-        PermintaanBukaKunci::where('juri_id', $id)->delete();
-
-        $juri->delete();
-
-        return redirect()->route('admin.akun.juri.index')->with('sukses', "Akun Juri {$juri->nama} berhasil dihapus.");
+        return $this->prosesHapus($request, 'juri', 'Juri', $juri, fn () => $penghapusan->hapusJuri($juri->id));
     }
 
     public function pesertaIndex()
@@ -206,21 +184,18 @@ class AkunController extends Controller
             ->with('sukses', "Password untuk {$peserta->nama} ({$peserta->email}) berhasil direset. Password baru: {$passwordBaru} (catat sekarang, tidak akan ditampilkan lagi)");
     }
 
-    public function pesertaHapus($id)
+    public function pesertaHapusForm($id, PenghapusanData $penghapusan)
     {
         $peserta = Peserta::findOrFail($id);
 
-        $jumlahPengajuan = Pengajuan::where('peserta_id', $id)->count();
+        return $this->tampilKonfirmasi('peserta', 'Peserta', $peserta, $penghapusan->ringkasanPeserta($peserta->id));
+    }
 
-        if ($jumlahPengajuan > 0) {
-            return back()->withErrors([
-                'umum' => "Akun {$peserta->nama} tidak bisa dihapus karena sudah punya {$jumlahPengajuan} pengajuan. Kalau semuanya masih berstatus draft, peserta bisa hapus sendiri lewat dashboard-nya dulu.",
-            ]);
-        }
+    public function pesertaHapus(Request $request, $id, PenghapusanData $penghapusan)
+    {
+        $peserta = Peserta::findOrFail($id);
 
-        $peserta->delete();
-
-        return redirect()->route('admin.akun.peserta.index')->with('sukses', "Akun Peserta {$peserta->nama} berhasil dihapus.");
+        return $this->prosesHapus($request, 'peserta', 'Peserta', $peserta, fn () => $penghapusan->hapusPeserta($peserta->id));
     }
 
     public function pimpinanIndex()
@@ -279,12 +254,45 @@ class AkunController extends Controller
             ->with('sukses', "Password untuk {$pimpinan->nama} ({$pimpinan->email}) berhasil direset. Password baru: {$passwordBaru} (catat sekarang, tidak akan ditampilkan lagi)");
     }
 
-    public function pimpinanHapus($id)
+    public function pimpinanHapusForm($id, PenghapusanData $penghapusan)
     {
-        // Pimpinan hanya-lihat dan tidak meninggalkan data lain, jadi aman dihapus langsung.
         $pimpinan = Pimpinan::findOrFail($id);
-        $pimpinan->delete();
 
-        return redirect()->route('admin.akun.pimpinan.index')->with('sukses', "Akun Pimpinan {$pimpinan->nama} berhasil dihapus.");
+        return $this->tampilKonfirmasi('pimpinan', 'Pimpinan', $pimpinan, []);
+    }
+
+    public function pimpinanHapus(Request $request, $id)
+    {
+        // Pimpinan hanya-lihat dan tidak meninggalkan data lain.
+        $pimpinan = Pimpinan::findOrFail($id);
+
+        return $this->prosesHapus($request, 'pimpinan', 'Pimpinan', $pimpinan, fn () => $pimpinan->delete());
+    }
+
+    private function tampilKonfirmasi(string $kunci, string $peran, $akun, array $ringkasan)
+    {
+        return view('admin.hapus.konfirmasi', [
+            'judul' => "Hapus Akun {$peran}",
+            'nama' => $akun->nama,
+            'sub' => $akun->email,
+            'ringkasan' => $ringkasan,
+            'action' => route("admin.akun.{$kunci}.hapus", $akun->uuid),
+            'batal' => route("admin.akun.{$kunci}.index"),
+        ]);
+    }
+
+    private function prosesHapus(Request $request, string $kunci, string $peran, $akun, \Closure $hapus)
+    {
+        $request->validate(
+            ['konfirmasi' => 'required|in:HAPUS'],
+            ['konfirmasi.*' => 'Ketik HAPUS (huruf besar semua) untuk melanjutkan.']
+        );
+
+        $nama = $akun->nama;
+        $hapus();
+
+        return redirect()
+            ->route("admin.akun.{$kunci}.index")
+            ->with('sukses', "Akun {$peran} {$nama} berhasil dihapus beserta data terkaitnya.");
     }
 }
