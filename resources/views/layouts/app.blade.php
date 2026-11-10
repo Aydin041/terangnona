@@ -16,7 +16,7 @@
                     <span class="text-white font-bold tracking-tight">TERANG NONA</span>
                 </a>
                 <span class="text-slate-400 text-sm">@yield('peran')</span>
-                <nav class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+                <nav class="flex flex-wrap items-center @yield('jarak-menu', 'gap-x-5') gap-y-1 text-sm">
                     @yield('menu')
                 </nav>
             </div>
