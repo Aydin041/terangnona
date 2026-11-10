@@ -8,7 +8,7 @@
         'peran' => 'Peserta',
         'daftar' => $daftarPeserta,
         'bolehTambah' => false,
-        'catatan' => 'Peserta mendaftar sendiri lewat halaman registrasi. Di sini Admin hanya bisa mereset password dan menghapus akun yang belum punya pengajuan (misalnya akun spam atau salah daftar).',
+        'catatan' => 'Peserta mendaftar sendiri lewat halaman registrasi. Admin dapat mereset password dan menghapus akun. Menghapus akun peserta ikut menghapus semua pengajuannya beserta nilai juri dan dokumennya, secara permanen.',
         'tampilKontak' => true,
     ])
 @endsection

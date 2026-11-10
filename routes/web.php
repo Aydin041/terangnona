@@ -15,6 +15,7 @@ use App\Http\Controllers\Juri\KoreksiController as JuriKoreksiController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\KoreksiController as AdminKoreksiController;
 use App\Http\Controllers\Admin\AkunController as AdminAkunController;
+use App\Http\Controllers\Admin\PengajuanController as AdminPengajuanController;
 use App\Http\Controllers\Admin\PengaturanController as AdminPengaturanController;
 use App\Http\Controllers\Admin\LaporanController as AdminLaporanController;
 use App\Http\Controllers\Admin\JadwalController as AdminJadwalController;
@@ -150,6 +151,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/akun/panitia', [AdminAkunController::class, 'panitiaStore'])->name('akun.panitia.store');
         Route::get('/akun/panitia/{panitia}/reset', [AdminAkunController::class, 'panitiaResetForm'])->name('akun.panitia.reset.form');
         Route::post('/akun/panitia/{panitia}/reset', [AdminAkunController::class, 'panitiaReset'])->name('akun.panitia.reset');
+        Route::get('/akun/panitia/{panitia}/hapus', [AdminAkunController::class, 'panitiaHapusForm'])->name('akun.panitia.hapus.form');
         Route::post('/akun/panitia/{panitia}/hapus', [AdminAkunController::class, 'panitiaHapus'])->name('akun.panitia.hapus');
 
         Route::get('/akun/juri', [AdminAkunController::class, 'juriIndex'])->name('akun.juri.index');
@@ -157,11 +159,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/akun/juri', [AdminAkunController::class, 'juriStore'])->name('akun.juri.store');
         Route::get('/akun/juri/{juri}/reset', [AdminAkunController::class, 'juriResetForm'])->name('akun.juri.reset.form');
         Route::post('/akun/juri/{juri}/reset', [AdminAkunController::class, 'juriReset'])->name('akun.juri.reset');
+        Route::get('/akun/juri/{juri}/hapus', [AdminAkunController::class, 'juriHapusForm'])->name('akun.juri.hapus.form');
         Route::post('/akun/juri/{juri}/hapus', [AdminAkunController::class, 'juriHapus'])->name('akun.juri.hapus');
 
         Route::get('/akun/peserta', [AdminAkunController::class, 'pesertaIndex'])->name('akun.peserta.index');
         Route::get('/akun/peserta/{peserta}/reset', [AdminAkunController::class, 'pesertaResetForm'])->name('akun.peserta.reset.form');
         Route::post('/akun/peserta/{peserta}/reset', [AdminAkunController::class, 'pesertaReset'])->name('akun.peserta.reset');
+        Route::get('/akun/peserta/{peserta}/hapus', [AdminAkunController::class, 'pesertaHapusForm'])->name('akun.peserta.hapus.form');
         Route::post('/akun/peserta/{peserta}/hapus', [AdminAkunController::class, 'pesertaHapus'])->name('akun.peserta.hapus');
 
         Route::get('/akun/pimpinan', [AdminAkunController::class, 'pimpinanIndex'])->name('akun.pimpinan.index');
@@ -169,7 +173,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/akun/pimpinan', [AdminAkunController::class, 'pimpinanStore'])->name('akun.pimpinan.store');
         Route::get('/akun/pimpinan/{pimpinan}/reset', [AdminAkunController::class, 'pimpinanResetForm'])->name('akun.pimpinan.reset.form');
         Route::post('/akun/pimpinan/{pimpinan}/reset', [AdminAkunController::class, 'pimpinanReset'])->name('akun.pimpinan.reset');
+        Route::get('/akun/pimpinan/{pimpinan}/hapus', [AdminAkunController::class, 'pimpinanHapusForm'])->name('akun.pimpinan.hapus.form');
         Route::post('/akun/pimpinan/{pimpinan}/hapus', [AdminAkunController::class, 'pimpinanHapus'])->name('akun.pimpinan.hapus');
+
+        Route::get('/pengajuan', [AdminPengajuanController::class, 'index'])->name('pengajuan.index');
+        Route::get('/pengajuan/{pengajuan}/hapus', [AdminPengajuanController::class, 'hapusForm'])->name('pengajuan.hapus.form');
+        Route::post('/pengajuan/{pengajuan}/hapus', [AdminPengajuanController::class, 'hapus'])->name('pengajuan.hapus');
 
         Route::get('/pengaturan', [AdminPengaturanController::class, 'form'])->name('pengaturan.form');
         Route::post('/pengaturan', [AdminPengaturanController::class, 'update'])->name('pengaturan.update');

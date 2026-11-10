@@ -49,14 +49,10 @@
                         class="text-sm font-medium border border-line hover:border-brand-amber rounded-xl px-4 py-2 transition-colors">
                         Reset Password
                     </a>
-                    <form method="POST" action="{{ route('admin.akun.' . $kunci . '.hapus', $item->uuid) }}"
-                        data-pesan="Yakin mau hapus akun {{ $peran }} {{ $item->nama }}? Tidak bisa dikembalikan."
-                        onsubmit="return confirm(this.dataset.pesan);">
-                        @csrf
-                        <button type="submit" class="text-sm font-medium border border-red-300 text-red-700 hover:bg-red-50 rounded-xl px-4 py-2 transition-colors">
-                            Hapus
-                        </button>
-                    </form>
+                    <a href="{{ route('admin.akun.' . $kunci . '.hapus.form', $item->uuid) }}"
+                        class="text-sm font-medium border border-red-300 text-red-700 hover:bg-red-50 rounded-xl px-4 py-2 transition-colors">
+                        Hapus
+                    </a>
                 </div>
             </div>
         @endforeach
