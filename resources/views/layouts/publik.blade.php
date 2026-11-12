@@ -41,7 +41,6 @@
                     <a href="{{ route('panitia.login') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-surface">Panitia</a>
                     <a href="{{ route('juri.login') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-surface">Juri</a>
                     <a href="{{ route('pimpinan.login') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-surface">Pimpinan</a>
-                    <a href="{{ route('admin.login') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-surface">Admin</a>
                 </div>
             </div>
         </div>
