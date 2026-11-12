@@ -3,6 +3,21 @@
 @section('title', 'Pengajuan - Langkah 5')
 
 @section('content')
+    @php
+        $namaBentuk = [
+            'eksisting' => 'Inovasi Eksisting',
+            'pengembangan' => 'Pengembangan Inovasi',
+            'rancangan' => 'Rancangan Inovasi',
+        ];
+        $namaDokumen = [
+            'surat_identitas' => 'Surat Pernyataan Identitas Inovator',
+            'surat_implementasi' => 'Surat Pernyataan Implementasi Inovasi',
+            'surat_komitmen' => 'Surat Pernyataan Komitmen Implementasi Inovasi',
+            'video_link' => 'Video Dampak Inovasi',
+            'lampiran_rab' => 'Dokumen RAB',
+            'lampiran_rencana_aksi' => 'Lampiran Rencana Aksi/Pengembangan',
+        ];
+    @endphp
     <div class="max-w-3xl mx-auto">
         <p class="mb-4"><a href="{{ route('peserta.pengajuan.step4', $pengajuan->uuid) }}" class="text-sm text-slate-500 hover:text-ink">← Kembali ke Langkah 4</a></p>
 
@@ -26,7 +41,7 @@
                 <dl class="text-sm divide-y divide-line">
                     <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-48 shrink-0">Nama Inovasi</dt><dd>{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</dd></div>
                     <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-48 shrink-0">Kategori</dt><dd>{{ $pengajuan->kategori->nama }}</dd></div>
-                    <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-48 shrink-0">Bentuk Inovasi</dt><dd>{{ $pengajuan->bentuk_inovasi }}</dd></div>
+                    <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-48 shrink-0">Bentuk Inovasi</dt><dd>{{ $namaBentuk[$pengajuan->bentuk_inovasi] ?? $pengajuan->bentuk_inovasi }}</dd></div>
                     <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-48 shrink-0">Tahun Implementasi</dt><dd>{{ $pengajuan->tahun_implementasi }}</dd></div>
                 </dl>
             </div>
@@ -47,7 +62,7 @@
                         <p class="font-semibold mb-1">Dokumen berikut belum lengkap:</p>
                         <ul class="list-disc list-inside">
                             @foreach ($dokumenBelumLengkap as $jenis)
-                                <li>{{ $jenis }}</li>
+                                <li>{{ $namaDokumen[$jenis] ?? $jenis }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -55,7 +70,7 @@
                     <ul class="text-sm space-y-1.5">
                         @foreach ($dokumenTersimpan as $jenis => $dok)
                             <li>
-                                <strong class="font-semibold">{{ $jenis }}:</strong>
+                                <strong class="font-semibold">{{ $namaDokumen[$jenis] ?? $jenis }}:</strong>
                                 <a href="{{ $dok->tautan }}" target="_blank" rel="noopener noreferrer" class="text-brand-blue underline break-all">{{ $dok->label }}</a>
                             </li>
                         @endforeach
