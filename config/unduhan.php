@@ -20,10 +20,10 @@ return [
     'kelompok' => [
         'Panduan' => [
             [
-                'judul' => 'SK TERANG NONA {tahun}',
+                'judul' => 'SK dan Panduan Kompetisi TERANG NONA {tahun}',
                 'deskripsi' => 'Surat Keputusan kompetisi',
                 'berkas' => 'sk-terang-nona-2026.pdf',
-                'nama_unduhan' => 'SK Terang Nona 2026.pdf',
+                'nama_unduhan' => 'SK dan Panduan Kompetisi TERANG NONA 2026.pdf',
             ],
             [
                 'judul' => 'Perubahan Jadwal TERANG NONA {tahun}',
