@@ -12,10 +12,6 @@
 | Nama berkas saat diunduh dibuat dari 'nama_unduhan' (lengkap dengan ekstensi).
 | Nama itu ditulis eksplisit supaya tanda "/" pada judul tidak merusak nama berkas.
 |
-| BERKAS KE-4: nama dan jenisnya masih menunggu. Kalau sudah jadi, ganti
-| 'judul', 'deskripsi', 'berkas', dan 'nama_unduhan' pada item bertanda TODO,
-| lalu letakkan filenya di public/unduhan.
-|
 */
 
 return [
@@ -28,6 +24,12 @@ return [
                 'deskripsi' => 'Surat Keputusan kompetisi',
                 'berkas' => 'sk-terang-nona-2026.pdf',
                 'nama_unduhan' => 'SK Terang Nona 2026.pdf',
+            ],
+            [
+                'judul' => 'Perubahan Jadwal TERANG NONA {tahun}',
+                'deskripsi' => 'Nota Dinas perubahan jadwal kompetisi',
+                'berkas' => 'perubahan-jadwal-terang-nona-2026.pdf',
+                'nama_unduhan' => 'Perubahan Jadwal TERANG NONA 2026.pdf',
             ],
         ],
 
@@ -43,13 +45,6 @@ return [
                 'deskripsi' => 'Template untuk diisi dan ditandatangani',
                 'berkas' => 'format-surat-pernyataan-identitas-inovator.docx',
                 'nama_unduhan' => 'Format Surat Pernyataan Identitas Inovator - TERANG NONA 2026.docx',
-            ],
-            [
-                // TODO: ganti setelah nama dan jenis berkas ke-4 pasti.
-                'judul' => 'Dokumen Tambahan (menyusul)',
-                'deskripsi' => 'Sedang dalam proses',
-                'berkas' => 'berkas-ke-4.pdf',
-                'nama_unduhan' => 'Berkas ke-4.pdf',
             ],
         ],
     ],
