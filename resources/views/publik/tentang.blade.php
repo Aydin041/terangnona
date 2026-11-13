@@ -99,7 +99,7 @@
             <div>
                 <p class="font-semibold">Alamat &amp; Email</p>
                 <p class="text-sm text-slate-600 mt-1">Jalan Pahlawan No.16, Pleburan, Kec. Semarang Sel., Kota Semarang, Jawa Tengah 50241</p>
-                <a href="mailto:terangnonanakertransprovjateng@gmail.com" class="text-sm font-semibold text-brand-blue hover:underline break-all">terangnonakertransprovjateng@gmail.com</a>
+                <a href="mailto:terangnonanakertransprovjateng@gmail.com" class="text-sm font-semibold text-brand-blue hover:underline break-all">terangnonanakertransprovjateng@gmail.com</a>
             </div>
         </div>
     </section>
