@@ -22,7 +22,7 @@
             <dl class="text-sm divide-y divide-line">
                 <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-44 shrink-0">Nama Inovasi</dt><dd>{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }})</dd></div>
                 <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-44 shrink-0">Kategori</dt><dd>{{ $pengajuan->kategori->nama }}</dd></div>
-                <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-44 shrink-0">Bentuk Inovasi</dt><dd>{{ $pengajuan->bentuk_inovasi }}</dd></div>
+                <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-44 shrink-0">Bentuk Inovasi</dt><dd>{{ $pengajuan->nama_bentuk }}</dd></div>
                 <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-44 shrink-0">Status Saat Ini</dt><dd><x-badge-status :status="$pengajuan->status" /></dd></div>
                 <div class="flex flex-col sm:flex-row sm:gap-4 py-2"><dt class="text-slate-500 sm:w-44 shrink-0">Peserta</dt><dd class="break-words">{{ $pengajuan->peserta->nama }} ({{ $pengajuan->peserta->email }})</dd></div>
             </dl>
@@ -53,7 +53,7 @@
             <ul class="text-sm space-y-1.5">
                 @forelse ($pengajuan->dokumen as $dok)
                     <li>
-                        <strong class="font-semibold">{{ $dok->jenis_dokumen }}:</strong>
+                        <strong class="font-semibold">{{ $dok->nama_jenis }}:</strong>
                         <a href="{{ $dok->tautan }}" target="_blank" rel="noopener noreferrer" class="text-brand-blue underline break-all">{{ $dok->label }}</a>
                     </li>
                 @empty

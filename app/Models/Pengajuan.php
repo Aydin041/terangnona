@@ -89,4 +89,18 @@ class Pengajuan extends Model
     {
         return $this->bentuk_inovasi === 'eksisting' ? 'eksisting' : 'pengembangan_rancangan';
     }
+
+    /**
+     * Nama bentuk inovasi yang mudah dibaca (untuk ditampilkan ke pengguna).
+     */
+    public function getNamaBentukAttribute(): string
+    {
+        $daftar = [
+            'eksisting' => 'Inovasi Eksisting',
+            'pengembangan' => 'Pengembangan Inovasi',
+            'rancangan' => 'Rancangan Inovasi',
+        ];
+
+        return $daftar[$this->bentuk_inovasi] ?? ucfirst((string) $this->bentuk_inovasi);
+    }
 }

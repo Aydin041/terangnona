@@ -42,7 +42,7 @@
                             <a href="{{ route($rutaDetail, $item->uuid) }}"
                                 class="block bg-white border border-line rounded-2xl p-5 hover:border-brand-amber transition-colors">
                                 <p class="font-semibold">{{ $item->nama_inovasi }} ({{ $item->akronim }})</p>
-                                <p class="text-sm text-slate-500 mt-0.5">Kategori: {{ $item->kategori->nama }} | Bentuk: {{ $item->bentuk_inovasi }}</p>
+                                <p class="text-sm text-slate-500 mt-0.5">Kategori: {{ $item->kategori->nama }} | Bentuk: {{ $item->nama_bentuk }}</p>
 
                                 @if (!empty($perluPerbaikan[$item->id] ?? []))
                                     <p class="mt-2 text-sm rounded-lg bg-amber-100 text-amber-800 px-3 py-2">

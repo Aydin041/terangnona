@@ -37,7 +37,7 @@
                 <ul class="text-sm space-y-1.5">
                     @foreach ($dokumenPengajuan as $dok)
                         <li>
-                            <strong class="font-semibold">{{ $dok->jenis_dokumen }}:</strong>
+                            <strong class="font-semibold">{{ $dok->nama_jenis }}:</strong>
                             <a href="{{ $dok->tautan }}" target="_blank" rel="noopener noreferrer" class="text-brand-blue underline break-all">{{ $dok->label }}</a>
                         </li>
                     @endforeach

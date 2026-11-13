@@ -52,4 +52,22 @@ class Dokumen extends Model
 
         return $this->nama_asli ?: basename((string) $this->file_path);
     }
+
+    /**
+     * Nama jenis dokumen yang mudah dibaca (untuk ditampilkan ke pengguna).
+     */
+    public function getNamaJenisAttribute(): string
+    {
+        $daftar = [
+            'surat_identitas' => 'Surat Pernyataan Identitas Inovator',
+            'surat_implementasi' => 'Surat Pernyataan Implementasi Inovasi',
+            'surat_komitmen' => 'Surat Pernyataan Komitmen Implementasi Inovasi',
+            'video_link' => 'Video Dampak Inovasi',
+            'lampiran_rab' => 'Dokumen RAB',
+            'lampiran_rencana_aksi' => 'Lampiran Rencana Aksi/Pengembangan',
+        ];
+
+        return $daftar[$this->jenis_dokumen]
+            ?? ucwords(str_replace('_', ' ', (string) $this->jenis_dokumen));
+    }
 }

@@ -14,7 +14,7 @@
         @include('peserta.pengajuan._stepper', ['langkah' => 4])
 
         <h1 class="text-2xl font-bold">Dokumen & Isian Proposal</h1>
-        <p class="text-slate-500 mt-1 mb-5">{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }}) — Bentuk: {{ $pengajuan->bentuk_inovasi }}</p>
+        <p class="text-slate-500 mt-1 mb-5">{{ $pengajuan->nama_inovasi }} ({{ $pengajuan->akronim }}) — Bentuk: {{ $pengajuan->nama_bentuk }}</p>
 
         @if ($errors->any())
             <div class="mb-5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm p-3">
