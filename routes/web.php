@@ -32,6 +32,7 @@ use App\Models\Panitia;
 use App\Models\Juri;
 use App\Models\Peserta;
 use App\Models\Pimpinan;
+use App\Models\Admin;
 use App\Models\PermintaanBukaKunci;
 use App\Http\Middleware\BatasiPercobaanLogin;
 use App\Http\Middleware\PimpinanReadOnly;
@@ -47,6 +48,7 @@ Route::bind('panitia', fn (string $uuid) => Panitia::where('uuid', $uuid)->value
 Route::bind('juri', fn (string $uuid) => Juri::where('uuid', $uuid)->value('id') ?? abort(404));
 Route::bind('peserta', fn (string $uuid) => Peserta::where('uuid', $uuid)->value('id') ?? abort(404));
 Route::bind('pimpinan', fn (string $uuid) => Pimpinan::where('uuid', $uuid)->value('id') ?? abort(404));
+Route::bind('admin_user', fn (string $uuid) => Admin::where('uuid', $uuid)->value('id') ?? abort(404));
 
 Route::get('/', [PublikController::class, 'beranda'])->name('landing');
 Route::get('/tentang', [PublikController::class, 'tentang'])->name('tentang');
@@ -175,6 +177,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/akun/pimpinan/{pimpinan}/reset', [AdminAkunController::class, 'pimpinanReset'])->name('akun.pimpinan.reset');
         Route::get('/akun/pimpinan/{pimpinan}/hapus', [AdminAkunController::class, 'pimpinanHapusForm'])->name('akun.pimpinan.hapus.form');
         Route::post('/akun/pimpinan/{pimpinan}/hapus', [AdminAkunController::class, 'pimpinanHapus'])->name('akun.pimpinan.hapus');
+
+        Route::get('/akun/admin', [AdminAkunController::class, 'adminIndex'])->name('akun.admin.index');
+        Route::get('/akun/admin/create', [AdminAkunController::class, 'adminCreateForm'])->name('akun.admin.create');
+        Route::post('/akun/admin', [AdminAkunController::class, 'adminStore'])->name('akun.admin.store');
+        Route::get('/akun/admin/{admin_user}/reset', [AdminAkunController::class, 'adminResetForm'])->name('akun.admin.reset.form');
+        Route::post('/akun/admin/{admin_user}/reset', [AdminAkunController::class, 'adminReset'])->name('akun.admin.reset');
+        Route::get('/akun/admin/{admin_user}/hapus', [AdminAkunController::class, 'adminHapusForm'])->name('akun.admin.hapus.form');
+        Route::post('/akun/admin/{admin_user}/hapus', [AdminAkunController::class, 'adminHapus'])->name('akun.admin.hapus');
 
         Route::get('/pengajuan', [AdminPengajuanController::class, 'index'])->name('pengajuan.index');
         Route::get('/pengajuan/{pengajuan}/hapus', [AdminPengajuanController::class, 'hapusForm'])->name('pengajuan.hapus.form');

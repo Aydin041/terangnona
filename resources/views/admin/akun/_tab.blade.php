@@ -1,5 +1,5 @@
 @php
-    $tabAkun = ['panitia' => 'Panitia', 'juri' => 'Juri', 'peserta' => 'Peserta', 'pimpinan' => 'Pimpinan'];
+    $tabAkun = ['panitia' => 'Panitia', 'juri' => 'Juri', 'peserta' => 'Peserta', 'pimpinan' => 'Pimpinan', 'admin' => 'Administrator'];
 @endphp
 <div class="flex flex-wrap gap-2 mb-6">
     @foreach ($tabAkun as $kunciTab => $labelTab)

@@ -64,6 +64,13 @@ class PenghapusanData
         ]);
     }
 
+    public function ringkasanAdmin(int $id): array
+    {
+        return array_filter([
+            'Persetujuan buka kunci koreksi nilai yang pernah diproses' => DB::table('permintaan_buka_kunci')->where('admin_id', $id)->count(),
+        ]);
+    }
+
     // ---------------------------------------------------------------- eksekusi
 
     public function hapusPengajuan(int $id): void
@@ -106,6 +113,14 @@ class PenghapusanData
             // Riwayat status milik pengajuan lain tidak boleh hilang, jadi hanya nama petugasnya yang dikosongkan.
             DB::table('riwayat_status')->where('panitia_id', $id)->update(['panitia_id' => null]);
             DB::table('panitia')->where('id', $id)->delete();
+        });
+    }
+
+    public function hapusAdmin(int $id): void
+    {
+        DB::transaction(function () use ($id) {
+            DB::table('permintaan_buka_kunci')->where('admin_id', $id)->update(['admin_id' => null]);
+            DB::table('admin')->where('id', $id)->delete();
         });
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Juri;
 use App\Models\Panitia;
 use App\Models\Peserta;
@@ -267,6 +268,101 @@ class AkunController extends Controller
         $pimpinan = Pimpinan::findOrFail($id);
 
         return $this->prosesHapus($request, 'pimpinan', 'Pimpinan', $pimpinan, fn () => $pimpinan->delete());
+    }
+
+    // ---------------------------------------------------------------- Admin
+    public function adminIndex()
+    {
+        $daftarAdmin = Admin::orderBy('nama')->get();
+        return view('admin.akun.admin_index', compact('daftarAdmin'));
+    }
+
+    public function adminCreateForm()
+    {
+        return view('admin.akun.admin_create');
+    }
+
+    public function adminStore(Request $request)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:admin,email',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $passwordAsli = !empty($validated['password']) ? $validated['password'] : Str::random(10);
+
+        Admin::create([
+            'nama' => $validated['nama'],
+            'email' => $validated['email'],
+            'password_hash' => Hash::make($passwordAsli),
+        ]);
+
+        return redirect()
+            ->route('admin.akun.admin.index')
+            ->with('sukses', "Akun Administrator berhasil dibuat. Email: {$validated['email']} | Password: {$passwordAsli} (catat sekarang, tidak akan ditampilkan lagi)");
+    }
+
+    public function adminResetForm($id)
+    {
+        $admin = Admin::findOrFail($id);
+        return view('admin.akun.admin_reset', compact('admin'));
+    }
+
+    public function adminReset(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $admin = Admin::findOrFail($id);
+        $passwordBaru = !empty($validated['password']) ? $validated['password'] : Str::random(10);
+
+        $admin->update([
+            'password_hash' => Hash::make($passwordBaru),
+        ]);
+
+        return redirect()
+            ->route('admin.akun.admin.index')
+            ->with('sukses', "Password untuk Administrator {$admin->nama} ({$admin->email}) berhasil direset. Password baru: {$passwordBaru} (catat sekarang, tidak akan ditampilkan lagi)");
+    }
+
+    public function adminHapusForm($id, PenghapusanData $penghapusan)
+    {
+        $admin = Admin::findOrFail($id);
+
+        if (Admin::count() <= 1) {
+            return redirect()
+                ->route('admin.akun.admin.index')
+                ->withErrors(['Tidak bisa menghapus satu-satunya akun Administrator yang tersisa.']);
+        }
+
+        if (auth('admin')->id() === $admin->id) {
+            return redirect()
+                ->route('admin.akun.admin.index')
+                ->withErrors(['Anda tidak dapat menghapus akun Administrator yang sedang Anda gunakan saat ini.']);
+        }
+
+        return $this->tampilKonfirmasi('admin', 'Administrator', $admin, $penghapusan->ringkasanAdmin($admin->id));
+    }
+
+    public function adminHapus(Request $request, $id, PenghapusanData $penghapusan)
+    {
+        $admin = Admin::findOrFail($id);
+
+        if (Admin::count() <= 1) {
+            return redirect()
+                ->route('admin.akun.admin.index')
+                ->withErrors(['Tidak bisa menghapus satu-satunya akun Administrator yang tersisa.']);
+        }
+
+        if (auth('admin')->id() === $admin->id) {
+            return redirect()
+                ->route('admin.akun.admin.index')
+                ->withErrors(['Anda tidak dapat menghapus akun Administrator yang sedang Anda gunakan saat ini.']);
+        }
+
+        return $this->prosesHapus($request, 'admin', 'Administrator', $admin, fn () => $penghapusan->hapusAdmin($admin->id));
     }
 
     private function tampilKonfirmasi(string $kunci, string $peran, $akun, array $ringkasan)
