@@ -9,9 +9,9 @@
     @php
         $aktif = fn (...$pola) => request()->routeIs(...$pola)
             ? 'text-brand-amber border-brand-amber font-semibold'
-            : 'text-slate-300 border-transparent hover:text-white';
+            : 'text-slate-300 border-transparent hover:text-white hover:border-white/20';
     @endphp
-    <a href="{{ route('panitia.pengajuan.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('panitia.dashboard', 'panitia.pengajuan.*') }}">Pengajuan</a>
-    <a href="{{ route('panitia.ranking.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('panitia.ranking.*') }}">Ranking</a>
-    <a href="{{ route('panitia.laporan.index') }}" class="py-1 border-b-2 transition-colors {{ $aktif('panitia.laporan.*') }}">Laporan Nilai</a>
+    <a href="{{ route('panitia.pengajuan.index') }}" class="py-1.5 border-b-2 transition-all {{ $aktif('panitia.dashboard', 'panitia.pengajuan.*') }}">Verifikasi Pengajuan</a>
+    <a href="{{ route('panitia.ranking.index') }}" class="py-1.5 border-b-2 transition-all {{ $aktif('panitia.ranking.*') }}">Ranking</a>
+    <a href="{{ route('panitia.laporan.index') }}" class="py-1.5 border-b-2 transition-all {{ $aktif('panitia.laporan.*') }}">Laporan Nilai</a>
 @endsection
