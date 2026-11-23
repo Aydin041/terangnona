@@ -379,7 +379,11 @@ class PengajuanController extends Controller
         }
 
         if (!empty($pesanKata)) {
-            return back()->withErrors(['kata' => $pesanKata])->withInput();
+            $errors = new \Illuminate\Support\MessageBag();
+            foreach ($pesanKata as $pesan) {
+                $errors->add('kata', $pesan);
+            }
+            return back()->withErrors($errors)->withInput();
         }
 
         // Periksa setiap tautan bukti dukung (alamat kosong atau bukan http/https): tolak sebelum menyimpan apa pun.
@@ -400,7 +404,11 @@ class PengajuanController extends Controller
         }
 
         if (!empty($pesanTautan)) {
-            return back()->withErrors(['tautan' => $pesanTautan])->withInput();
+            $errors = new \Illuminate\Support\MessageBag();
+            foreach ($pesanTautan as $pesan) {
+                $errors->add('tautan', $pesan);
+            }
+            return back()->withErrors($errors)->withInput();
         }
 
         $pengajuan->dokumen()->updateOrCreate(

@@ -104,20 +104,43 @@
                             <div class="mt-4 pt-4 border-t border-slate-200/60">
                                 <label class="block text-xs sm:text-sm font-bold text-ink mb-2">Tautan Bukti Dukung</label>
                                 <div id="links-container-{{ $komponen->id }}" class="space-y-2.5">
-                                    @php $linkList = $isianRow->links ?? collect(); @endphp
-                                    @forelse ($linkList as $linkItem)
+                                    @php
+                                        // Prioritas: old() saat validasi gagal, lalu dari DB
+                                        $oldJudul = old("link_judul.{$komponen->id}");
+                                        $oldUrl   = old("link_url.{$komponen->id}");
+                                        $pakaiOld = $oldJudul !== null || $oldUrl !== null;
+
+                                        if ($pakaiOld) {
+                                            $judulList = (array) ($oldJudul ?? []);
+                                            $urlList   = (array) ($oldUrl ?? []);
+                                            // Gabungkan jadi array pasangan
+                                            $linkTampil = [];
+                                            $maxIdx = max(count($judulList), count($urlList));
+                                            for ($i = 0; $i < $maxIdx; $i++) {
+                                                $linkTampil[] = [
+                                                    'judul' => $judulList[$i] ?? '',
+                                                    'link'  => $urlList[$i] ?? '',
+                                                ];
+                                            }
+                                            if (empty($linkTampil)) {
+                                                $linkTampil[] = ['judul' => '', 'link' => ''];
+                                            }
+                                        } else {
+                                            $dbLinks = $isianRow->links ?? collect();
+                                            if ($dbLinks->isEmpty()) {
+                                                $linkTampil = [['judul' => '', 'link' => '']];
+                                            } else {
+                                                $linkTampil = $dbLinks->map(fn($l) => ['judul' => $l->judul, 'link' => $l->link])->toArray();
+                                            }
+                                        }
+                                    @endphp
+                                    @foreach ($linkTampil as $lRow)
                                         <div class="flex flex-col sm:flex-row gap-2">
-                                            <input type="text" name="link_judul[{{ $komponen->id }}][]" value="{{ $linkItem->judul }}" placeholder="Keterangan / Nama Dokumen" class="{{ $kelasKecil }} sm:flex-1">
-                                            <input type="text" name="link_url[{{ $komponen->id }}][]" value="{{ $linkItem->link }}" placeholder="https://drive.google.com/..." class="{{ $kelasKecil }} sm:flex-[2]">
+                                            <input type="text" name="link_judul[{{ $komponen->id }}][]" value="{{ $lRow['judul'] }}" placeholder="Keterangan / Nama Dokumen" class="{{ $kelasKecil }} sm:flex-1">
+                                            <input type="text" name="link_url[{{ $komponen->id }}][]" value="{{ $lRow['link'] }}" placeholder="https://drive.google.com/..." class="{{ $kelasKecil }} sm:flex-[2]">
                                             <button type="button" onclick="this.parentElement.remove()" class="self-end sm:self-auto text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-rose-200 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold transition-colors shrink-0">Hapus</button>
                                         </div>
-                                    @empty
-                                        <div class="flex flex-col sm:flex-row gap-2">
-                                            <input type="text" name="link_judul[{{ $komponen->id }}][]" placeholder="Keterangan / Nama Dokumen" class="{{ $kelasKecil }} sm:flex-1">
-                                            <input type="text" name="link_url[{{ $komponen->id }}][]" placeholder="https://drive.google.com/..." class="{{ $kelasKecil }} sm:flex-[2]">
-                                            <button type="button" onclick="this.parentElement.remove()" class="self-end sm:self-auto text-rose-600 hover:text-rose-800 hover:bg-rose-50 border border-rose-200 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold transition-colors shrink-0">Hapus</button>
-                                        </div>
-                                    @endforelse
+                                    @endforeach
                                 </div>
 
                                 <button type="button" onclick="tambahLinkRow({{ $komponen->id }})"
