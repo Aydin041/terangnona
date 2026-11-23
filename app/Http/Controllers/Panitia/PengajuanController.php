@@ -3,11 +3,16 @@
 namespace App\Http\Controllers\Panitia;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PengajuanDiSetujui;
+use App\Mail\PengajuanDitolak;
+use App\Mail\PengajuanPerluPerbaikan;
 use App\Models\AnggotaKelompok;
 use App\Models\Pengajuan;
 use App\Models\RiwayatStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PengajuanController extends Controller
 {
@@ -73,6 +78,14 @@ class PengajuanController extends Controller
             'changed_at' => now(),
         ]);
 
+        // Kirim notifikasi email ke peserta
+        try {
+            $pengajuan->load('peserta', 'kategori');
+            Mail::to($pengajuan->peserta->email)->send(new PengajuanDiSetujui($pengajuan));
+        } catch (\Exception $e) {
+            Log::error('Gagal kirim email disetujui: ' . $e->getMessage());
+        }
+
         return redirect()->route('panitia.pengajuan.index')->with('sukses', 'Pengajuan disetujui.');
     }
 
@@ -100,6 +113,14 @@ class PengajuanController extends Controller
             'changed_at' => now(),
         ]);
 
+        // Kirim notifikasi email ke peserta
+        try {
+            $pengajuan->load('peserta', 'kategori');
+            Mail::to($pengajuan->peserta->email)->send(new PengajuanPerluPerbaikan($pengajuan, $validated['catatan_panitia']));
+        } catch (\Exception $e) {
+            Log::error('Gagal kirim email perlu perbaikan: ' . $e->getMessage());
+        }
+
         return redirect()->route('panitia.pengajuan.index')->with('sukses', 'Pengajuan dikembalikan ke peserta.');
     }
 
@@ -126,6 +147,14 @@ class PengajuanController extends Controller
             'panitia_id' => $panitia->id,
             'changed_at' => now(),
         ]);
+
+        // Kirim notifikasi email ke peserta
+        try {
+            $pengajuan->load('peserta', 'kategori');
+            Mail::to($pengajuan->peserta->email)->send(new PengajuanDitolak($pengajuan, $validated['catatan_panitia']));
+        } catch (\Exception $e) {
+            Log::error('Gagal kirim email ditolak: ' . $e->getMessage());
+        }
 
         return redirect()->route('panitia.pengajuan.index')->with('sukses', 'Pengajuan ditolak.');
     }

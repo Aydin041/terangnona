@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Peserta;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PengajuanTandaTerima;
 use App\Models\Kategori;
 use App\Models\KomponenPenilaian;
 use App\Models\IsianProposal;
@@ -11,6 +12,8 @@ use App\Models\RiwayatStatus;
 use App\Models\UnitKerja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class PengajuanController extends Controller
@@ -542,6 +545,14 @@ class PengajuanController extends Controller
             'panitia_id' => null,
             'changed_at' => now(),
         ]);
+
+        // Kirim tanda terima email ke peserta
+        try {
+            $pengajuan->load('peserta', 'kategori');
+            Mail::to($pengajuan->peserta->email)->send(new PengajuanTandaTerima($pengajuan));
+        } catch (\Exception $e) {
+            Log::error('Gagal kirim email tanda terima: ' . $e->getMessage());
+        }
 
         return redirect()->route('peserta.dashboard')->with('sukses', 'Pengajuan berhasil disubmit dan menunggu pemeriksaan Panitia.');
     }
