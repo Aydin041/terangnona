@@ -8,5 +8,6 @@
         'subjudul' => 'Masuk sebagai peserta',
         'action' => route('peserta.login.submit'),
         'daftar' => route('peserta.register'),
+        'lupaPassword' => route('peserta.password.request'),
     ])
 @endsection

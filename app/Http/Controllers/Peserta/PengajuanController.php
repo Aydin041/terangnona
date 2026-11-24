@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Peserta;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PengajuanMasukPanitia;
 use App\Mail\PengajuanTandaTerima;
 use App\Models\Kategori;
 use App\Models\KomponenPenilaian;
 use App\Models\IsianProposal;
+use App\Models\Panitia;
 use App\Models\Pengajuan;
 use App\Models\RiwayatStatus;
 use App\Models\UnitKerja;
@@ -519,6 +521,13 @@ class PengajuanController extends Controller
             ->where('peserta_id', $peserta->id)
             ->firstOrFail();
 
+        // Cek apakah pengajuan baru disubmit dan sudah lewat batas waktu (deadline)
+        if ($pengajuan->status === 'draft' && \App\Models\Pengaturan::sudahLewatDeadline()) {
+            return back()->withErrors([
+                'umum' => 'Batas waktu (deadline) pengajuan proposal telah berakhir. Pengajuan tidak dapat disubmit lagi.',
+            ]);
+        }
+
         $dokumenTersimpan = $pengajuan->dokumen()->get()->keyBy('jenis_dokumen');
         $dokumenWajib = $this->daftarDokumenWajib($pengajuan);
 
@@ -554,12 +563,17 @@ class PengajuanController extends Controller
             'changed_at' => now(),
         ]);
 
-        // Kirim tanda terima email ke peserta
+        // Kirim tanda terima email ke peserta & pemberitahuan ke Panitia
         try {
             $pengajuan->load('peserta', 'kategori');
             Mail::to($pengajuan->peserta->email)->send(new PengajuanTandaTerima($pengajuan));
+
+            $emailPanitiaList = Panitia::whereNotNull('email')->pluck('email')->filter()->all();
+            if (!empty($emailPanitiaList)) {
+                Mail::to($emailPanitiaList)->send(new PengajuanMasukPanitia($pengajuan));
+            }
         } catch (\Exception $e) {
-            Log::error('Gagal kirim email tanda terima: ' . $e->getMessage());
+            Log::error('Gagal kirim email pengajuan baru: ' . $e->getMessage());
         }
 
         return redirect()->route('peserta.dashboard')->with('sukses', 'Pengajuan berhasil disubmit dan menunggu pemeriksaan Panitia.');

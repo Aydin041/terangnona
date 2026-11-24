@@ -29,7 +29,14 @@
     </div>
 
     <div>
-        <label for="password" class="block text-xs sm:text-sm font-bold text-ink mb-1.5">Kata Sandi</label>
+        <div class="flex items-center justify-between mb-1.5">
+            <label for="password" class="block text-xs sm:text-sm font-bold text-ink">Kata Sandi</label>
+            @isset($lupaPassword)
+                <a href="{{ $lupaPassword }}" class="text-xs font-semibold text-brand-blue hover:text-brand-blue-light transition-colors">
+                    Lupa Kata Sandi?
+                </a>
+            @endisset
+        </div>
         <div class="relative">
             <input type="password" id="password" name="password" required placeholder="Masukkan kata sandi"
                 class="w-full rounded-xl border border-slate-200 px-4 py-3 pr-24 text-sm text-ink placeholder-slate-400 bg-white transition-all focus:outline-none focus:ring-2 focus:ring-brand-amber/30 focus:border-brand-amber shadow-sm">

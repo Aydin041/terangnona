@@ -63,6 +63,12 @@ Route::prefix('peserta')->name('peserta.')->group(function () {
     Route::post('/login', [PesertaAuthController::class, 'login'])->middleware(BatasiPercobaanLogin::class . ':peserta')->name('login.submit');
     Route::post('/logout', [PesertaAuthController::class, 'logout'])->name('logout');
 
+    // Reset Password Peserta
+    Route::get('/forgot-password', [PesertaAuthController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [PesertaAuthController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/reset-password', [PesertaAuthController::class, 'showResetPasswordForm'])->name('password.reset');
+    Route::post('/reset-password', [PesertaAuthController::class, 'resetPassword'])->name('password.update');
+
     Route::middleware('auth:peserta')->group(function () {
         Route::get('/dashboard', [PesertaPengajuanController::class, 'dashboard'])->name('dashboard');
         Route::get('/survei', [PesertaSurveiController::class, 'form'])->name('survei.form');
