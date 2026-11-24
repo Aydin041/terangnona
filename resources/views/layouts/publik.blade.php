@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('judul', 'TERANG NONA ' . $tahunKompetisi . ' - Kompetisi Inovasi Disnakertrans Provinsi Jawa Tengah')</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ file_exists(public_path('css/app.css')) ? filemtime(public_path('css/app.css')) : time() }}">
     @stack('gaya')
 </head>
 <body class="bg-surface font-sans text-ink antialiased selection:bg-brand-amber selection:text-brand-navy min-h-screen flex flex-col">
