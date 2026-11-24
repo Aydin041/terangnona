@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Juri;
 
 use App\Http\Controllers\Controller;
+use App\Mail\PermintaanBukaKunciMasuk;
+use App\Models\Admin;
 use App\Models\NilaiAspekPresentasi;
 use App\Models\NilaiKomponenProposal;
 use App\Models\Pengajuan;
@@ -11,6 +13,8 @@ use App\Models\SubmissionPresentasi;
 use App\Models\SubmissionProposal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class KoreksiController extends Controller
 {
@@ -67,7 +71,7 @@ class KoreksiController extends Controller
             return back()->withErrors(['umum' => 'Sudah ada permintaan koreksi untuk komponen ini yang masih menunggu persetujuan Admin.']);
         }
 
-        PermintaanBukaKunci::create([
+        $permintaan = PermintaanBukaKunci::create([
             'juri_id' => $juri->id,
             'pengajuan_id' => $pengajuan->id,
             'tahap' => 'proposal',
@@ -77,6 +81,17 @@ class KoreksiController extends Controller
             'status_persetujuan' => 'menunggu',
             'admin_id' => null,
         ]);
+
+        // Kirim email notifikasi ke seluruh Admin
+        try {
+            $permintaan->load('juri', 'pengajuan', 'komponen');
+            $emailAdminList = Admin::whereNotNull('email')->pluck('email')->filter()->all();
+            if (!empty($emailAdminList)) {
+                Mail::to($emailAdminList)->send(new PermintaanBukaKunciMasuk($permintaan));
+            }
+        } catch (\Exception $e) {
+            Log::error('Gagal kirim email permohonan buka kunci proposal ke admin: ' . $e->getMessage());
+        }
 
         return redirect()
             ->route('juri.penilaian.proposal', $pengajuan->uuid)
@@ -130,7 +145,7 @@ class KoreksiController extends Controller
             return back()->withErrors(['umum' => 'Sudah ada permintaan koreksi untuk aspek ini yang masih menunggu persetujuan Admin.']);
         }
 
-        PermintaanBukaKunci::create([
+        $permintaan = PermintaanBukaKunci::create([
             'juri_id' => $juri->id,
             'pengajuan_id' => $pengajuan->id,
             'tahap' => 'presentasi',
@@ -140,6 +155,17 @@ class KoreksiController extends Controller
             'status_persetujuan' => 'menunggu',
             'admin_id' => null,
         ]);
+
+        // Kirim email notifikasi ke seluruh Admin
+        try {
+            $permintaan->load('juri', 'pengajuan');
+            $emailAdminList = Admin::whereNotNull('email')->pluck('email')->filter()->all();
+            if (!empty($emailAdminList)) {
+                Mail::to($emailAdminList)->send(new PermintaanBukaKunciMasuk($permintaan));
+            }
+        } catch (\Exception $e) {
+            Log::error('Gagal kirim email permohonan buka kunci presentasi ke admin: ' . $e->getMessage());
+        }
 
         return redirect()
             ->route('juri.penilaian.presentasi', $pengajuan->uuid)
