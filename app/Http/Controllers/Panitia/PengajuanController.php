@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Mail\PengajuanDiSetujui;
 use App\Mail\PengajuanDitolak;
 use App\Mail\PengajuanPerluPerbaikan;
+use App\Mail\ProposalSiapDinilaiJuri;
 use App\Models\AnggotaKelompok;
+use App\Models\Juri;
 use App\Models\Pengajuan;
 use App\Models\RiwayatStatus;
 use Illuminate\Http\Request;
@@ -78,12 +80,17 @@ class PengajuanController extends Controller
             'changed_at' => now(),
         ]);
 
-        // Kirim notifikasi email ke peserta
+        // Kirim notifikasi email ke peserta & ke seluruh dewan juri
         try {
             $pengajuan->load('peserta', 'kategori');
             Mail::to($pengajuan->peserta->email)->send(new PengajuanDiSetujui($pengajuan));
+
+            $emailJuriList = Juri::whereNotNull('email')->pluck('email')->filter()->all();
+            if (!empty($emailJuriList)) {
+                Mail::to($emailJuriList)->send(new ProposalSiapDinilaiJuri($pengajuan));
+            }
         } catch (\Exception $e) {
-            Log::error('Gagal kirim email disetujui: ' . $e->getMessage());
+            Log::error('Gagal kirim email disetujui / notifikasi juri: ' . $e->getMessage());
         }
 
         return redirect()->route('panitia.pengajuan.index')->with('sukses', 'Pengajuan disetujui.');
