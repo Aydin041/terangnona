@@ -12,6 +12,21 @@ class JadwalController extends Controller
 {
     public function index()
     {
+        // Jika tabel tahap_jadwal ada tapi masih kosong, isi otomatis dari konfigurasi bawaan
+        if (\Illuminate\Support\Facades\Schema::hasTable('tahap_jadwal') && \App\Models\TahapJadwal::count() === 0) {
+            $sekarang = now();
+            foreach (config('jadwal.tahap_awal', []) as $urutan => $t) {
+                \App\Models\TahapJadwal::create([
+                    'kunci' => $t['kunci'],
+                    'nama' => $t['nama'],
+                    'mulai' => $t['mulai'],
+                    'selesai' => $t['selesai'],
+                    'sorot' => $t['sorot'] ?? null,
+                    'urutan' => $urutan + 1,
+                ]);
+            }
+        }
+
         $tahap = TahapJadwal::urut();
 
         return view('admin.jadwal.index', compact('tahap'));
