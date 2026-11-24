@@ -274,6 +274,15 @@ class AkunController extends Controller
     public function adminIndex()
     {
         $daftarAdmin = Admin::orderBy('nama')->get();
+
+        // Pastikan setiap admin memiliki UUID (self-healing jika migrasi server belum generate UUID)
+        foreach ($daftarAdmin as $admin) {
+            if (empty($admin->uuid) && \Illuminate\Support\Facades\Schema::hasColumn('admin', 'uuid')) {
+                $admin->uuid = (string) Str::uuid();
+                $admin->save();
+            }
+        }
+
         return view('admin.akun.admin_index', compact('daftarAdmin'));
     }
 

@@ -48,7 +48,9 @@ Route::bind('panitia', fn (string $uuid) => Panitia::where('uuid', $uuid)->value
 Route::bind('juri', fn (string $uuid) => Juri::where('uuid', $uuid)->value('id') ?? abort(404));
 Route::bind('peserta', fn (string $uuid) => Peserta::where('uuid', $uuid)->value('id') ?? abort(404));
 Route::bind('pimpinan', fn (string $uuid) => Pimpinan::where('uuid', $uuid)->value('id') ?? abort(404));
-Route::bind('admin_user', fn (string $uuid) => Admin::where('uuid', $uuid)->value('id') ?? abort(404));
+Route::bind('admin_user', function (string $val) {
+    return Admin::where('uuid', $val)->orWhere('id', $val)->value('id') ?? abort(404);
+});
 
 Route::get('/', [PublikController::class, 'beranda'])->name('landing');
 Route::get('/tentang', [PublikController::class, 'tentang'])->name('tentang');

@@ -65,13 +65,17 @@
                                 @endif
                             </td>
                             <td class="py-4 px-5 text-right">
+                                @php
+                                    $kodeItem = !empty($item->uuid) ? $item->uuid : $item->id;
+                                    $paramResetHapus = ($kunci === 'admin') ? ['admin_user' => $kodeItem] : $kodeItem;
+                                @endphp
                                 <div class="inline-flex items-center gap-2">
-                                    <a href="{{ route('admin.akun.' . $kunci . '.reset.form', $item->uuid) }}"
+                                    <a href="{{ route('admin.akun.' . $kunci . '.reset.form', $paramResetHapus) }}"
                                         class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 transition-colors shadow-2xs">
                                         <svg class="w-3.5 h-3.5 text-brand-amber-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                                         <span>Reset Password</span>
                                     </a>
-                                    <a href="{{ route('admin.akun.' . $kunci . '.hapus.form', $item->uuid) }}"
+                                    <a href="{{ route('admin.akun.' . $kunci . '.hapus.form', $paramResetHapus) }}"
                                         class="inline-flex items-center gap-1.5 text-xs font-bold text-rose-600 bg-white hover:bg-rose-50 border border-rose-200 rounded-xl px-3 py-1.5 transition-colors shadow-2xs">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                         <span>Hapus</span>
