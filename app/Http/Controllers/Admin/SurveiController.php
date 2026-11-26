@@ -10,9 +10,12 @@ class SurveiController extends Controller
 {
     public function index()
     {
+        $ringkasan = SurveiService::ringkasan();
+
         return view('admin.survei.index', [
-            'ringkasan' => SurveiService::ringkasan(),
+            'ringkasan' => $ringkasan,
             'jumlahLayak' => SurveiService::pesertaLayak()->count(),
+            'belumMigrasi' => $ringkasan['belumMigrasi'] ?? false,
         ]);
     }
 
@@ -21,6 +24,16 @@ class SurveiController extends Controller
      */
     public function partisipasi()
     {
+        // Jika tabel survei belum ada, tampilkan halaman kosong yang aman
+        if (! \Illuminate\Support\Facades\Schema::hasTable('survei_partisipasi')) {
+            return view('admin.survei.partisipasi', [
+                'sudah' => collect(),
+                'belum' => collect(),
+                'jumlahLayak' => 0,
+                'belumMigrasi' => true,
+            ]);
+        }
+
         $layak = SurveiService::pesertaLayak()->orderBy('nama')->get(['id', 'nama']);
         $sudahId = SurveiPartisipasi::pluck('peserta_id')->all();
 

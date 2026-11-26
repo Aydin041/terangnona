@@ -37,6 +37,18 @@ class SurveiService
      */
     public static function ringkasan(): array
     {
+        // Jika tabel survei belum ada (migrasi belum dijalankan), kembalikan data kosong
+        if (! \Illuminate\Support\Facades\Schema::hasTable('survei_jawaban')) {
+            return [
+                'jumlah' => 0,
+                'rata' => null,
+                'distribusi' => [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0],
+                'aspek' => collect(self::ASPEK)->mapWithKeys(fn ($label) => [$label => 0])->all(),
+                'saran' => [],
+                'belumMigrasi' => true,
+            ];
+        }
+
         $jawaban = SurveiJawaban::query()->get(['nilai', 'aspek', 'saran']);
         $jumlah = $jawaban->count();
 
